@@ -11,7 +11,11 @@ import lombok.Data;
 public class buyDetail {
 
     @Id
-    @OneToOne
+    @Column(name = "buyDetailID")
+    private Long buyDetailID;
+
+    @Id
+    @ManyToOne
     @JoinColumns(
             {
                 @JoinColumn(name = "invoiceCODE", referencedColumnName = "invoiceCODE"),
@@ -20,7 +24,6 @@ public class buyDetail {
     )
     private invoice invoice;
 
-    @Id
     @ManyToOne
     @JoinColumns(
             {

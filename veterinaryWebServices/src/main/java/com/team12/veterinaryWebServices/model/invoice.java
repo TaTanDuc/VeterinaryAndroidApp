@@ -29,11 +29,11 @@ public class invoice {
     private Date invoiceDATE;
 
     @Column(name = "TOTAL")
-    private int TOTAL;
+    private Long TOTAL;
 
-    @OneToOne(mappedBy = "invoice")
-    private appointmentDetail appointmentDetails;
+    @OneToMany(mappedBy = "invoice")
+    private List<appointmentDetail> appointmentDetails;
 
-    @OneToOne(mappedBy = "invoice")
-    private buyDetail buyDetail;
+    @OneToMany(mappedBy = "invoice")
+    private List<buyDetail> buyDetail;
 }

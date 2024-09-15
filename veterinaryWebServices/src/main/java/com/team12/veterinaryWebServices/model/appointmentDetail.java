@@ -11,6 +11,10 @@ import lombok.Data;
 public class appointmentDetail {
 
     @Id
+    @Column(name = "apmDetailID")
+    private Long apmDetailID;
+
+    @Id
     @ManyToOne
     @JoinColumns(
             {
@@ -25,12 +29,10 @@ public class appointmentDetail {
     @JoinColumn(name = "appointmentID", referencedColumnName = "appointmentID")
     private appointment appointment;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "serviceCODE", referencedColumnName = "serviceCODE")
     private com.team12.veterinaryWebServices.model.service service;
 
-    @Id
     @ManyToOne
     @JoinColumns(
             {

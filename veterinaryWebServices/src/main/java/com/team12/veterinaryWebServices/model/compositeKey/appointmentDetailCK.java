@@ -13,15 +13,13 @@ import java.io.Serializable;
 @Data
 public class appointmentDetailCK implements Serializable {
 
+    private Long apmDetailID;
     private invoice invoice;
     private appointment appointment;
-    private service service;
-    private storage storage;
 
-    public appointmentDetailCK(invoice invoice, appointment appointment, service service, storage storage){
+    public appointmentDetailCK(Long apmDetailID, invoice invoice, appointment appointment){
         this.invoice = invoice;
         this.appointment = appointment;
-        this.service = service;
-        this.storage = storage;
+        this.apmDetailID = apmDetailID;
     }
 }

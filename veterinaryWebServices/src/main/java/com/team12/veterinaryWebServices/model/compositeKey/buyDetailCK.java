@@ -12,10 +12,10 @@ import java.io.Serializable;
 public class buyDetailCK implements Serializable {
 
     private invoice invoice;
-    private storage storage;
+    private Long buyDetailID;
 
-    public buyDetailCK(invoice invoice,storage storage){
+    public buyDetailCK(invoice invoice,Long buyDetailID){
         this.invoice = invoice;
-        this.storage = storage;
+        this.buyDetailID = buyDetailID;
     }
 }
