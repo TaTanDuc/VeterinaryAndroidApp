@@ -1,15 +1,15 @@
 package com.team12.veterinaryWebServices.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@Setter
 @Entity
+@Data
 @Table(name = "profile")
 public class profile {
 
@@ -32,7 +32,7 @@ public class profile {
     private boolean GENDER;
 
     @Column(name = "AGE")
-    private int AGE;
+    private Long AGE;
 
     @Column(name = "PHONE")
     private String PHONE;

@@ -1,8 +1,12 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.model.compositeKey.buyDetailCK;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
+@IdClass(buyDetailCK.class)
 @Table(name = "buyDetail")
 public class buyDetail {
 
@@ -16,10 +20,6 @@ public class buyDetail {
     )
     private invoice invoice;
 
-    @ManyToOne
-    @JoinColumn(name = "profileID", referencedColumnName = "profileID")
-    private profile profile;
-
     @Id
     @ManyToOne
     @JoinColumns(
@@ -30,6 +30,10 @@ public class buyDetail {
     )
     private storage storage;
 
+    @ManyToOne
+    @JoinColumn(name = "profileID", referencedColumnName = "profileID")
+    private profile profile;
+
     @Column(name = "itemQUANTITY")
-    private int itemQUANTITY;
+    private Long itemQUANTITY;
 }

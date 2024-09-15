@@ -1,13 +1,14 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.model.compositeKey.storageCK;
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
-@IdClass(storage.itemCK.class)
+@Data
+@IdClass(storageCK.class)
 @Table(name = "storage")
 public class storage {
 
@@ -19,26 +20,14 @@ public class storage {
     @Column(name = "itemID")
     private Long itemID;
 
-    public static class itemCK implements Serializable {
-
-        private String itemCODE;
-
-        private Long itemID;
-
-        public itemCK(String storageCODE,Long storageID){
-            this.itemCODE = storageCODE;
-            this.itemID = storageID;
-        }
-    }
-
     @Column(name = "itemNAME")
     private String itemNAME;
 
     @Column(name = "itemPRICE")
-    private int itemPRICE;
+    private Long itemPRICE;
 
     @Column(name = "INSTOCK")
-    private int INSTOCK;
+    private Long INSTOCK;
 
     @OneToMany(mappedBy = "storage")
     private List<appointmentDetail> appointmentDetails;

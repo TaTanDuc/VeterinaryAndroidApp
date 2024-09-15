@@ -1,13 +1,17 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.model.compositeKey.appointmentDetailCK;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
+@IdClass(appointmentDetailCK.class)
 @Table(name = "appointmentDetail")
 public class appointmentDetail {
 
     @Id
-    @OneToOne
+    @ManyToOne
     @JoinColumns(
             {
                     @JoinColumn(name = "invoiceCODE", referencedColumnName = "invoiceCODE"),
@@ -26,6 +30,7 @@ public class appointmentDetail {
     @JoinColumn(name = "serviceCODE", referencedColumnName = "serviceCODE")
     private com.team12.veterinaryWebServices.model.service service;
 
+    @Id
     @ManyToOne
     @JoinColumns(
             {
@@ -36,5 +41,5 @@ public class appointmentDetail {
     private storage storage;
 
     @Column(name = "itemQUANTITY")
-    private int itemQUANTITY;
+    private Long itemQUANTITY;
 }
