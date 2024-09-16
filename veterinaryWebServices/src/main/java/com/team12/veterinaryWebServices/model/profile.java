@@ -37,7 +37,7 @@ public class profile {
     @Column(name = "PHONE")
     private String PHONE;
 
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     private String USERNAME;
 
     @Column(name = "PASSWORD")
@@ -51,4 +51,6 @@ public class profile {
 
     @OneToMany(mappedBy = "profile")
     private List<pet> pets;
+
+
 }
