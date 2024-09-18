@@ -1,6 +1,5 @@
 package com.team12.veterinaryWebServices.viewmodel;
 
-import com.team12.veterinaryWebServices.model.buyDetail;
 import com.team12.veterinaryWebServices.model.invoice;
 import java.sql.Date;
 import java.util.List;

@@ -43,6 +43,9 @@ public class profile {
     @Column(name = "PASSWORD")
     private String PASSWORD;
 
+    @Column(name = "SESSION")
+    private String SESSION;
+
     @OneToMany(mappedBy = "profile")
     private List<appointment> appointments;
 
@@ -51,6 +54,4 @@ public class profile {
 
     @OneToMany(mappedBy = "profile")
     private List<pet> pets;
-
-
 }

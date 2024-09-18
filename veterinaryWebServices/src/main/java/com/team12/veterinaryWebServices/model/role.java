@@ -14,6 +14,7 @@ import java.util.List;
 public class role {
 
     @Id
+    @Enumerated(EnumType.STRING)
     @Column(name = "roleCODE")
     private String roleCODE;
 

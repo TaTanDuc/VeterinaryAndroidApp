@@ -11,11 +11,6 @@ import java.util.Optional;
 public interface profileRepository extends JpaRepository<profile,Long> {
 
     @Query(nativeQuery = true)
-    boolean existsProfileByEmail (String email);
-    @Query(nativeQuery = true)
-    boolean existsProfileByUsername (String username);
-
-    @Query(nativeQuery = true)
     Optional<profile> findProfileByEmail (String email);
     @Query(nativeQuery = true)
     Optional<profile> findProfileByUsername (String username);
