@@ -1,4 +1,4 @@
-package com.team12.veterinaryWebServices.security;
+package com.team12.veterinaryWebServices.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,7 +9,7 @@ public enum roleEnum implements GrantedAuthority {
     MAN("MANAGER"),
     CUS("CUSTOMER");
 
-    roleEnum(String s) {
+    roleEnum(String description) {
     }
 
     @Override

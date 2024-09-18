@@ -25,10 +25,10 @@ public class profileServices {
     public String addProfile(profile profile){
 
         if(profileRepository.findProfileByEmail(profile.getProfileEMAIL()).isPresent() || profileRepository.findProfileByUsername(profile.getUSERNAME()).isPresent())
-            return "User already exist!!!";
+            return "User already exist!";
 
         profile.setPASSWORD(passwordEncoder.encode(profile.getPASSWORD()));
         profileRepository.save(profile);
-        return "Profile added successfully";
+        return "Profile added successfully!";
     }
 }
