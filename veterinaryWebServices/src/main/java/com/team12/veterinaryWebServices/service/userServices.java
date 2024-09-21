@@ -3,10 +3,13 @@ package com.team12.veterinaryWebServices.service;
 import com.team12.veterinaryWebServices.dto.registerRequest;
 import com.team12.veterinaryWebServices.enums.ROLE;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
+import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.profile;
 import com.team12.veterinaryWebServices.model.role;
 import com.team12.veterinaryWebServices.repository.profileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -15,10 +18,10 @@ public class userServices {
 
     private final profileRepository profileRepository;
 
-    public String register (registerRequest request){
+    public appException register (registerRequest request){
 
         if(profileRepository.findByEmailOrUsername(request.getUSERNAME(),request.getEMAIL()).isPresent()){
-            return ERRORCODE.USER_EXISTED.name();
+            return new appException(ERRORCODE.USER_EXISTED);
         }
 
         profile user = new profile();
@@ -31,6 +34,6 @@ public class userServices {
 
         profileRepository.save(user);
 
-        return "User registered successfully!";
+        return new appException("User added successfully!");
     }
 }
