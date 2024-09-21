@@ -1,19 +1,20 @@
 package com.team12.veterinaryWebServices.service;
 
+import com.team12.veterinaryWebServices.exception.ERRORCODE;
+import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.profile;
 import com.team12.veterinaryWebServices.repository.profileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.team12.veterinaryWebServices.viewmodel.profileVM;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class profileServices {
 
     private final profileRepository profileRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public List<profileVM> getAllProfiles(){
         return profileRepository.findAll()
@@ -22,13 +23,12 @@ public class profileServices {
                 .toList();
     }
 
-    public String addProfile(profile profile){
+    public String updateProfile(profile p){
+        Optional<profile> user = profileRepository.findByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
 
-        if(profileRepository.findProfileByEmail(profile.getProfileEMAIL()).isPresent() || profileRepository.findProfileByUsername(profile.getUSERNAME()).isPresent())
-            return "User already exist!";
+        if(user.isEmpty()) throw new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
-        profile.setPASSWORD(passwordEncoder.encode(profile.getPASSWORD()));
-        profileRepository.save(profile);
-        return "Profile added successfully!";
+        profileRepository.save(p);
+        return "Profile update successfully!";
     }
 }

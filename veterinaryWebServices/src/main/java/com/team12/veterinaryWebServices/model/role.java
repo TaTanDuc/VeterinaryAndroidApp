@@ -1,26 +1,20 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.enums.ROLE;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Type;
 
-@Entity
 @Data
-@Table(name = "role")
+@Entity
 public class role {
 
     @Id
-    @Enumerated(EnumType.STRING)
     @Column(name = "roleCODE")
-    private String roleCODE;
+    @Enumerated(EnumType.STRING)
+    private ROLE roleCODE;
 
     @Column(name = "roleNAME")
     private String roleNAME;
-
-    @OneToMany(mappedBy = "role")
-    private List<profile> profiles;
 }

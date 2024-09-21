@@ -1,4 +1,4 @@
-package com.team12.veterinaryWebServices.enums;
+package com.team12.veterinaryWebServices.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatusCode;
 public enum ERRORCODE {
 
     USER_EXISTED(601, "User already existed!", HttpStatus.BAD_REQUEST),
-    UNAUTHENTICATED(602, "Unauthenticated!",HttpStatus.UNAUTHORIZED),
+    USER_DOES_NOT_EXIST(602, "User doesn't exist!", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(603, "Unauthenticated!",HttpStatus.UNAUTHORIZED)
     ;
 
 

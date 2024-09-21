@@ -1,11 +1,9 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.enums.gender;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -25,11 +23,12 @@ public class profile {
     @Column(name = "profileNAME")
     private String profileNAME;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", unique = true)
     private String profileEMAIL;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "GENDER")
-    private boolean GENDER;
+    private gender GENDER;
 
     @Column(name = "AGE")
     private Long AGE;
@@ -42,9 +41,6 @@ public class profile {
 
     @Column(name = "PASSWORD")
     private String PASSWORD;
-
-    @Column(name = "SESSION")
-    private String SESSION;
 
     @OneToMany(mappedBy = "profile")
     private List<appointment> appointments;

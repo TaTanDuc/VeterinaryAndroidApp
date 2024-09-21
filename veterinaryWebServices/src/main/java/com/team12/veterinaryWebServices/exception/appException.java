@@ -1,12 +1,12 @@
-package com.team12.veterinaryWebServices.security.dto;
+package com.team12.veterinaryWebServices.exception;
 
-import com.team12.veterinaryWebServices.enums.ERRORCODE;
-
-public class appException extends RuntimeException {
-
+public class appException extends RuntimeException{
     public appException(ERRORCODE errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
+    }
+
+    public appException(String s){
     }
 
     private ERRORCODE errorCode;
