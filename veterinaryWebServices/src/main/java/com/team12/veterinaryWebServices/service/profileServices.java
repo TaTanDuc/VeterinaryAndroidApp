@@ -23,12 +23,13 @@ public class profileServices {
                 .toList();
     }
 
-    public String updateProfile(profile p){
-        profile user = profileRepository.findByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
+    public appException updateProfile(profile p){
+        profile user = profileRepository.getByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
 
-        if(user != null) throw new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+        if(user != null)
+            return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
         profileRepository.save(p);
-        return "Profile update successfully!";
+        return new appException("Profile updated successfully!");
     }
 }

@@ -16,7 +16,10 @@ public class profileAPI {
     private final profileServices profileServices;
 
     @GetMapping("/admin/all")
-    public ResponseEntity<List<profileVM>> allProfiles(){
+    public ResponseEntity<Object> allProfiles(){
         return ResponseEntity.ok(profileServices.getAllProfiles());
     }
+
+    @PutMapping("/update")
+
 }

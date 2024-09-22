@@ -11,5 +11,8 @@ import java.util.Optional;
 public interface profileRepository extends JpaRepository<profile,Long> {
 
     @Query(value = "SELECT profile.* FROM profile WHERE profile.username = ?1 OR profile.email = ?2", nativeQuery = true)
-    profile findByEmailOrUsername(String username, String email);
+    profile getByEmailOrUsername(String username, String email);
+
+    @Query(value = "SELECT profile.* FROM profile WHERE profileid = ?1", nativeQuery = true)
+    profile getById(Long profileID);
 }

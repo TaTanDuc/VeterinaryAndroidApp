@@ -11,6 +11,9 @@ public enum ERRORCODE {
     USER_DOES_NOT_EXIST(602, "User doesn't exist!", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH(603, "User password isn't right!", HttpStatus.CONFLICT),
     UNAUTHENTICATED(610, "Unauthenticated!",HttpStatus.UNAUTHORIZED),
+
+    PET_DOES_NOT_EXIST(701, "Pet doesn't exist!", HttpStatus.BAD_REQUEST),
+    NOT_PET_OWNER(702, "You are not the owner of this pet!", HttpStatus.UNAUTHORIZED)
     ;
 
 

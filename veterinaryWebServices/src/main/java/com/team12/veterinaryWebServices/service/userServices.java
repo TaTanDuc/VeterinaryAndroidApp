@@ -23,7 +23,7 @@ public class userServices {
 
     public appException register (registerRequest request){
 
-        profile register = profileRepository.findByEmailOrUsername(request.getUSERNAME(),request.getPASSWORD());
+        profile register = profileRepository.getByEmailOrUsername(request.getUSERNAME(),request.getPASSWORD());
         if (register != null){
             return new appException(ERRORCODE.USER_EXISTED);
         }
@@ -43,7 +43,7 @@ public class userServices {
 
     public appException login (loginRequest request){
 
-        profile user = profileRepository.findByEmailOrUsername(request.getLOGINSTRING(),request.getLOGINSTRING());
+        profile user = profileRepository.getByEmailOrUsername(request.getLOGINSTRING(),request.getLOGINSTRING());
         if (user != null){
             if (user.getPASSWORD().equals(request.getPASSWORD()))
                 return new appException("User logged in successfully!");

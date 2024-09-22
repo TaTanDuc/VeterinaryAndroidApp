@@ -17,7 +17,7 @@ public class appointmentAPI {
     private final appointmentServices appointmentServices;
 
     @GetMapping("/all")
-    public ResponseEntity<List<appointmentVM>> allAppointments(){
+    public ResponseEntity<Object> allAppointments(){
         return ResponseEntity.ok(appointmentServices.getAllAppointments());
     }
 }
