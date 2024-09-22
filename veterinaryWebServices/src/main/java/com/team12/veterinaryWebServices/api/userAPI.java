@@ -1,5 +1,6 @@
 package com.team12.veterinaryWebServices.api;
 
+import com.team12.veterinaryWebServices.dto.loginRequest;
 import com.team12.veterinaryWebServices.dto.registerRequest;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.service.userServices;
@@ -22,5 +23,11 @@ public class userAPI {
     public ResponseEntity<Object> registerUser(@RequestBody registerRequest request){
         appException register = userServices.register(request);
         return new ResponseEntity<>(register.getMessage(),register.getErrorCode());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Object> loginUser(@RequestBody loginRequest request){
+        appException login = userServices.login(request);
+        return new ResponseEntity<>(login.getMessage(),login.getErrorCode());
     }
 }

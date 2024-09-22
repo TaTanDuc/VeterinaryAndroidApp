@@ -9,7 +9,8 @@ public enum ERRORCODE {
 
     USER_EXISTED(601, "User already existed!", HttpStatus.BAD_REQUEST),
     USER_DOES_NOT_EXIST(602, "User doesn't exist!", HttpStatus.BAD_REQUEST),
-    UNAUTHENTICATED(603, "Unauthenticated!",HttpStatus.UNAUTHORIZED)
+    PASSWORD_NOT_MATCH(603, "User password isn't right!", HttpStatus.CONFLICT),
+    UNAUTHENTICATED(610, "Unauthenticated!",HttpStatus.UNAUTHORIZED),
     ;
 
 

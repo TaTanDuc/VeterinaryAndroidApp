@@ -24,9 +24,9 @@ public class profileServices {
     }
 
     public String updateProfile(profile p){
-        Optional<profile> user = profileRepository.findByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
+        profile user = profileRepository.findByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
 
-        if(user.isEmpty()) throw new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+        if(user != null) throw new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
         profileRepository.save(p);
         return "Profile update successfully!";

@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface profileRepository extends JpaRepository<profile,Long> {
 
     @Query(value = "SELECT profile.* FROM profile WHERE profile.username = ?1 OR profile.email = ?2", nativeQuery = true)
-    Optional<profile> findByEmailOrUsername(String username, String email);
+    profile findByEmailOrUsername(String username, String email);
 }
