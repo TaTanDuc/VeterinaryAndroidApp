@@ -14,5 +14,5 @@ public interface profileRepository extends JpaRepository<profile,Long> {
     profile getByEmailOrUsername(String username, String email);
 
     @Query(value = "SELECT profile.* FROM profile WHERE profileid = ?1", nativeQuery = true)
-    profile getById(Long profileID);
+    profile getProfileById(Long profileID);
 }

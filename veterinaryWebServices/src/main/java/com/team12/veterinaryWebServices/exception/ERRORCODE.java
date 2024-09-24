@@ -13,7 +13,10 @@ public enum ERRORCODE {
     UNAUTHENTICATED(610, "Unauthenticated!",HttpStatus.UNAUTHORIZED),
 
     PET_DOES_NOT_EXIST(701, "Pet doesn't exist!", HttpStatus.BAD_REQUEST),
-    NOT_PET_OWNER(702, "You are not the owner of this pet!", HttpStatus.UNAUTHORIZED)
+    NOT_PET_OWNER(702, "You are not the owner of this pet!", HttpStatus.UNAUTHORIZED),
+
+    SERVICE_DOES_NOT_EXIST(801, "Service doesn't exist!", HttpStatus.NO_CONTENT),
+    NO_COMMENT(805, "There is no comment here!", HttpStatus.NO_CONTENT),
     ;
 
 

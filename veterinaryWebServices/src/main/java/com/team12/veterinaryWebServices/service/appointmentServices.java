@@ -1,5 +1,6 @@
 package com.team12.veterinaryWebServices.service;
 
+import com.team12.veterinaryWebServices.exception.appException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.team12.veterinaryWebServices.repository.appointmentRepository;
@@ -18,5 +19,12 @@ public class appointmentServices {
                 .stream()
                 .map(appointmentVM::from)
                 .toList();
+    }
+
+    public appException addAppointment (){
+
+
+
+        return new appException("Appointment added successfully");
     }
 }

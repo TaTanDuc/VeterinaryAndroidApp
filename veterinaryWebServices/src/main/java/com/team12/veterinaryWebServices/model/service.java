@@ -22,6 +22,15 @@ public class service {
     @Column(name = "PRICE")
     private Long servicePRICE;
 
+    @Column(name = "RATING" , columnDefinition = "double default 0")
+    private double serviceRATING;
+
+    @Column(name = "serviceDATE")
+    private String serviceDATE;
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    private List<comment> comments;
+
     @OneToMany(mappedBy = "service")
     private List<appointmentDetail> appointmentDetails;
 }

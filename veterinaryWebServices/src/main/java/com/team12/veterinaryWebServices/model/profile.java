@@ -20,6 +20,9 @@ public class profile {
     @JoinColumn(name = "roleCODE", referencedColumnName = "roleCODE")
     private role role;
 
+    @Column(name = "profileIMG")
+    private String profileIMG;
+
     @Column(name = "profileNAME")
     private String profileNAME;
 
@@ -50,4 +53,7 @@ public class profile {
 
     @OneToMany(mappedBy = "profile")
     private List<pet> pets;
+
+    @OneToMany(mappedBy = "profile")
+    private List<comment> comments;
 }

@@ -2,7 +2,9 @@ package com.team12.veterinaryWebServices.api;
 
 import com.team12.veterinaryWebServices.dto.petDTO;
 import com.team12.veterinaryWebServices.exception.appException;
+import com.team12.veterinaryWebServices.model.petDetail;
 import com.team12.veterinaryWebServices.service.petServices;
+import com.team12.veterinaryWebServices.viewmodel.petDetailVM;
 import com.team12.veterinaryWebServices.viewmodel.petVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,7 @@ public class petAPI {
         return ResponseEntity.ok(userPets);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/employee/add")
     public ResponseEntity<Object> addUserPet(@RequestBody petDTO data){
         appException add = petServices.addUserPet(data);
         return new ResponseEntity<>(add.getMessage(),add.getErrorCode());
@@ -44,5 +46,16 @@ public class petAPI {
                                                 @RequestParam("userID") Long userID){
         appException delete = petServices.deleteUserPet(petID,userID);
         return new ResponseEntity<>(delete.getMessage(),delete.getErrorCode());
+    }
+
+    @GetMapping("/getdetails")
+    public ResponseEntity<Object> getPetDetails(@RequestParam("petID") Long petID,
+                                                @RequestParam("userID") Long userID){
+        List<petDetailVM> petDetails = petServices.getPetDetails(petID,userID);
+
+        if(petDetails.isEmpty())
+            return ResponseEntity.ok("There is no detail for this pet yet!");
+
+        return ResponseEntity.ok(petDetails);
     }
 }

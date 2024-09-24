@@ -31,7 +31,7 @@ public class appointmentDetail {
 
     @ManyToOne
     @JoinColumn(name = "serviceCODE", referencedColumnName = "serviceCODE")
-    private com.team12.veterinaryWebServices.model.service service;
+    private service service;
 
     @ManyToOne
     @JoinColumns(

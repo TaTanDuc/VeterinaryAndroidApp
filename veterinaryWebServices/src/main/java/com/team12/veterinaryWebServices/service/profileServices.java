@@ -24,9 +24,9 @@ public class profileServices {
     }
 
     public appException updateProfile(profile p){
-        profile user = profileRepository.getByEmailOrUsername(p.getUSERNAME(), p.getProfileEMAIL());
+        profile user = profileRepository.getProfileById(p.getProfileID());
 
-        if(user != null)
+        if(user == null)
             return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
         profileRepository.save(p);

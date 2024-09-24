@@ -17,6 +17,9 @@ public class pet {
     @Column(name = "petID")
     private Long petID;
 
+    @Column(name = "petIMAGE")
+    private String petIMAGE;
+
     @ManyToOne
     @JoinColumn(name = "profileID")
     private profile profile;
