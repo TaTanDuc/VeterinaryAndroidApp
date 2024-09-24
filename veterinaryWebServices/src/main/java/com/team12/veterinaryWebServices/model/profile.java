@@ -56,4 +56,7 @@ public class profile {
 
     @OneToMany(mappedBy = "profile")
     private List<comment> comments;
+
+    @OneToOne(mappedBy = "profile")
+    private cart cart;
 }

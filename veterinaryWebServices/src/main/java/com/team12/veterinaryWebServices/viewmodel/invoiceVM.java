@@ -23,7 +23,8 @@ public record invoiceVM(String invoiceCODE, Long invoiceID, Date invoiceDATE, Lo
                     .stream()
                     .map(bD -> new bDetails(
                             bD.getStorage().getItemNAME(),
-                            bD.getStorage().getItemPRICE()
+                            bD.getStorage().getItemPRICE(),
+                            bD.getItemQUANTITY()
                     )
                     ).toList();
 
@@ -46,7 +47,8 @@ public record invoiceVM(String invoiceCODE, Long invoiceID, Date invoiceDATE, Lo
                             aD.getService().getServiceNAME(),
                             aD.getService().getServicePRICE(),
                             aD.getStorage().getItemNAME(),
-                            aD.getStorage().getItemPRICE()
+                            aD.getStorage().getItemPRICE(),
+                            aD.getItemQUANTITY()
                     )
                     ).toList();
 
@@ -60,7 +62,7 @@ public record invoiceVM(String invoiceCODE, Long invoiceID, Date invoiceDATE, Lo
         }
     }
 
-    private record apmDetails (String serviceNAME, Long servicePRICE, String itemNAME, Long itemPRICE) {}
+    private record apmDetails (String serviceNAME, Long servicePRICE, String itemNAME, Long itemPRICE, Long itemQUANTITY) {}
 
-    private record bDetails (String itemNAME, Long itemPRICE) {}
+    private record bDetails (String itemNAME, Long itemPRICE, Long itemQUANTITY) {}
 }

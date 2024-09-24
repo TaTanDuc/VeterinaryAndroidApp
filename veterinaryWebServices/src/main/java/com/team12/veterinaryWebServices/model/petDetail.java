@@ -18,7 +18,7 @@ public class petDetail {
     private Long petDetailID;
 
     @ManyToOne
-    @JoinColumn(name = "petID")
+    @JoinColumn(name = "petID", referencedColumnName = "petID")
     private pet pet;
 
     @Column(name = "petDetailDATE")

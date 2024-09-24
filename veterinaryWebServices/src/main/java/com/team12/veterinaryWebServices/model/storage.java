@@ -38,4 +38,7 @@ public class storage {
     @OneToMany(mappedBy = "storage")
     private List<import_export> importExports;
 
+    @OneToMany(mappedBy = "storage")
+    private List<cartDetail> cartDetails;
+
 }
