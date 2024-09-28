@@ -21,7 +21,9 @@ public enum ERRORCODE {
 
     CART_DOES_NOT_EXIST(901, "Cart doesn't exist!", HttpStatus.BAD_REQUEST),
     NOT_CART_OWNER(902, "This is not your cart!", HttpStatus.CONFLICT),
-    ITEM_OVER_STOCK(903, "Your item quantity is over the stock limit!", HttpStatus.BAD_REQUEST)
+    ITEM_OVER_STOCK(903, "Your item quantity is over the stock limit!", HttpStatus.BAD_REQUEST),
+    SOLD_OUT(904, "Your item have been sold out!", HttpStatus.NO_CONTENT),
+    NO_ITEM_FOUND(910, "There is no item here!", HttpStatus.NO_CONTENT),
     ;
 
 

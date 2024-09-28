@@ -35,6 +35,7 @@ public class cartServices {
     public Object getUserCart(cartDTO request) {
         cart c = cartRepository.getUserCart(request.getProfileID());
         appException error = cartERROR(request,c);
+
         if(error != null)
             return error;
         return c;
@@ -42,7 +43,13 @@ public class cartServices {
 
     public Object addItemToCart(cartDTO request) {
         cart c = cartRepository.getUserCart(request.getProfileID());
+        appException error = cartERROR(request,c);
 
-        return
+        if(error != null)
+            return error;
+
+
+
+        return new appException("Item added successfully!");
     }
 }
