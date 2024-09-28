@@ -5,17 +5,16 @@ import com.team12.veterinaryWebServices.model.storage;
 
 import java.util.List;
 
-public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails, Long TOTAL) {
+public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails, long TOTAL) {
     public static cartVM from (cart c){
 
         List<cartDetails> cartDetails = c.getCartDetails()
                 .stream()
                 .map(cD ->  new cartDetails(
                         cD.getStorage().getItemNAME(),
-                        cD.getStorage().getItemPRICE(),
-                        cD.getItemQUANTIY())
+                        cD.getStorage().getItemPRICE()
                 )
-                .toList();
+                ).toList();
 
         return new cartVM(
                 c.getCartID(),
@@ -25,5 +24,5 @@ public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails
         );
     }
 
-    private record cartDetails(String itemNAME, Long itemPRICE ,Long itemQUANTITY) {}
+    private record cartDetails(String itemNAME, long itemPRICE) {}
 }

@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.team12.veterinaryWebServices.service.appointmentServices;
-import com.team12.veterinaryWebServices.viewmodel.appointmentVM;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController

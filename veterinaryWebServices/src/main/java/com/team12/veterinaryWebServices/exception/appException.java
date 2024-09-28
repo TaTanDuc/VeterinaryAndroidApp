@@ -5,8 +5,6 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import java.util.Objects;
-
 @Getter
 @Setter
 public class appException extends RuntimeException{
@@ -16,12 +14,13 @@ public class appException extends RuntimeException{
         this.errorCode = errorCode;
     }
 
-    public appException(String customMessage){
+
+    private String customMessage;
+
+    public appException(String customMessage) {
         super(customMessage);
         this.customMessage = customMessage;
     }
-
-    private String customMessage;
 
     private ERRORCODE errorCode;
 

@@ -18,7 +18,7 @@ public class comment {
     @Column(name = "commentDATE")
     private Date commentDATE;
 
-    @Column(name = "commentRATING")
+    @Column(name = "commentRATING", columnDefinition = "INT DEFAULT 0")
     private int commentRATING;
 
     @Column(name = "CONTENT")

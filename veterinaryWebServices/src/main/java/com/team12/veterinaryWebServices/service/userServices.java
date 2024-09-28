@@ -20,13 +20,16 @@ import java.util.Optional;
 public class userServices {
 
     private final profileRepository profileRepository;
-
+    private final cartServices cartServices;
     public appException register (registerRequest request){
 
         profile register = profileRepository.getByEmailOrUsername(request.getUSERNAME(),request.getPASSWORD());
         if (register != null){
             return new appException(ERRORCODE.USER_EXISTED);
         }
+
+        if(request.getPASSWORD() == null)
+            return new appException(ERRORCODE.PASS_WORD_CANT_NULL);
 
         profile user = new profile();
         role r = new role();
@@ -35,8 +38,8 @@ public class userServices {
         user.setProfileEMAIL(request.getEMAIL());
         user.setRole(r);
         user.setPASSWORD(request.getPASSWORD());
-
         profileRepository.save(user);
+        cartServices.createUserCart(user);
 
         return new appException("User registered successfully!");
     }

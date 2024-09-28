@@ -23,11 +23,11 @@ public class storage {
     @Column(name = "itemNAME")
     private String itemNAME;
 
-    @Column(name = "itemPRICE")
-    private Long itemPRICE;
+    @Column(name = "itemPRICE", columnDefinition = "INT DEFAULT 0")
+    private long itemPRICE;
 
-    @Column(name = "INSTOCK")
-    private Long INSTOCK;
+    @Column(name = "INSTOCK", columnDefinition = "INT DEFAULT 0")
+    private long INSTOCK;
 
     @OneToMany(mappedBy = "storage")
     private List<appointmentDetail> appointmentDetails;

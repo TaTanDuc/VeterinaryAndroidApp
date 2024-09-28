@@ -31,9 +31,9 @@ public class import_export {
     )
     private storage storage;
 
-    @Column(name = "importExportPRICE")
-    private Long importExportPRICE;
+    @Column(name = "importExportPRICE", columnDefinition = "INT DEFAULT 0")
+    private long importExportPRICE;
 
-    @Column(name = "importExportQUANTITY")
-    private Long getImportExportQUANTITY;
+    @Column(name = "importExportQUANTITY", columnDefinition = "INT DEFAULT 0")
+    private int getImportExportQUANTITY;
 }

@@ -37,6 +37,6 @@ public class buyDetail {
     @JoinColumn(name = "profileID", referencedColumnName = "profileID")
     private profile profile;
 
-    @Column(name = "itemQUANTITY")
-    private Long itemQUANTITY;
+    @Column(name = "itemQUANTITY", columnDefinition = "INT DEFAULT 0")
+    private long itemQUANTITY;
 }

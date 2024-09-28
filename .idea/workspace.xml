@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/cartAPI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/cartDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/cartDetailRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/cartRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/cartServices.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/storageServices.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AndroidApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AndroidApp.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/application/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/.metadata" beforeDir="false" afterPath="$PROJECT_DIR$/application/.metadata" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/application/README.md" afterDir="false" />
@@ -102,10 +116,14 @@
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/VeterinaryWebServicesApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/VeterinaryWebServicesApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/appointmentAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/appointmentAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/invoiceAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/invoiceAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/petAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/petAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/profileAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/profileAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/serviceAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/serviceAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/userAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/api/userAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/authenticationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/authenticationRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/authenticationResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/authenticationResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/loginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/loginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/petDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/petDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/registerRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/dto/registerRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/enums/ROLE.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/enums/ROLE.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/enums/gender.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/enums/gender.java" afterDir="false" />
@@ -114,6 +132,9 @@
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/appointment.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/appointment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/appointmentDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/appointmentDetail.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/buyDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/buyDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/cart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/cartDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/cartDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/comment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/appointmentDetailCK.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/appointmentDetailCK.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/buyDetailCK.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/buyDetailCK.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/importExportCK.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/model/compositeKey/importExportCK.java" afterDir="false" />
@@ -130,6 +151,7 @@
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/appointmentDetailRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/appointmentDetailRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/appointmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/appointmentRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/buyDetailRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/buyDetailRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/commentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/commentRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/importExportRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/importExportRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/invoiceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/invoiceRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/petDetailRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/repository/petDetailRepository.java" afterDir="false" />
@@ -141,11 +163,18 @@
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/security/securityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/security/securityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/appointmentServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/appointmentServices.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/invoiceServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/invoiceServices.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/petServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/petServices.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/profileServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/profileServices.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/serviceServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/serviceServices.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/userServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/userServices.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/appointmentVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/appointmentVM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/cartVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/cartVM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/commentVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/commentVM.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/invoiceVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/invoiceVM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/petDetailVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/petDetailVM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/petVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/petVM.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/profileVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/profileVM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/serviceVM.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/viewmodel/serviceVM.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/test/java/com/team12/veterinaryWebServices/VeterinaryWebServicesApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/test/java/com/team12/veterinaryWebServices/VeterinaryWebServicesApplicationTests.java" afterDir="false" />
     </list>
@@ -154,10 +183,16 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 4
-}]]></component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2mNi4xx3cm41SQq7qYEWh5rSkoB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -166,8 +201,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "Duc",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/AndroidApp/veterinaryWebServices"
+    "last_opened_file_path": "D:/AndroidApp/veterinaryWebServices",
+    "settings.editor.selected.configurable": "emulator"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

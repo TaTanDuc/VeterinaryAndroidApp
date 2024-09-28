@@ -19,10 +19,10 @@ public class service {
     @Column(name = "serviceNAME")
     private String serviceNAME;
 
-    @Column(name = "PRICE")
-    private Long servicePRICE;
+    @Column(name = "PRICE", columnDefinition = "INT DEFAULT 0")
+    private long servicePRICE;
 
-    @Column(name = "RATING" , columnDefinition = "double default 0")
+    @Column(name = "RATING" , columnDefinition = "DOUBLE DEFAULT 0")
     private double serviceRATING;
 
     @Column(name = "serviceDATE")

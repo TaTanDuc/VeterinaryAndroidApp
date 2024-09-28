@@ -25,6 +25,6 @@ public class cartDetail {
     )
     private storage storage;
 
-    @Column(name = "itemQUANTITY")
-    private Long itemQUANTIY;
+    @Column(name = "itemQUANTITY", columnDefinition = "INT DEFAULT 0")
+    private int itemQUANTIY;
 }

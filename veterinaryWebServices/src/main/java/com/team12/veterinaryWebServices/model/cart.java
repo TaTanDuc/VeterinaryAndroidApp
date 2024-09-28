@@ -21,6 +21,6 @@ public class cart {
     @OneToMany(mappedBy = "cart")
     private List<cartDetail> cartDetails;
 
-    @Column(name = "TOTAL")
-    private Long TOTAL;
+    @Column(name = "TOTAL", columnDefinition = "INT DEFAULT 0")
+    private long TOTAL;
 }

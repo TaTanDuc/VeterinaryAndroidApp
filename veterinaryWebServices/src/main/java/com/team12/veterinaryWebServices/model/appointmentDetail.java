@@ -42,6 +42,6 @@ public class appointmentDetail {
     )
     private storage storage;
 
-    @Column(name = "itemQUANTITY")
-    private Long itemQUANTITY;
+    @Column(name = "itemQUANTITY", columnDefinition = "INT DEFAULT 0")
+    private long itemQUANTITY;
 }

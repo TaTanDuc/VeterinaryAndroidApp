@@ -28,8 +28,8 @@ public class invoice {
     @Column(name = "invoiceDATE")
     private Date invoiceDATE;
 
-    @Column(name = "TOTAL")
-    private Long TOTAL;
+    @Column(name = "TOTAL", columnDefinition = "INT DEFAULT 0")
+    private long TOTAL;
 
     @OneToMany(mappedBy = "invoice")
     private List<appointmentDetail> appointmentDetails;
