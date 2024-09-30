@@ -1,6 +1,7 @@
 package com.team12.veterinaryWebServices.api;
 
 import com.team12.veterinaryWebServices.dto.cartDTO;
+import com.team12.veterinaryWebServices.dto.itemDTO;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.cart;
 import com.team12.veterinaryWebServices.service.cartServices;
@@ -8,10 +9,9 @@ import com.team12.veterinaryWebServices.viewmodel.cartVM;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +28,22 @@ public class cartAPI {
             return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
         return ResponseEntity.ok(cartVM.from((cart) o));
+    }
+
+    @PostMapping("/addItem")
+    public ResponseEntity<Object> addItemToCart(@RequestBody itemDTO requestITEM,
+                                                @RequestBody cartDTO requestCART){
+        appException e = ((appException) cartServices.addItemToCart(requestITEM, requestCART));
+
+        return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+    }
+
+    @PostMapping("/cartCheckOut")
+    public ResponseEntity<Object> cartCheckOut(@RequestBody List<itemDTO> requestITEM,
+                                               @RequestBody cartDTO requestCART){
+        
+
+        return new ResponseEntity<>();
     }
 
 }

@@ -8,7 +8,4 @@ import lombok.Setter;
 public class cartDTO {
     private Long profileID;
     private Long cartID;
-    private String itemCODE;
-    private String itemID;
-    private int QUANTITY;
 }
