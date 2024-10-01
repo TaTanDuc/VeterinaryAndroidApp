@@ -1,11 +1,16 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.model.compositeKey.importExportCK;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @Entity
-@IdClass(import_export.importExportCK.class)
+@Data
+@IdClass(importExportCK.class)
 @Table(name = "import_export")
 public class import_export {
 
@@ -17,18 +22,6 @@ public class import_export {
     @Column(name = "importExportID")
     private Long importExportID;
 
-    public static class importExportCK implements Serializable {
-
-        private String importExportCODE;
-
-        private Long importExportID;
-
-        public importExportCK(String importExportCODE,Long importExportID){
-            this.importExportCODE = importExportCODE;
-            this.importExportID = importExportID;
-        }
-    }
-
     @ManyToOne
     @JoinColumns(
             {
@@ -38,9 +31,9 @@ public class import_export {
     )
     private storage storage;
 
-    @Column(name = "importExportPRICE")
-    private int importExportPRICE;
+    @Column(name = "importExportPRICE", columnDefinition = "INT DEFAULT 0")
+    private long importExportPRICE;
 
-    @Column(name = "importExportQUANTITY")
+    @Column(name = "importExportQUANTITY", columnDefinition = "INT DEFAULT 0")
     private int getImportExportQUANTITY;
 }

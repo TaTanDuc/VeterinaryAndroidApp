@@ -1,11 +1,11 @@
 package com.team12.veterinaryWebServices.api;
 
+import com.team12.veterinaryWebServices.dto.profileDTO;
+import com.team12.veterinaryWebServices.exception.appException;
+import com.team12.veterinaryWebServices.model.profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.team12.veterinaryWebServices.viewmodel.profileVM;
 import com.team12.veterinaryWebServices.service.profileServices;
 
@@ -18,8 +18,11 @@ public class profileAPI {
 
     private final profileServices profileServices;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<profileVM>> allProfiles(){
-        return ResponseEntity.ok(profileServices.getAllProfiles());
+    @GetMapping("/user/get")
+    public ResponseEntity<Object> getUserProfile(@RequestBody profileDTO request){
+        Object o = profileServices.getUserProfile(request);
+
+        return ResponseEntity.ok(o);
     }
+
 }

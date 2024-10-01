@@ -1,13 +1,15 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.enums.category;
+import com.team12.veterinaryWebServices.model.compositeKey.storageCK;
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
-@IdClass(storage.itemCK.class)
+@Data
+@IdClass(storageCK.class)
 @Table(name = "storage")
 public class storage {
 
@@ -19,26 +21,21 @@ public class storage {
     @Column(name = "itemID")
     private Long itemID;
 
-    public static class itemCK implements Serializable {
-
-        private String itemCODE;
-
-        private Long itemID;
-
-        public itemCK(String storageCODE,Long storageID){
-            this.itemCODE = storageCODE;
-            this.itemID = storageID;
-        }
-    }
-
     @Column(name = "itemNAME")
     private String itemNAME;
 
-    @Column(name = "itemPRICE")
-    private int itemPRICE;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "itemCATEGORY")
+    private category itemCATEGORY;
 
-    @Column(name = "INSTOCK")
-    private int INSTOCK;
+    @Column(name = "itemDESCRIPTION")
+    private String itemDESCRIPTION;
+
+    @Column(name = "itemPRICE", columnDefinition = "INT DEFAULT 0")
+    private long itemPRICE;
+
+    @Column(name = "INSTOCK", columnDefinition = "INT DEFAULT 0")
+    private long INSTOCK;
 
     @OneToMany(mappedBy = "storage")
     private List<appointmentDetail> appointmentDetails;
@@ -48,5 +45,8 @@ public class storage {
 
     @OneToMany(mappedBy = "storage")
     private List<import_export> importExports;
+
+    @OneToMany(mappedBy = "storage")
+    private List<cartDetail> cartDetails;
 
 }

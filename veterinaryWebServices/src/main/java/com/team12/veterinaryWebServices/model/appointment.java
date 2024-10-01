@@ -1,13 +1,14 @@
 package com.team12.veterinaryWebServices.model;
 
 import jakarta.persistence.*;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "appointment")
 public class appointment {
@@ -23,11 +24,8 @@ public class appointment {
     @Column(name = "appointmentDATE")
     private Date appointmentDATE;
 
-    @Column(name = "START")
-    private Time START;
-
-    @Column(name = "END")
-    private Time END;
+    @Column(name = "appointmentTIME")
+    private Time appointmentTIME;
 
     @OneToMany(mappedBy = "appointment")
     private List<appointmentDetail> appointmentDetails;
