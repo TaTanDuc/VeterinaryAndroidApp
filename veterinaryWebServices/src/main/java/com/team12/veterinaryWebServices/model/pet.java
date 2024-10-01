@@ -1,10 +1,14 @@
 package com.team12.veterinaryWebServices.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "pet")
 public class pet {
 
@@ -12,6 +16,9 @@ public class pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "petID")
     private Long petID;
+
+    @Column(name = "petIMAGE")
+    private String petIMAGE;
 
     @ManyToOne
     @JoinColumn(name = "profileID")
@@ -24,7 +31,7 @@ public class pet {
     private String petNAME;
 
     @Column(name = "petAGE")
-    private int petAGE;
+    private Long petAGE;
 
     @OneToMany(mappedBy = "pet")
     private List<petDetail> petDetails;

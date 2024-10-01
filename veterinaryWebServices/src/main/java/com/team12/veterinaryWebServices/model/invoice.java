@@ -1,6 +1,10 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.model.compositeKey.invoiceCK;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -8,7 +12,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@IdClass(invoice.invoiceCK.class)
+@Data
+@IdClass(invoiceCK.class)
 @Table(name = "invoice")
 public class invoice {
 
@@ -20,27 +25,15 @@ public class invoice {
     @Column(name = "invoiceID")
     private Long invoiceID;
 
-    public static class invoiceCK implements Serializable {
-
-        private String invoiceCODE;
-
-        private Long invoiceID;
-
-        public invoiceCK(String invoiceCODE,Long invoiceID){
-            this.invoiceCODE = invoiceCODE;
-            this.invoiceID = invoiceID;
-        }
-    }
-
     @Column(name = "invoiceDATE")
     private Date invoiceDATE;
 
-    @Column(name = "TOTAL")
-    private int TOTAL;
+    @Column(name = "TOTAL", columnDefinition = "INT DEFAULT 0")
+    private long TOTAL;
 
-    @OneToOne(mappedBy = "invoice")
-    private appointmentDetail appointmentDetails;
+    @OneToMany(mappedBy = "invoice")
+    private List<appointmentDetail> appointmentDetails;
 
-    @OneToOne(mappedBy = "invoice")
-    private buyDetail buyDetail;
+    @OneToMany(mappedBy = "invoice")
+    private List<buyDetail> buyDetail;
 }

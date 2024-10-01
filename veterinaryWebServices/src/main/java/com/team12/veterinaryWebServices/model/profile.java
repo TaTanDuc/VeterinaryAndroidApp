@@ -1,15 +1,13 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.enums.gender;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.Collection;
 import java.util.List;
 
-@Getter
-@Setter
 @Entity
+@Data
 @Table(name = "profile")
 public class profile {
 
@@ -22,22 +20,26 @@ public class profile {
     @JoinColumn(name = "roleCODE", referencedColumnName = "roleCODE")
     private role role;
 
+    @Column(name = "profileIMG")
+    private String profileIMG;
+
     @Column(name = "profileNAME")
     private String profileNAME;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", unique = true)
     private String profileEMAIL;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "GENDER")
-    private boolean GENDER;
+    private gender GENDER;
 
     @Column(name = "AGE")
-    private int AGE;
+    private Long AGE;
 
     @Column(name = "PHONE")
     private String PHONE;
 
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     private String USERNAME;
 
     @Column(name = "PASSWORD")
@@ -51,4 +53,10 @@ public class profile {
 
     @OneToMany(mappedBy = "profile")
     private List<pet> pets;
+
+    @OneToMany(mappedBy = "profile")
+    private List<comment> comments;
+
+    @OneToOne(mappedBy = "profile")
+    private cart cart;
 }
