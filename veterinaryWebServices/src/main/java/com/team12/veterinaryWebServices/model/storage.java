@@ -23,6 +23,9 @@ public class storage {
     @Column(name = "itemNAME")
     private String itemNAME;
 
+    @Column(name = "itemDESCRIPTION")
+    private String itemDESCRIPTION;
+
     @Column(name = "itemPRICE", columnDefinition = "INT DEFAULT 0")
     private long itemPRICE;
 

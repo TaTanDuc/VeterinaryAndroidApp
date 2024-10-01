@@ -7,6 +7,7 @@ import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.compositeKey.storageCK;
 import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.storageRepository;
+import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,17 +35,26 @@ public class storageServices {
         if (error != null)
             return error;
 
-        return items;
+        return items.stream().map(itemVM::from).toList();
     }
 
-    public Object findItemByName(String itemNAME){
+    public Object findItemsByName(String itemNAME){
         List<storage> items = storageRepository.getAllByItemName(itemNAME);
         appException error = storageERROR(items);
 
         if (error != null)
             return error;
 
-        return items;
+        return items.stream().map(itemVM::from).toList();
+    }
+
+    public Object getItem(itemDTO request){
+        storage item = storageRepository.getItem(request);
+
+        if (item == null)
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
+
+        return itemVM.from(item);
     }
 
     public Object checkItemStock(itemDTO item){

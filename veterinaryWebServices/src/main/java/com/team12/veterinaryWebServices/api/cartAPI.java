@@ -39,11 +39,12 @@ public class cartAPI {
     }
 
     @PostMapping("/cartCheckOut")
-    public ResponseEntity<Object> cartCheckOut(@RequestBody List<itemDTO> requestITEM,
+    public ResponseEntity<Object> cartCheckOut(@RequestBody List<itemDTO> requestITEMs,
                                                @RequestBody cartDTO requestCART){
         
+        appException e = (appException) cartServices.cartCheckOut(requestITEMs,requestCART);
 
-        return new ResponseEntity<>();
+        return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
     }
 
 }

@@ -20,4 +20,7 @@ public interface storageRepository extends JpaRepository<storage, storageCK> {
 
     @Query(value = "SELECT * FROM storage WHERE (storage.itemcode, storage.itemid) IN ?1",nativeQuery = true)
     List<storage> getAllItem (List<itemDTO> items);
+
+    @Query(value = "SELECT storage.* FROM storage WHERE (storage.itemcode, storage.itemid) IN ?1",nativeQuery = true)
+    storage getItem (itemDTO item);
 }
