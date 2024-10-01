@@ -1,10 +1,10 @@
 package com.team12.veterinaryWebServices.api;
 
+import com.team12.veterinaryWebServices.dto.appointmentDTO;
+import com.team12.veterinaryWebServices.exception.appException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.team12.veterinaryWebServices.service.appointmentServices;
 
 @RequiredArgsConstructor
@@ -16,6 +16,31 @@ public class appointmentAPI {
 
     @GetMapping("/all")
     public ResponseEntity<Object> allAppointments(){
-        return ResponseEntity.ok(appointmentServices.getAllAppointments());
+        Object o = appointmentServices.getAllAppointments();
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
+    @GetMapping("/getWeek")
+    public ResponseEntity<Object> getWeek(){
+        Object o = appointmentServices.getWeekAppointments();
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<Object> addAppointment(@RequestBody appointmentDTO request){
+        Object o = appointmentServices.addAppointment(request);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
     }
 }

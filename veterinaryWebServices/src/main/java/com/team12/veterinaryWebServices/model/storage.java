@@ -1,5 +1,6 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.team12.veterinaryWebServices.enums.category;
 import com.team12.veterinaryWebServices.model.compositeKey.storageCK;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,6 +23,10 @@ public class storage {
 
     @Column(name = "itemNAME")
     private String itemNAME;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "itemCATEGORY")
+    private category itemCATEGORY;
 
     @Column(name = "itemDESCRIPTION")
     private String itemDESCRIPTION;

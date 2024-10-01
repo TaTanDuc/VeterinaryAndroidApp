@@ -1,5 +1,6 @@
 package com.team12.veterinaryWebServices.api;
 
+import com.team12.veterinaryWebServices.dto.profileDTO;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.profile;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,11 @@ public class profileAPI {
 
     private final profileServices profileServices;
 
-    @GetMapping("/admin/all")
-    public ResponseEntity<Object> allProfiles(){
-        return ResponseEntity.ok(profileServices.getAllProfiles());
+    @GetMapping("/user/get")
+    public ResponseEntity<Object> getUserProfile(@RequestBody profileDTO request){
+        Object o = profileServices.getUserProfile(request);
+
+        return ResponseEntity.ok(o);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Object> updateUserProfile(@RequestBody profile p){
-        appException update = profileServices.updateProfile(p);
-        return new ResponseEntity<>(update.getMessage(),update.getErrorCode());
-    }
 }

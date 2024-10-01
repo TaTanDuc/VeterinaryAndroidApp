@@ -19,43 +19,23 @@ public class petAPI {
 
     private final petServices petServices;
 
-    @GetMapping("/mypets")
-    public ResponseEntity<Object> getUserPets(@RequestParam("userID") Long userID){
-        List<petVM> userPets = petServices.getUserPets(userID);
+    @GetMapping("/getUserPets")
+    public ResponseEntity<Object> getUserPets (@RequestBody petDTO request){
+        Object o = petServices.getUserPets(request);
 
-        if (userPets.isEmpty())
-            return ResponseEntity.ok("You haven't registered any pet!");
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
-        return ResponseEntity.ok(userPets);
+        return ResponseEntity.ok(o);
     }
 
-    @PostMapping("/employee/add")
-    public ResponseEntity<Object> addUserPet(@RequestBody petDTO data){
-        appException add = petServices.addUserPet(data);
-        return new ResponseEntity<>(add.getMessage(),add.getErrorCode());
-    }
+    @GetMapping("/getPetDetails")
+    public ResponseEntity<Object> getPetDetails (@RequestBody petDTO request){
+        Object o = petServices.getPetDetail(request);
 
-    @PutMapping("/update")
-    public ResponseEntity<Object> updateUserPet(@RequestBody petDTO data){
-        appException update = petServices.updateUserPet(data);
-        return new ResponseEntity<>(update.getMessage(),update.getErrorCode());
-    }
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Object> deleteUserPet(@RequestParam("petID") Long petID,
-                                                @RequestParam("userID") Long userID){
-        appException delete = petServices.deleteUserPet(petID,userID);
-        return new ResponseEntity<>(delete.getMessage(),delete.getErrorCode());
-    }
-
-    @GetMapping("/getdetails")
-    public ResponseEntity<Object> getPetDetails(@RequestParam("petID") Long petID,
-                                                @RequestParam("userID") Long userID){
-        List<petDetailVM> petDetails = petServices.getPetDetails(petID,userID);
-
-        if(petDetails.isEmpty())
-            return ResponseEntity.ok("There is no detail for this pet yet!");
-
-        return ResponseEntity.ok(petDetails);
+        return ResponseEntity.ok(o);
     }
 }

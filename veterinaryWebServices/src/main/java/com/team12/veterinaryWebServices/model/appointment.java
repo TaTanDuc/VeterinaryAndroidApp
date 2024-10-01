@@ -24,11 +24,8 @@ public class appointment {
     @Column(name = "appointmentDATE")
     private Date appointmentDATE;
 
-    @Column(name = "START")
-    private Time START;
-
-    @Column(name = "END")
-    private Time END;
+    @Column(name = "appointmentTIME")
+    private Time appointmentTIME;
 
     @OneToMany(mappedBy = "appointment")
     private List<appointmentDetail> appointmentDetails;

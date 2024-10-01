@@ -1,5 +1,6 @@
 package com.team12.veterinaryWebServices.api;
 
+import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.service.serviceServices;
 import com.team12.veterinaryWebServices.viewmodel.commentVM;
 import com.team12.veterinaryWebServices.viewmodel.serviceVM;
@@ -21,21 +22,21 @@ public class serviceAPI {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllServices(){
-        List<serviceVM> all = serviceServices.getAllServices();
+        Object o = serviceServices.getAllServices();
 
-        if (all.isEmpty())
-            return ResponseEntity.ok("There is no service yet!");
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
-        return ResponseEntity.ok(all);
+        return ResponseEntity.ok(o);
     }
 
-    @GetMapping("/comments")
-    public ResponseEntity<Object> getServiceComments(@RequestParam("serviceCODE") String serviceCODE){
-        List<commentVM> all = serviceServices.getServiceComments(serviceCODE);
+    @GetMapping("/detail")
+    public ResponseEntity<Object> getServiceDetail(@RequestParam("serviceCODE") String serviceCODE){
+        Object o = serviceServices.getServiceDetail(serviceCODE);
 
-        if (all.isEmpty())
-            return ResponseEntity.ok("There is no comment yet!");
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
-        return ResponseEntity.ok(all);
+        return ResponseEntity.ok(o);
     }
 }

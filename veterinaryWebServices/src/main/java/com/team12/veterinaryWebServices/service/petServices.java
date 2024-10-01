@@ -27,77 +27,21 @@ public class petServices {
     private final petRepository petRepository;
     private final petDetailRepository petDetailRepository;
 
-    private ERRORCODE petERROR(profile p, pet pet){
-        if(p == null)
-            return ERRORCODE.USER_DOES_NOT_EXIST;
-        if(pet == null)
-            return ERRORCODE.PET_DOES_NOT_EXIST;
-        if (!Objects.equals(pet.getProfile().getProfileID(), p.getProfileID()))
-            return ERRORCODE.NOT_PET_OWNER;
-        return null;
+    public Object getUserPets (petDTO request){
+        List<pet> list = petRepository.getProfilePets(request.getUserID());
+
+        if(list.isEmpty())
+            return new appException(ERRORCODE.NO_PET_FOUND);
+
+        return list.stream().map(petVM::from);
     }
 
-    public List<petVM> getUserPets(Long userID){
-        return petRepository.getProfilePets(userID)
-                .stream()
-                .map(petVM::from)
-                .toList();
-    }
+    public Object getPetDetail (petDTO request){
+        List<petDetail> list = petDetailRepository.getPetDetails(request.getPetID());
 
-    public appException addUserPet(petDTO data){
-        profile p = profileRepository.getProfileById(data.getUserID());
+        if (list.isEmpty())
+            return new appException(ERRORCODE.NO_PET_DETAIL_FOUND);
 
-        if(p == null)
-            return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
-
-        pet userPet = new pet();
-        userPet.setProfile(p);
-        userPet.setPetNAME(data.getPetNAME());
-        userPet.setPetSPECIE(data.getPetSPECIE());
-        userPet.setPetAGE(data.getPetAGE());
-
-        petRepository.save(userPet);
-
-        return new appException("Pet added successfully!");
-    }
-
-    public appException updateUserPet(petDTO data){
-        profile p = profileRepository.getProfileById(data.getUserID());
-        pet pet = petRepository.getPetById(data.getPetID());
-        ERRORCODE errorcode = petERROR(p,pet);
-
-        if(errorcode != null)
-            return new appException(errorcode);
-
-        pet.setPetNAME(data.getPetNAME());
-        pet.setPetSPECIE(data.getPetSPECIE());
-        pet.setPetAGE(data.getPetAGE());
-
-        petRepository.save(pet);
-        return new appException("Pet updated successfully!");
-    }
-
-    public appException deleteUserPet(Long petID, Long userID){
-        profile p = profileRepository.getProfileById(userID);
-        pet pet = petRepository.getPetById(petID);
-        ERRORCODE errorcode = petERROR(p,pet);
-
-        if(errorcode != null)
-            return new appException(errorcode);
-
-        petRepository.delete(pet);
-        return new appException("Deleted pet successfully");
-    }
-
-    public List<petDetailVM> getPetDetails(Long petID, Long userID){
-        pet pet = petRepository.getPetById(petID);
-
-        if(!Objects.equals(pet.getProfile().getProfileID(), userID))
-            throw new appException(ERRORCODE.NOT_PET_OWNER);
-
-        return petDetailRepository.getPetDetails(petID)
-                .stream()
-                .map(petDetailVM::from)
-                .toList();
+        return list.stream().map(petDetailVM::from).toList();
     }
 }

@@ -43,30 +43,4 @@ public class cartServices {
             return error;
         return c;
     }
-
-    public Object addItemToCart(itemDTO item, cartDTO cart) {
-        cart c = cartRepository.getUserCart(cart.getProfileID());
-        appException error = cartERROR(cart,c);
-        Object storageERROR = storageServices.checkItemStock(item);
-
-        if(error != null)
-            return error;
-        if(storageERROR != null)
-            return storageERROR;
-
-        return new appException("Item added successfully!");
-    }
-
-    public Object cartCheckOut(List<itemDTO> list , cartDTO cart){
-        Object storageERROR = storageServices.checkItemsStock(list);
-        cart c = cartRepository.getUserCart(cart.getProfileID());
-        appException error = cartERROR(cart,c);
-
-        if(error != null)
-            return error;
-        if(storageERROR != null)
-            return storageERROR;
-
-        return new appException("Redirecting you to check out!");
-    }
 }

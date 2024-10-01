@@ -5,7 +5,6 @@ import com.team12.veterinaryWebServices.dto.registerRequest;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.service.userServices;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +20,18 @@ public class userAPI {
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody registerRequest request){
-        appException register = userServices.register(request);
-        return new ResponseEntity<>(register.getMessage(),register.getErrorCode());
+         appException e = userServices.register(request);
+
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
     }
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody loginRequest request){
-        appException login = userServices.login(request);
-        return new ResponseEntity<>(login.getMessage(),login.getErrorCode());
+        Object o = userServices.login(request);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
     }
 }

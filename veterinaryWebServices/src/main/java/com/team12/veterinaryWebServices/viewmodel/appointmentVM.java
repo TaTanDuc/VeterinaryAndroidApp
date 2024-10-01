@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-public record appointmentVM (Long appointmentID, Date apmDATE, String profileNAME, Time START, Time END, List<apmDetails> appointmentDetails) {
+public record appointmentVM (Long appointmentID, Date apmDATE, String profileNAME, Time appointmentTIME, List<apmDetails> appointmentDetails) {
     public static appointmentVM from (appointment a){
 
         List<apmDetails> appointmentDetails = a.getAppointmentDetails()
@@ -22,8 +22,7 @@ public record appointmentVM (Long appointmentID, Date apmDATE, String profileNAM
                 a.getAppointmentID(),
                 a.getAppointmentDATE(),
                 a.getProfile().getProfileNAME(),
-                a.getSTART(),
-                a.getEND(),
+                a.getAppointmentTIME(),
                 appointmentDetails
         );
     }

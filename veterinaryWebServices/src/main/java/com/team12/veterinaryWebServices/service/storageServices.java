@@ -22,39 +22,41 @@ public class storageServices {
 
     private final storageRepository storageRepository;
 
-    private appException storageERROR(List<storage> items){
-        if(items.isEmpty())
-            return new appException(ERRORCODE.NO_ITEM_FOUND);
-        return null;
-    }
 
     public Object getAllItem(){
         List<storage> items = storageRepository.findAll();
-        appException error = storageERROR(items);
 
-        if (error != null)
-            return error;
+        if(items.isEmpty())
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
 
         return items.stream().map(itemVM::from).toList();
     }
 
     public Object findItemsByName(String itemNAME){
         List<storage> items = storageRepository.getAllByItemName(itemNAME);
-        appException error = storageERROR(items);
 
-        if (error != null)
-            return error;
+        if(items.isEmpty())
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
 
         return items.stream().map(itemVM::from).toList();
     }
 
     public Object getItem(itemDTO request){
-        storage item = storageRepository.getItem(request);
+        storage item = storageRepository.getItem(request.getItemCODE(), request.getItemID());
 
         if (item == null)
             return new appException(ERRORCODE.NO_ITEM_FOUND);
 
         return itemVM.from(item);
+    }
+
+    public Object getItemByCategory(String category){
+        List<storage> item = storageRepository.getItemByCategory(category);
+
+        if (item.isEmpty())
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
+
+        return item.stream().map(itemVM::from).toList();
     }
 
     public Object checkItemStock(itemDTO item){
@@ -65,29 +67,5 @@ public class storageServices {
         if (result < item.getQUANTITY())
             return new appException(ERRORCODE.ITEM_OVER_STOCK);
         return null;
-    }
-
-    public Object checkItemsStock(List<itemDTO> items){
-        List<storage> list = storageRepository.getAllItem(items);
-
-        Map<storageCK, storage> itemMap = list
-                .stream()
-                .collect(Collectors.toMap(storage -> new storageCK(storage.getItemCODE(),storage.getItemID()), storage -> storage));
-
-        List<appException> errorList = new ArrayList<>();
-
-        for (itemDTO i : items){
-            storageCK key = new storageCK(i.getItemCODE(),i.getItemID());
-            storage item = itemMap.get(key);
-
-            if (item == null)
-                errorList.add(new appException(ERRORCODE.NO_ITEM_FOUND));
-            else if (item.getINSTOCK() == 0)
-                errorList.add(new appException(ERRORCODE.SOLD_OUT));
-            else if (i.getQUANTITY() > item.getINSTOCK())
-                errorList.add(new appException(ERRORCODE.ITEM_OVER_STOCK));
-        }
-
-        return errorList;
     }
 }

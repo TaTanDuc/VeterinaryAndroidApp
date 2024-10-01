@@ -1,6 +1,5 @@
 package com.team12.veterinaryWebServices.enums;
 
-
 public enum ROLE {
 
     AD("ADMIN"),
