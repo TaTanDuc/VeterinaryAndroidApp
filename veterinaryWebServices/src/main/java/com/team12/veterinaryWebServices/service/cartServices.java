@@ -6,6 +6,7 @@ import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.cart;
 import com.team12.veterinaryWebServices.model.profile;
+import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.cartDetailRepository;
 import com.team12.veterinaryWebServices.repository.cartRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,26 @@ public class cartServices {
 
         if(error != null)
             return error;
+
         return c;
     }
+
+    public Object addItemToCart(itemDTO request){
+        Object o = storageServices.checkItemStock(request);
+
+        if (!Objects.equals(cartRepository.getUserCart(request.getUserID()).getCartID(), request.getCartID()))
+            return new appException(ERRORCODE.NOT_CART_OWNER);
+
+        if (o instanceof ERRORCODE e)
+            return new appException(e);
+
+        return (storage) o;
+    }
+
+    public Object updateCart(cartDTO request){
+        Object o = storageServices.
+
+
+    }
+
 }

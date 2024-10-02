@@ -43,5 +43,4 @@ public class invoiceServices {
         return list.stream().map(invoiceVM.appointment::from).toList();
     }
 
-
 }

@@ -19,14 +19,11 @@ public interface storageRepository extends JpaRepository<storage, storageCK> {
     @Query(value = "SELECT storage.instock FROM storage WHERE storage.itemcode = ?1 AND storage.itemID = ?2",nativeQuery = true)
     long getItemStock (String itemCODE, Long itemID);
 
-    @Query(value = "SELECT * FROM storage WHERE (storage.itemcode, storage.itemid) IN ?1",nativeQuery = true)
-    List<storage> getAllItem (List<itemDTO> items);
-
     @Query(value = "SELECT storage.* FROM storage WHERE storage.itemcode = ?1 AND storage.itemid = ?2",nativeQuery = true)
     storage getItem (String itemCODE, Long itemID);
 
     @Query(value = "SELECT * FROM storage WHERE storage.itemcategory = ?1",nativeQuery = true)
     List<storage> getItemByCategory (String category);
 
-
+    @Query(value = "SELECT * FROM storage WHERE storage.", nativeQuery = true);
 }

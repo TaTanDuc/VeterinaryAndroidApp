@@ -4,12 +4,9 @@ import com.team12.veterinaryWebServices.dto.appointmentDTO;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.*;
-import com.team12.veterinaryWebServices.repository.appointmentDetailRepository;
-import com.team12.veterinaryWebServices.repository.invoiceRepository;
-import com.team12.veterinaryWebServices.repository.profileRepository;
+import com.team12.veterinaryWebServices.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.team12.veterinaryWebServices.repository.appointmentRepository;
 import com.team12.veterinaryWebServices.viewmodel.appointmentVM;
 
 import java.util.ArrayList;
@@ -23,6 +20,7 @@ public class appointmentServices {
     private final appointmentDetailRepository appointmentDetailRepository;
     private final profileRepository profileRepository;
     private final invoiceRepository invoiceRepository;
+    private final serviceRepository serviceRepository;
 
     public Object getAllAppointments(){
         List<appointment> list = appointmentRepository.findAll();
@@ -42,7 +40,7 @@ public class appointmentServices {
         return list.stream().map(appointmentVM::from).toList();
     }
 
-    public Object addAppointment(appointmentDTO request){
+    public appException addAppointment(appointmentDTO request){
 
         profile p = profileRepository.getProfileById(request.getProfileID());
 
@@ -59,28 +57,30 @@ public class appointmentServices {
 
 
         List<appointmentDetail> aDList = new ArrayList<>();
+
         appointment a = new appointment();
+        a.setProfile(p);
+        a.setAppointmentDATE(request.getAppointmentDATE());
+        a.setAppointmentTIME(request.getAppointmentTIME());
+        appointmentRepository.save(a);
+
         invoice i = new invoice();
 
         i.setInvoiceCODE("A");
-        i.setInvoiceID((long) invoiceRepository.findAllByInvoiceCode("A").size() + 1);
+        i.setInvoiceID(invoiceRepository.countByCode("A")+ 1);
+        i.setInvoiceDATE(request.getAppointmentDATE());
 
         invoiceRepository.save(i);
 
         for(service s : request.getServices()){
             appointmentDetail aD = new appointmentDetail();
-            aD.setService(s);
             aD.setInvoice(i);
-            aDList.add(aD);
+            aD.setApmDetailID(appointmentDetailRepository.count()+1);
+            aD.setAppointment(a);
+            aD.setService(s);
             appointmentDetailRepository.save(aD);
         }
 
-        a.setProfile(p);
-        a.setAppointmentDATE(request.getAppointmentDATE());
-        a.setAppointmentTIME(request.getAppointmentTIME());
-        a.setAppointmentDetails(aDList);
-
-        appointmentRepository.save(a);
         return new appException("Appointment added successfully!");
     }
 }

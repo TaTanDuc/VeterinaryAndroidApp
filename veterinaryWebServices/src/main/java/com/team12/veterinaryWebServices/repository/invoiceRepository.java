@@ -12,5 +12,8 @@ import java.util.List;
 public interface invoiceRepository extends JpaRepository<invoice, invoiceCK> {
 
     @Query(value = "SELECT * FROM invoice WHERE invoicecode = ?1",nativeQuery = true)
-    List<invoice> findAllByInvoiceCode(String invoicecode);
+    List<invoice> findAllByInvoiceCode(String invoiceCODE);
+
+    @Query(value = "SELECT COUNT(*) FROM invoice WHERE invoicecode = ?1",nativeQuery = true)
+    long countByCode(String invoiceCODE);
 }

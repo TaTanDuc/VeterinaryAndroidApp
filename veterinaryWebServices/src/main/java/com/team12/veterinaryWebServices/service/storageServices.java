@@ -6,6 +6,7 @@ import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.compositeKey.storageCK;
 import com.team12.veterinaryWebServices.model.storage;
+import com.team12.veterinaryWebServices.repository.profileRepository;
 import com.team12.veterinaryWebServices.repository.storageRepository;
 import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 public class storageServices {
 
     private final storageRepository storageRepository;
-
 
     public Object getAllItem(){
         List<storage> items = storageRepository.findAll();
@@ -63,9 +63,13 @@ public class storageServices {
         long result = storageRepository.getItemStock(item.getItemCODE(), item.getItemID());
 
         if (result == 0)
-            return new appException(ERRORCODE.SOLD_OUT);
+            return ERRORCODE.SOLD_OUT;
         if (result < item.getQUANTITY())
-            return new appException(ERRORCODE.ITEM_OVER_STOCK);
-        return null;
+            return ERRORCODE.ITEM_OVER_STOCK;
+        return result;
+    }
+
+    public Object checkCartStock(cartDTO cart){
+
     }
 }

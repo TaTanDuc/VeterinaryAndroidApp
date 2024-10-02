@@ -10,4 +10,5 @@ public class userDTO {
     private Long userID;
     private String userNAME;
     private String userEMAIL;
+    private Long cartID;
 }
