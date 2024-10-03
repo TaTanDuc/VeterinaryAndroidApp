@@ -37,7 +37,7 @@ public class cartServices {
     }
 
     public Object getUserCart(cartDTO request) {
-        cart c = cartRepository.getUserCart(request.getProfileID());
+        cart c = cartRepository.getUserCart(request.getUserID());
         appException error = cartERROR(request,c);
 
         if(error != null)
@@ -59,9 +59,9 @@ public class cartServices {
     }
 
     public Object updateCart(cartDTO request){
-        Object o = storageServices.
+        Object o = storageServices.checkCartStock(request);
 
-
+        return (cart) o;
     }
 
 }

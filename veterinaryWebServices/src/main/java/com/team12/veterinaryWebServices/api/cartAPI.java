@@ -39,10 +39,13 @@ public class cartAPI {
         return ResponseEntity.ok(o);
     }
 
-    @PutMapping("/updateCart")
+    @PatchMapping("/updateCart")
     public ResponseEntity<Object> updateUserCart(@RequestBody cartDTO request){
-        Object o = cartServices.up
+        Object o = cartServices.updateCart(request);
 
-        return ResponseEntity.ok(o);+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
     }
 }

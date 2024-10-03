@@ -70,6 +70,17 @@ public class storageServices {
     }
 
     public Object checkCartStock(cartDTO cart){
+        List<storageCK> ckList = cart.getItems().stream()
+                .map(storage -> new storageCK(storage.getItemCODE(),storage.getItemID()))
+                .toList();
 
+        List<storage> list = storageRepository.getItems(ckList);
+
+        if (list.isEmpty())
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
+
+
+
+        return cart;
     }
 }
