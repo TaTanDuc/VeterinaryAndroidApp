@@ -9,6 +9,7 @@ import com.team12.veterinaryWebServices.model.profile;
 import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.cartDetailRepository;
 import com.team12.veterinaryWebServices.repository.cartRepository;
+import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +56,13 @@ public class cartServices {
         if (o instanceof ERRORCODE e)
             return new appException(e);
 
-        return (storage) o;
+        return itemVM.from((storage) o) ;
     }
 
-    public Object updateCart(cartDTO request){
-        Object o = storageServices.checkCartStock(request);
-
-        return (cart) o;
-    }
+//    public Object updateCart(cartDTO request){
+//        Object o = storageServices.checkCartStock(request);
+//
+//        return (cart) o;
+//    }
 
 }

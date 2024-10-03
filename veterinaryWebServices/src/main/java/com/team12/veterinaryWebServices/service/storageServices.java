@@ -1,6 +1,7 @@
 package com.team12.veterinaryWebServices.service;
 
 import com.team12.veterinaryWebServices.dto.cartDTO;
+import com.team12.veterinaryWebServices.dto.cartItemsDTO;
 import com.team12.veterinaryWebServices.dto.itemDTO;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
@@ -60,27 +61,23 @@ public class storageServices {
     }
 
     public Object checkItemStock(itemDTO item){
-        long result = storageRepository.getItemStock(item.getItemCODE(), item.getItemID());
+        storage result = storageRepository.getItem(item.getItemCODE(), item.getItemID());
 
-        if (result == 0)
+        if (result.getINSTOCK() == 0)
             return ERRORCODE.SOLD_OUT;
-        if (result < item.getQUANTITY())
+        if (result.getINSTOCK() < item.getQuantity())
             return ERRORCODE.ITEM_OVER_STOCK;
         return result;
     }
 
-    public Object checkCartStock(cartDTO cart){
-        List<storageCK> ckList = cart.getItems().stream()
-                .map(storage -> new storageCK(storage.getItemCODE(),storage.getItemID()))
-                .toList();
-
-        List<storage> list = storageRepository.getItems(ckList);
-
-        if (list.isEmpty())
-            return new appException(ERRORCODE.NO_ITEM_FOUND);
-
-
-
-        return cart;
-    }
+//    public Object checkCartStock(cartDTO cart){
+//
+//
+//        if (list.isEmpty())
+//            return new appException(ERRORCODE.NO_ITEM_FOUND);
+//
+//
+//
+//        return cart;
+//    }
 }

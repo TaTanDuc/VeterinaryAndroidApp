@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @NoArgsConstructor
 @Data
@@ -12,8 +13,8 @@ public class storageCK implements Serializable {
     private String itemCODE;
     private Long itemID;
 
-    public storageCK(String storageCODE,Long storageID){
-        this.itemCODE = storageCODE;
-        this.itemID = storageID;
+    public storageCK(String itemCODE,Long itemID){
+        this.itemCODE = itemCODE;
+        this.itemID = itemID;
     }
 }
