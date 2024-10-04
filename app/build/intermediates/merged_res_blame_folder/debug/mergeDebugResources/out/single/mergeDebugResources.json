@@ -1,0 +1,154 @@
+[
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_icon_register.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\icon_register.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_icon1.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\icon1.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_rounded_corner.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\rounded_corner.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\font_fredoka.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\font\\fredoka.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_google1.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\google1.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\font_fredoka_light.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\font\\fredoka_light.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_facebook_icon.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\facebook_icon.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_lock.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\lock.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_apple.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\apple.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_ins_icon.jpg.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\ins_icon.jpg"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\layout_activity_appointment_form.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\layout\\activity_appointment_form.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\layout_activity_register_form.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\layout\\activity_register_form.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\font_fredoka_medium.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\font\\fredoka_medium.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_rounder_button.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\rounder_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_mail.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\mail.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_icon.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\icon.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_google.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\google.png"
+    },
+    {
+        "merged": "com.example.veterinaryandroidapp-debug-31:/layout_activity_appointment_form.xml.flat",
+        "source": "com.example.veterinaryandroidapp-main-33:/layout/activity_appointment_form.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_icon2.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\icon2.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_facebook.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\facebook.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\drawable_time_icon.png.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\drawable\\time_icon.png"
+    },
+    {
+        "merged": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-debug-31:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\Admin\\.gradle\\daemon\\8.7\\com.example.veterinaryandroidapp-main-33:\\xml\\data_extraction_rules.xml"
+    }
+]
