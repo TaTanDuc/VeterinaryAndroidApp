@@ -45,7 +45,7 @@ class CustomNavContent extends StatelessWidget {
                       navText,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 16,
                         fontFamily: 'Fredoka',
                         color: Color(0xffFFFFFF),
                         fontWeight: FontWeight.w500,
