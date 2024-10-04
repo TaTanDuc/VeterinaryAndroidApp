@@ -59,6 +59,7 @@ public class userServices {
                 response.setUserID(user.getProfileID());
                 response.setUserNAME(user.getUSERNAME());
                 response.setUserEMAIL(user.getProfileEMAIL());
+                response.setCartID(user.getCart().getCartID());
                 return response;
             }
             else

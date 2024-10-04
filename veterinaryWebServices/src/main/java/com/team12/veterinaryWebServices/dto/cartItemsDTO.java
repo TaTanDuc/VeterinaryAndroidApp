@@ -5,10 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class itemDTO {
-    private Long userID;
-    private Long cartID;
+public class cartItemsDTO {
     private String itemCODE;
     private Long itemID;
-    private int quantity;
+    private int itemQUANTITY;
 }

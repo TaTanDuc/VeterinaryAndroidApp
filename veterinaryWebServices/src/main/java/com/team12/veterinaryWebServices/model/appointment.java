@@ -29,4 +29,8 @@ public class appointment {
 
     @OneToMany(mappedBy = "appointment")
     private List<appointmentDetail> appointmentDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "petID", referencedColumnName = "petID")
+    private pet pet;
 }

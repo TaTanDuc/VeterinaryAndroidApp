@@ -3,6 +3,7 @@ package com.team12.veterinaryWebServices.model;
 import com.team12.veterinaryWebServices.model.compositeKey.appointmentDetailCK;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Data
@@ -16,6 +17,7 @@ public class appointmentDetail {
 
     @Id
     @ManyToOne
+    @Cascade(org.hibernate.annotations.CascadeType.MERGE)
     @JoinColumns(
             {
                     @JoinColumn(name = "invoiceCODE", referencedColumnName = "invoiceCODE"),

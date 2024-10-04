@@ -29,4 +29,23 @@ public class cartAPI {
         return ResponseEntity.ok(cartVM.from((cart) o));
     }
 
+    @PostMapping("/addItem")
+    public ResponseEntity<Object> addItemToUserCart(@RequestBody itemDTO request){
+        Object o = cartServices.addItemToCart(request);
+
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
+    @PatchMapping("/updateCart")
+    public ResponseEntity<Object> updateUserCart(@RequestBody cartDTO request){
+        Object o = cartServices.updateCart(request);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
 }

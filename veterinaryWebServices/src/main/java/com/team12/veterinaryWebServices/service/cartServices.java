@@ -6,8 +6,10 @@ import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.cart;
 import com.team12.veterinaryWebServices.model.profile;
+import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.cartDetailRepository;
 import com.team12.veterinaryWebServices.repository.cartRepository;
+import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +38,34 @@ public class cartServices {
     }
 
     public Object getUserCart(cartDTO request) {
-        cart c = cartRepository.getUserCart(request.getProfileID());
+        cart c = cartRepository.getUserCart(request.getUserID());
         appException error = cartERROR(request,c);
 
         if(error != null)
             return error;
+
         return c;
     }
+
+    public Object addItemToCart(itemDTO request){
+        Object o = storageServices.checkItemStock(request);
+
+        if (!Objects.equals(cartRepository.getUserCart(request.getUserID()).getCartID(), request.getCartID()))
+            return new appException(ERRORCODE.NOT_CART_OWNER);
+
+        if (o instanceof ERRORCODE e)
+            return new appException(e);
+
+        return itemVM.from((storage) o) ;
+    }
+
+    public Object updateCart(cartDTO request){
+        Object o = storageServices.checkCartStock(request);
+
+        if(o instanceof ERRORCODE e)
+            return new appException(e);
+
+        return o;
+    }
+
 }
