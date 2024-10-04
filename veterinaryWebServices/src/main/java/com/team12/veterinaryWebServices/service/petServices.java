@@ -44,4 +44,15 @@ public class petServices {
 
         return list.stream().map(petDetailVM::from).toList();
     }
+
+//    public Object addPet (petDTO request){
+//        profile p = profileRepository.getProfileById(request.getUserID());
+//
+//        if (p == null)
+//            return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+//
+//        pet pet = new pet();
+//        pet.set
+//
+//    }
 }

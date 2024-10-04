@@ -55,9 +55,6 @@ public class appointmentServices {
         if (request.getServices().isEmpty())
             return new appException(ERRORCODE.NO_SERVICE_IN_APPOINTMENT);
 
-
-        List<appointmentDetail> aDList = new ArrayList<>();
-
         appointment a = new appointment();
         a.setProfile(p);
         a.setAppointmentDATE(request.getAppointmentDATE());

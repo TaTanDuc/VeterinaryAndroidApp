@@ -38,4 +38,14 @@ public class petAPI {
 
         return ResponseEntity.ok(o);
     }
+
+    @PostMapping("/addPet")
+    public ResponseEntity<Object> addPet (@RequestBody petDTO request){
+        Object o = petServices.addPet(request);
+
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
 }

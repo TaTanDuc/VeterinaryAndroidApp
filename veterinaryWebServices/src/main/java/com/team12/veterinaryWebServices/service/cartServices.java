@@ -59,10 +59,13 @@ public class cartServices {
         return itemVM.from((storage) o) ;
     }
 
-//    public Object updateCart(cartDTO request){
-//        Object o = storageServices.checkCartStock(request);
-//
-//        return (cart) o;
-//    }
+    public Object updateCart(cartDTO request){
+        Object o = storageServices.checkCartStock(request);
+
+        if(o instanceof ERRORCODE e)
+            return new appException(e);
+
+        return o;
+    }
 
 }

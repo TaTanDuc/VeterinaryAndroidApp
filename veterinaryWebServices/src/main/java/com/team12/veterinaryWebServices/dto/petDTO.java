@@ -10,5 +10,5 @@ public class petDTO {
     private Long petID;
     private String petNAME;
     private String petSPECIE;
-    private Long petAGE;
+    private int petAGE;
 }

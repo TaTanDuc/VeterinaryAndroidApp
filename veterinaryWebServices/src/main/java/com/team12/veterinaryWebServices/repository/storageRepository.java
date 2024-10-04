@@ -21,6 +21,4 @@ public interface storageRepository extends JpaRepository<storage, storageCK> {
 
     @Query(value = "SELECT * FROM storage WHERE storage.itemcategory = ?1",nativeQuery = true)
     List<storage> getItemByCategory (String category);
-
-
 }

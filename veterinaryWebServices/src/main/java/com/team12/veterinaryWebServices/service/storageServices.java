@@ -70,14 +70,17 @@ public class storageServices {
         return result;
     }
 
-//    public Object checkCartStock(cartDTO cart){
-//
-//
-//        if (list.isEmpty())
-//            return new appException(ERRORCODE.NO_ITEM_FOUND);
-//
-//
-//
-//        return cart;
-//    }
+    public Object checkCartStock(cartDTO cart){
+
+        for (cartItemsDTO i : cart.getCartItems())
+        {
+            storage item = storageRepository.getItem(i.getItemCODE(),i.getItemID());
+            if (item.getINSTOCK() < i.getItemQUANTITY())
+                i.setItemQUANTITY(1);
+            if (item.getINSTOCK() <= 0)
+                i.setItemQUANTITY(0);
+        }
+
+        return cart;
+    }
 }
