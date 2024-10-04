@@ -1,8 +1,10 @@
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:application/pages/Homepage/service.dart';
+import 'package:application/pages/Homepage/shop.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,5 +20,33 @@ class MyApp extends StatelessWidget {
       ),
       home: ProfileScreen(),
     );
+  }
+}
+
+class HomePage1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: HomePage());
+  }
+}
+
+class ExplorePage1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: ExplorePage());
+  }
+}
+
+class ManagePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Manage Page'));
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Profile Page'));
   }
 }
