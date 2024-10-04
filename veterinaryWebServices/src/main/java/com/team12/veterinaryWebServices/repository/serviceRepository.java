@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.team12.veterinaryWebServices.model.service;
 
+import java.util.List;
+
 @Repository
 public interface serviceRepository extends JpaRepository<service, Long> {
 

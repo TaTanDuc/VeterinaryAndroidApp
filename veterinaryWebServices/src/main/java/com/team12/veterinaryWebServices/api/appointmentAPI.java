@@ -36,11 +36,7 @@ public class appointmentAPI {
 
     @PostMapping("/add")
     public ResponseEntity<Object> addAppointment(@RequestBody appointmentDTO request){
-        Object o = appointmentServices.addAppointment(request);
-
-        if (o instanceof appException e)
-            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
-
-        return ResponseEntity.ok(o);
+        appException e = appointmentServices.addAppointment(request);
+        return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
     }
 }

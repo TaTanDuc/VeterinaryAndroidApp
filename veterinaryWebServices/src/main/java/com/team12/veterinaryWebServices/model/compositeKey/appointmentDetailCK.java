@@ -2,6 +2,7 @@ package com.team12.veterinaryWebServices.model.compositeKey;
 
 import com.team12.veterinaryWebServices.model.appointment;
 import com.team12.veterinaryWebServices.model.invoice;
+import jakarta.persistence.IdClass;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

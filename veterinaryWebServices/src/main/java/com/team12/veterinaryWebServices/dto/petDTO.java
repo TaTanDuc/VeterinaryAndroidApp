@@ -8,7 +8,8 @@ import lombok.Setter;
 public class petDTO {
     private Long userID;
     private Long petID;
+    private String petIMAGE;
     private String petNAME;
     private String petSPECIE;
-    private Long petAGE;
+    private int petAGE;
 }

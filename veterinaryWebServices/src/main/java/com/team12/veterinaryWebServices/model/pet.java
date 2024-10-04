@@ -24,15 +24,15 @@ public class pet {
     @JoinColumn(name = "profileID")
     private profile profile;
 
-    @Column(name = "petSpecie")
+    @Column(name = "petSPECIE")
     private String petSPECIE;
 
     @Column(name = "petNAME")
     private String petNAME;
 
-    @Column(name = "petAGE")
-    private Long petAGE;
+    @Column(name = "petAGE", columnDefinition = "INT DEFAULT 1")
+    private int petAGE;
 
     @OneToMany(mappedBy = "pet")
-    private List<petDetail> petDetails;
+    private List<appointment> appointment;
 }
