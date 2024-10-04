@@ -4,65 +4,6 @@ import 'package:application/pages/Homepage/shop.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: myPet(),
-  //     body: Column(
-  //       children: [
-  //         Container(
-  //           margin: EdgeInsets.only(top: 12, left: 18, right: 12),
-  //           decoration: BoxDecoration(
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.white,
-  //                 blurRadius: 40,
-  //                 spreadRadius: 0.0,
-  //               ),
-  //             ],
-  //           ),
-  //           child: TextField(
-  //             decoration: InputDecoration(
-  //               filled: true,
-  //               fillColor: Colors.white,
-  //               contentPadding: EdgeInsets.all(15),
-  //               border: OutlineInputBorder(
-  //                 borderRadius: BorderRadius.circular(15),
-  //                 borderSide: BorderSide.none,
-  //               ),
-  //               prefixIcon: Padding(
-  //                 padding: const EdgeInsets.all(8.0),
-  //                 child: Image.asset(
-  //                   'assets/icons/mypet.png', // Your image path
-  //                   width: 40, // Set larger width
-  //                   height: 40, // Set larger height
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // AppBar myPet() {
-  //   return AppBar(
-  //     backgroundColor: Color(0xFF5CB15A),
-  //     actions: [
-  //       Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: Container(
-  //           height: AppBar().preferredSize.height, // Match the AppBar height
-  //           child: Image.asset(
-  //             'assets/icons/logo.png',
-  //             fit: BoxFit.contain, // Fit the logo within the available space
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
