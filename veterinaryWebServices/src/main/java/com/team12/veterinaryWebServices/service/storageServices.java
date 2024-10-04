@@ -60,16 +60,6 @@ public class storageServices {
         return item.stream().map(itemVM::from).toList();
     }
 
-    public Object checkItemStock(itemDTO item){
-        storage result = storageRepository.getItem(item.getItemCODE(), item.getItemID());
-
-        if (result.getINSTOCK() == 0)
-            return ERRORCODE.SOLD_OUT;
-        if (result.getINSTOCK() < item.getQuantity())
-            return ERRORCODE.ITEM_OVER_STOCK;
-        return result;
-    }
-
     public Object checkCartStock(cartDTO cart){
 
         for (cartItemsDTO i : cart.getCartItems())

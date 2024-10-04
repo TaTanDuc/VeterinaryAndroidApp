@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 public class appointmentDTO {
     private Long profileID;
+    private Long petID;
     private Date appointmentDATE;
     private Time appointmentTIME;
     List<service> services;
