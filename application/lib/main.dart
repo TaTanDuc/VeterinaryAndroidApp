@@ -1,6 +1,7 @@
+import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/pages/Homepage/explore.dart';
 import 'package:application/pages/Homepage/home.dart';
-import 'package:application/profile.dart';
+//import 'package:application/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:application/pages/Homepage/service.dart';
 import 'package:application/pages/Homepage/shop.dart';
@@ -35,8 +36,8 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _children = [
     HomePage1(),
     ExplorePage1(),
-    ManagePage(),
-    ProfilePage(),
+    ManagePage1(),
+    ProfilePage1(),
   ];
 
   void onTappedBar(int index) {
@@ -97,16 +98,16 @@ class ExplorePage1 extends StatelessWidget {
   }
 }
 
-class ManagePage extends StatelessWidget {
+class ManagePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('Manage Page'));
   }
 }
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Profile Page'));
+    return Center(child: ProfileScreen());
   }
 }
