@@ -4,7 +4,6 @@ class ServicePage extends StatefulWidget {
   const ServicePage({super.key});
 
   @override
-  @override
   _ServicePageState createState() => _ServicePageState();
 }
 
