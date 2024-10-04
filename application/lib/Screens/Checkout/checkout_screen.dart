@@ -39,8 +39,8 @@ class _CheckoutScreen extends State<CheckoutScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Radio(
-                              value: 1, groupValue: groupValue, onChanged: hand)
+                          // Radio(
+                          //     value: 1, groupValue: groupValue, onChanged: hand)
                         ],
                       ),
                     ),
