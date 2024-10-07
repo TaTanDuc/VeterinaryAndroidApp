@@ -14,7 +14,7 @@ public class petAPI {
 
     private final petServices petServices;
 
-    @GetMapping("/getUserPets")
+    @PostMapping("/getUserPets")
     public ResponseEntity<Object> getUserPets (@RequestBody petDTO request){
         Object o = petServices.getUserPets(request);
 
