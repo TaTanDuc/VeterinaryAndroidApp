@@ -5,7 +5,7 @@ import 'package:application/pages/Homepage/shop.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
-  final String userID;
+  final int userID;
 
   const HomePage({required this.userID});
 

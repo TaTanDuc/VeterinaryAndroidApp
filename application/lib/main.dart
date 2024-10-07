@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      //home: LoginScreen(),
       //home: ShopPage(),
-      //home: ExplorePage(),
+      home: ExplorePage(),
       //home: ServicePage(),
       // home: DetailServiceScreen(),
     );
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  final String userID; // Nhận userID từ trang trước
+  final int userID; // Nhận userID từ trang trước
 
   const MainPage({required this.userID});
   @override
@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  final String userID; // Nhận userID qua constructor
+  final int userID; // Nhận userID qua constructor
 
   HomePage1({required this.userID});
 
@@ -117,7 +117,7 @@ class ExplorePage1 extends StatelessWidget {
 }
 
 class ManagePage1 extends StatelessWidget {
-  final String userID; // Nhận userID qua constructor
+  final int userID; // Nhận userID qua constructor
 
   ManagePage1({required this.userID});
 
@@ -129,7 +129,7 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  final String userID; // Nhận userID qua constructor
+  final int userID; // Nhận userID qua constructor
 
   ProfilePage1({required this.userID});
 

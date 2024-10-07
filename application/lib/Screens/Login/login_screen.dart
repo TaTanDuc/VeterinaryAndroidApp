@@ -28,7 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
           "password": passwordController.text
         }),
       );
-
+      print(response.statusCode);
+      print(response.body);
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
