@@ -18,7 +18,7 @@ public class profileAPI {
 
     private final profileServices profileServices;
 
-    @GetMapping("/user/get")
+    @PostMapping("/user/get")
     public ResponseEntity<Object> getUserProfile(@RequestBody profileDTO request){
         Object o = profileServices.getUserProfile(request);
 
