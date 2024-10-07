@@ -4,6 +4,7 @@ class Service {
   final double serviceRATING;
   final int commentCOUNT;
   final String serviceDATE;
+
   final String imageService;
   final int userID;
 

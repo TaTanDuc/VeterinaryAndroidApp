@@ -54,8 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         setState(() {
-          _errorMessage =
-              'Username or Password is went wrong'; // Hiển thị thông báo lỗi
+          _errorMessage = response.body; // Hiển thị thông báo lỗi
         });
         return;
       }
