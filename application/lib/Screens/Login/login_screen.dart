@@ -5,6 +5,7 @@ import 'package:application/components/customInputField.dart';
 import 'package:application/main.dart';
 import 'package:application/pages/Homepage/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async'; // Import http package
 
@@ -16,9 +17,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String _errorMessage = "";
   Future<void> _login() async {
+    setState(() {
+      _errorMessage = ''; // Xóa thông báo lỗi trước đó
+    });
     try {
       final url = Uri.parse("http://localhost:8080/api/user/login");
+      if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+        setState(() {
+          _errorMessage =
+              'Input data cannot be empty'; // Hiển thị thông báo lỗi
+        });
+        return;
+      }
       // Gửi yêu cầu POST tới API
       final response = await http.post(
         url,
@@ -40,6 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
           context,
           MaterialPageRoute(builder: (context) => MainPage(userID: userId)),
         );
+      } else {
+        setState(() {
+          _errorMessage =
+              'Username or Password is went wrong'; // Hiển thị thông báo lỗi
+        });
+        return;
       }
     } catch (error) {
       print(error);
@@ -75,10 +93,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       pathImage: 'assets/icons/mail.png'),
                   const SizedBox(height: 30),
                   CustomInput(
-                      hintText: 'Password',
-                      hintTextColor: Color(0xFFA6A6A6),
-                      controller: passwordController,
-                      pathImage: 'assets/icons/lock.png'),
+                    hintText: 'Password',
+                    hintTextColor: Color(0xFFA6A6A6),
+                    controller: passwordController,
+                    pathImage: 'assets/icons/lock.png',
+                    isPassword: true,
+                  ),
                   const SizedBox(height: 20),
                   _forgotPasswordText(),
                   const SizedBox(height: 30),
@@ -105,6 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
+                  _buildErrorMessage(),
+                  const SizedBox(height: 30),
                   _infoLogin(),
                   const SizedBox(height: 20),
                   _extraText(),
@@ -129,6 +151,15 @@ class _LoginScreenState extends State<LoginScreen> {
         height: 120,
       ),
     );
+  }
+
+  Widget _buildErrorMessage() {
+    return Text(_errorMessage,
+        style: TextStyle(
+          color: Colors.red,
+          fontSize: 16,
+          fontFamily: 'Fredoka',
+        ));
   }
 
   Widget _forgotPasswordText() {

@@ -88,6 +88,7 @@ flutter:
     - assets/icons/add_review.png
     - assets/icons/star_icon1.png
     - assets/icons/star_yellow.png
+    - assets/icons/user.jpg
     - assets/images/avatar01.jpg
     - assets/images/food2.png
     - assets/images/pin.png

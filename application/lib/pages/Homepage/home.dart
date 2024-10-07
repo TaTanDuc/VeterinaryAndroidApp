@@ -62,16 +62,20 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF5CB15A),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height, // Match the AppBar height
-              child: Image.asset(
-                'assets/icons/logo.png',
-                fit: BoxFit.contain, // Fit the logo within the available space
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height:
+                    AppBar().preferredSize.height, // Match the AppBar height
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                  fit:
+                      BoxFit.contain, // Fit the logo within the available space
+                ),
               ),
             ),
-          ),
+          )
         ],
       ),
       body: SingleChildScrollView(
