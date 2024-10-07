@@ -1,7 +1,11 @@
-import "package:application/Screens/Login/register_screen.dart";
-import "package:application/components/customButton.dart";
-import "package:application/components/customInputField.dart";
-import "package:flutter/material.dart";
+import 'dart:convert'; // Thêm import để xử lý JSON
+import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
+import 'package:application/components/customButton.dart';
+import 'package:application/components/customInputField.dart';
+import 'package:application/pages/Homepage/home.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async'; // Import http package
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,7 +15,35 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController testController = TextEditingController();
+  Future<void> _login() async {
+    try {
+      final url = Uri.parse("http://localhost:8080/api/user/login");
+      // Gửi yêu cầu POST tới API
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "loginstring":
+              usernameController.text, // Lấy text từ usernameController
+          "password": passwordController.text
+        }),
+      );
+
+      // Kiểm tra trạng thái của API trả về
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final userId = data['userID'];
+        // Nếu đăng nhập thành công, chuyển tới MainPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage(userID: userId)),
+        );
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,42 +57,59 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _page() {
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(32),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _icon(),
-                const SizedBox(height: 50),
-                CustomInput(
-                    hintText: 'Username',
-                    hintTextColor: Color(0xFFA6A6A6),
-                    controller: usernameController,
-                    pathImage: 'assets/icons/mail.png'),
-                const SizedBox(height: 30),
-                CustomInput(
-                    hintText: 'Password',
-                    hintTextColor: Color(0xFFA6A6A6),
-                    controller: testController,
-                    pathImage: 'assets/icons/lock.png'),
-                const SizedBox(height: 20),
-                _forgotPasswordText(),
-                const SizedBox(height: 30),
-                CustomButton(
-                  text: 'Login',
-                  onPressed: () {
-                    debugPrint("Username: " + usernameController.text);
-                    debugPrint("Password: " + passwordController.text);
-                  },
-                ),
-                const SizedBox(height: 30),
-                _infoLogin(),
-                const SizedBox(height: 20),
-                _extraText(),
-                const SizedBox(height: 20),
-                _socialList(),
-              ],
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _icon(),
+                  const SizedBox(height: 50),
+                  CustomInput(
+                      hintText: 'Username',
+                      hintTextColor: Color(0xFFA6A6A6),
+                      controller: usernameController,
+                      pathImage: 'assets/icons/mail.png'),
+                  const SizedBox(height: 30),
+                  CustomInput(
+                      hintText: 'Password',
+                      hintTextColor: Color(0xFFA6A6A6),
+                      controller: passwordController,
+                      pathImage: 'assets/icons/lock.png'),
+                  const SizedBox(height: 20),
+                  _forgotPasswordText(),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: _login,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'LOGIN',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'Fredoka',
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Color(0xFF000000), // Màu chữ
+                      backgroundColor: Color(0xFF5CB15A), // Màu nền
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  _infoLogin(),
+                  const SizedBox(height: 20),
+                  _extraText(),
+                  const SizedBox(height: 20),
+                  _socialList(),
+                ],
+              ),
             ),
           ),
         ),

@@ -5,7 +5,9 @@ import 'package:application/pages/Homepage/shop.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String userID;
+
+  const HomePage({required this.userID});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,7 +31,8 @@ class _HomePageState extends State<HomePage> {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": "1"}), // Replace with your actual userID
+        body: jsonEncode(
+            {"userID": widget.userID}), // Replace with your actual userID
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
