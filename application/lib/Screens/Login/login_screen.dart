@@ -16,32 +16,32 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   Future<void> _login() async {
-    final url = Uri.parse('http://localhost:8080/api/user/login');
     try {
+      final url = Uri.parse("http://localhost:8080/api/user/login");
       // Gửi yêu cầu POST tới API
       final response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json charset=UTF-8',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "loginstring": "nguyenthanhlong",
-          "password": "15122003",
+          "loginstring":
+              usernameController.text, // Lấy text từ usernameController
+          "password": passwordController.text
         }),
       );
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
+        final userId = data['userID'];
         // Nếu đăng nhập thành công, chuyển tới MainPage
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomePage(userID: userId)),
         );
       }
-    } catch (error) {}
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
