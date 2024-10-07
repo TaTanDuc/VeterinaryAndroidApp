@@ -2,6 +2,7 @@ import 'dart:convert'; // Thêm import để xử lý JSON
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customInputField.dart';
+import 'package:application/main.dart';
 import 'package:application/pages/Homepage/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Nếu đăng nhập thành công, chuyển tới MainPage
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(userID: userId)),
+          MaterialPageRoute(builder: (context) => MainPage(userID: userId)),
         );
       }
     } catch (error) {
