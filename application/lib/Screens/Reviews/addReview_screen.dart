@@ -4,6 +4,8 @@ import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 
 class AddReviewScreen extends StatefulWidget {
+  const AddReviewScreen({super.key});
+
   @override
   State<AddReviewScreen> createState() => _MyWidgetState();
 }
@@ -12,7 +14,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
   int hoveredIndex = -1;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: double.infinity,
       child: Scaffold(
         body: _page(),

@@ -3,15 +3,13 @@ import 'package:application/pages/Homepage/explore.dart';
 import 'package:application/pages/Homepage/home.dart';
 //import 'package:application/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:application/pages/Homepage/service.dart';
-import 'package:application/pages/Homepage/shop.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +24,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -85,6 +85,8 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
+  const HomePage1({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(child: HomePage());
@@ -92,6 +94,8 @@ class HomePage1 extends StatelessWidget {
 }
 
 class ExplorePage1 extends StatelessWidget {
+  const ExplorePage1({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(child: ExplorePage());
@@ -99,6 +103,8 @@ class ExplorePage1 extends StatelessWidget {
 }
 
 class ManagePage1 extends StatelessWidget {
+  const ManagePage1({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('Manage Page'));
@@ -106,6 +112,8 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
+  const ProfilePage1({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(child: ProfileScreen());

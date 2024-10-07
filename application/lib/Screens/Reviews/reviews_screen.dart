@@ -4,6 +4,8 @@ import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 
 class ReviewsScreen extends StatefulWidget {
+  const ReviewsScreen({super.key});
+
   @override
   State<ReviewsScreen> createState() => _MyWidgetState();
 }
@@ -11,7 +13,7 @@ class ReviewsScreen extends StatefulWidget {
 class _MyWidgetState extends State<ReviewsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: double.infinity,
       child: Scaffold(
         backgroundColor: Color(0xffEBEBEB),

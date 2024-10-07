@@ -3,6 +3,8 @@ import 'package:application/Screens/Login/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
+
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
@@ -38,7 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 30),
-                Container(
+                SizedBox(
                   width: 250, // Đặt chiều rộng mong muốn để ép xuống dòng
                   child: Text(
                     'While You Sit and Stay - We\'ll Go Out And Play',
@@ -87,6 +89,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     RegisterScreen()), // Thay RegisterScreen bằng trang đăng ký của bạn
           );
         },
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Color(0xFFFFFFFF), // Màu chữ
+          backgroundColor: Color(0xFF5CB15A), // Màu nền
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center, // Căn giữa nội dung
           children: [
@@ -104,14 +114,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               color: Colors.white, // Màu của icon
             ),
           ],
-        ),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Color(0xFFFFFFFF), // Màu chữ
-          backgroundColor: Color(0xFF5CB15A), // Màu nền
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
     );

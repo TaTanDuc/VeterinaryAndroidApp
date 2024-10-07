@@ -143,7 +143,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             ],
                           ),
                         ),
-                        ButtonBar(
+                        OverflowBar(
                           alignment: MainAxisAlignment.center,
                           children: <Widget>[
                             ElevatedButton(

@@ -78,7 +78,7 @@ class _ServicePageState extends State<ServicePage> {
   Widget _buildShopRow(
       String service, String description, String imagePath, int rating) {
     // Method to build the star rating
-    Widget _buildStarRating(int rating) {
+    Widget buildStarRating(int rating) {
       List<Widget> stars = [];
       for (int i = 0; i < 5; i++) {
         stars.add(
@@ -141,7 +141,7 @@ class _ServicePageState extends State<ServicePage> {
                           TextOverflow.ellipsis, // Add ellipsis if overflow
                     ),
                     SizedBox(height: 8), // Space between description and rating
-                    _buildStarRating(rating), // Display star rating
+                    buildStarRating(rating), // Display star rating
                     SizedBox(height: 8),
                     Container(
                       // Align the text to the bottom center
@@ -177,7 +177,7 @@ class _ServicePageState extends State<ServicePage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Container(
+      child: SizedBox(
         width: screenWidth * 0.8,
         child: Padding(
           padding: EdgeInsets.all(12.0),

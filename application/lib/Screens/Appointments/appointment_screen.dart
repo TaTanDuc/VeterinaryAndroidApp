@@ -231,6 +231,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget _buttonAppointment() {
     return ElevatedButton(
       onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Color(0xffffffff), // Màu chữ
+        backgroundColor: Color(0xff5CB15A), // Màu nền
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+      ),
       child: SizedBox(
         width: double.infinity,
         child: Row(
@@ -254,14 +262,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ),
           ],
         ),
-      ),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Color(0xffffffff), // Màu chữ
-        backgroundColor: Color(0xff5CB15A), // Màu nền
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
       ),
     );
   }
