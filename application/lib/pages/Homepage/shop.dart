@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ShopPage extends StatefulWidget {
-  const ShopPage({super.key});
+  final int userID;
+
+  const ShopPage({required this.userID});
 
   @override
   _ShopPageState createState() => _ShopPageState();
