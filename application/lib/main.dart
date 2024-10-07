@@ -1,4 +1,5 @@
 import 'package:application/Screens/Profile/profile_screen.dart';
+import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/pages/Homepage/explore.dart';
 import 'package:application/pages/Homepage/home.dart';
 //import 'package:application/profile.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
       home: MainPage(),
       //home: ShopPage(),
       //home: ExplorePage(),
-      //home: ServicePage()
+      //home: ServicePage(),
+      // home: DetailServiceScreen(),
     );
   }
 }
