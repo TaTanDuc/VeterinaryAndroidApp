@@ -5,8 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ServicePage extends StatefulWidget {
-  const ServicePage({super.key});
+  final int userID;
 
+  const ServicePage({required this.userID});
   @override
   _ServicePageState createState() => _ServicePageState();
 }
@@ -159,12 +160,14 @@ class _ServicePageState extends State<ServicePage> {
                   const SizedBox(height: 8),
                   GestureDetector(
                     onTap: () {
+                      print("User ID: ${widget.userID}");
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => DetailServiceScreen(
-                              serviceCODE:
-                                  service.serviceCODE), // Pass serviceCODE
+                            serviceCODE: service.serviceCODE,
+                            userID: service.userID,
+                          ), // Pass serviceCODE
                         ),
                       );
                     },

@@ -175,7 +175,8 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ShopPage()),
+                                  builder: (context) =>
+                                      ShopPage(userID: widget.userID)),
                             );
                           },
                           child: const Text(
@@ -230,18 +231,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             )
-            // CircleAvatar(
-            //   radius: 30,
-            //   backgroundImage: AssetImage(pet.petIMAGE), // Fallback image
-            // ),
-            // const SizedBox(height: 5),
-            // Text(
-            //   pet.petNAME,
-            //   style: TextStyle(
-            //       fontSize: 14,
-            //       fontFamily: 'Fredoka',
-            //       fontWeight: FontWeight.bold),
-            // ),
           ],
         ),
       ),

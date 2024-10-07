@@ -47,7 +47,9 @@ class _MainPageState extends State<MainPage> {
     // Khởi tạo các trang với userID được truyền vào từ widget
     _children = [
       HomePage1(userID: widget.userID),
-      ExplorePage1(),
+      ExplorePage1(
+        userID: widget.userID,
+      ),
       ManagePage1(userID: widget.userID),
       ProfilePage1(userID: widget.userID),
     ];
@@ -110,9 +112,12 @@ class HomePage1 extends StatelessWidget {
 }
 
 class ExplorePage1 extends StatelessWidget {
+  final int userID; // Nhận userID qua constructor
+
+  ExplorePage1({required this.userID});
   @override
   Widget build(BuildContext context) {
-    return Center(child: ExplorePage());
+    return Center(child: ExplorePage(userID: userID));
   }
 }
 

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Service {
   final String serviceCODE;
   final String serviceNAME;
@@ -7,6 +5,7 @@ class Service {
   final int commentCOUNT;
   final String serviceDATE;
   final String imageService;
+  final int userID;
 
   Service({
     required this.serviceCODE,
@@ -15,6 +14,7 @@ class Service {
     required this.commentCOUNT,
     required this.serviceDATE,
     required this.imageService,
+    required this.userID,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -26,6 +26,7 @@ class Service {
       commentCOUNT: json['commentCOUNT'] ?? 0,
       serviceDATE: json['serviceDATE'] ?? '',
       imageService: json['imageService'] ?? 'assets/icons/logo.png',
+      userID: json['userID'] ?? 0,
     );
   }
   // @override

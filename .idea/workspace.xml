@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/pages/Homepage/explore.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/pages/Homepage/explore.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/pages/Homepage/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/pages/Homepage/home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/pages/Homepage/service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/pages/Homepage/service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/pages/Homepage/shop.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/pages/Homepage/shop.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +28,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;TungIT2912&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/TaTanDuc/VeterinaryAndroidApp.git&quot;,
+    &quot;accountId&quot;: &quot;f978356c-fe62-44c8-8a9e-077ed0056777&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
@@ -36,19 +49,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Long",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/AndroidApp/veterinaryWebServices",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Tung&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/AndroidApp/veterinaryWebServices&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

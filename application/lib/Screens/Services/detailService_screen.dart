@@ -297,9 +297,13 @@ import 'package:http/http.dart' as http;
 
 class DetailServiceScreen extends StatefulWidget {
   final String serviceCODE;
+  final int userID; // Added userID field
 
-  const DetailServiceScreen({Key? key, required this.serviceCODE})
-      : super(key: key);
+  const DetailServiceScreen({
+    Key? key,
+    required this.serviceCODE,
+    required this.userID, // Make userID required as well
+  }) : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -372,6 +376,15 @@ class _DetailPageState extends State<DetailServiceScreen> {
         body: SingleChildScrollView(
             child: Column(
           children: [
+            ClipPath(
+              clipper: BottomRoundedClipper(),
+              child: Image.asset(
+                'assets/icons/Icon.jpg',
+                width: double.infinity,
+                height: 350,
+                fit: BoxFit.cover,
+              ),
+            ),
             Center(
               child: _loading
                   ? Center(child: CircularProgressIndicator())
@@ -383,144 +396,101 @@ class _DetailPageState extends State<DetailServiceScreen> {
         )));
   }
 
-  Widget _buildStarRating(int rating) {
+  Widget _buildStarRating(double rating) {
     List<Widget> stars = [];
-    for (int i = 0; i < 5; i++) {
+
+    // Determine the number of full, half, and empty stars
+    int fullStars = rating.floor(); // Number of full stars
+    bool hasHalfStar = (rating % 1) >= 0.5; // Determine if there is a half star
+
+    // Add full stars
+    for (int i = 0; i < fullStars; i++) {
       stars.add(
         Icon(
-          i < rating ? Icons.star : Icons.star_border,
+          Icons.star,
           color: Colors.yellow,
         ),
       );
     }
+
+    // Add half star if needed
+    if (hasHalfStar) {
+      stars.add(
+        Icon(
+          Icons.star_half,
+          color: Colors.yellow,
+        ),
+      );
+    }
+
+    // Add empty stars to make the total 5
+    for (int i = stars.length; i < 5; i++) {
+      stars.add(
+        Icon(
+          Icons.star_border,
+          color: Colors.yellow,
+        ),
+      );
+    }
+
     return Row(
       children: stars,
     );
   }
 
   Widget _buildServiceDetailView() {
-    // Build your detail view using the serviceDetails
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        // children: [
-        //   Text(
-        //     serviceDetails[
-        //         'serviceNAME'], // Adjust according to your data structure
-        //     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        //   ),
-        //   const SizedBox(height: 8),
-        //   Text('Price: ${serviceDetails['servicePRICE']}'),
-        //   const SizedBox(height: 8),
-        //   Text('Rating: ${serviceDetails['serviceRATING']}'),
-        //   // Add more details as necessary
-        // ],
         children: [
-          const SizedBox(
-            height: 350,
+          // Adjust or remove this SizedBox for smaller spacing
+          _infoItem(
+            serviceDetails['serviceNAME'],
+            serviceDetails['serviceRATING'],
+            serviceDetails['commentCOUNT'],
           ),
-          _infoItem(),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           _descItem(serviceDetails['serviceDATE']),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           _buttonAddToCart(),
         ],
       ),
     );
   }
 
-  Widget _infoItem() {
+  Widget _infoItem(String name, double rating, int number) {
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 128),
       child: Container(
         decoration: BoxDecoration(
           color: Color(0xffFFFFFF),
-          borderRadius: BorderRadius.circular(15), // Đặt border-radius
+          borderRadius: BorderRadius.circular(15),
         ),
-        // color: Color(0xffFFFFFF),
         child: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.symmetric(
+              vertical: 8, horizontal: 15), // Reduced vertical padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Josi Dog Master Mix - 900g',
+                name,
                 style: TextStyle(
-                    color: Color(0xff000000),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 30,
-                    fontFamily: 'Fredoka'),
+                  color: Color(0xff000000),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 30,
+                  fontFamily: 'Fredoka',
+                ),
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Brand: Josera',
-                    style: TextStyle(
-                        color: Color(0xff064E57),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Fredoka'),
-                  ),
-                  Text(
-                    'Rs 1500.00',
-                    style: TextStyle(
-                        color: Color(0xff5CB15A),
-                        fontSize: 14,
-                        fontFamily: 'Fredoka'),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(
+                  height: 8), // Reduced from 20 to 8 for closer spacing
               Row(
                 children: [
-                  Text(
-                    '5.0',
-                    style: TextStyle(
-                        color: Color(0xff000000),
-                        fontSize: 12,
-                        fontFamily: 'Fredoka'),
-                  ),
-                  const SizedBox(width: 5),
-                  Image.asset(
-                    'assets/icons/star_yellow.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/icons/star_yellow.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/icons/star_yellow.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/icons/star_yellow.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Image.asset(
-                    'assets/icons/star_yellow.png',
-                    width: 20,
-                    height: 20,
-                  ),
+                  _buildStarRating(rating),
                   const SizedBox(width: 10),
                   Text(
-                    '(100 reviews)',
+                    '($number reviews)',
                     style: TextStyle(color: Color(0xffA6A6A6)),
                   ),
                 ],
@@ -541,34 +511,6 @@ class _DetailPageState extends State<DetailServiceScreen> {
           style: TextStyle(
               color: Color(0xff191919), fontSize: 16, fontFamily: 'Fredoka'),
         ),
-      ],
-    );
-  }
-
-  Widget _countItem() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Quantity',
-          style: TextStyle(color: Color(0xff868889), fontSize: 16),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Icon(
-              Icons.remove,
-              color: Color(0xff6CC51D),
-            ),
-            const SizedBox(width: 10),
-            Text('3', style: TextStyle(fontSize: 16, color: Color(0xff000000))),
-            const SizedBox(width: 10),
-            Icon(
-              Icons.add,
-              color: Color(0xff6CC51D),
-            )
-          ],
-        )
       ],
     );
   }
