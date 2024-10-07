@@ -1,3 +1,4 @@
+import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/pages/Homepage/explore.dart';
 import 'package:application/pages/Homepage/home.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainPage(),
+      home: LoginScreen(),
       //home: ShopPage(),
       //home: ExplorePage(),
       //home: ServicePage()
