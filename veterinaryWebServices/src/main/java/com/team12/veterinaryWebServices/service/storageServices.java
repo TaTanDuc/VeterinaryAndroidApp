@@ -33,8 +33,8 @@ public class storageServices {
         return items.stream().map(itemVM::from).toList();
     }
 
-    public Object findItemsByName(String itemNAME){
-        List<storage> items = storageRepository.getAllByItemName(itemNAME);
+    public Object findItemsByName(String itemCATEGORY, String itemNAME){
+        List<storage> items = storageRepository.getAllByItemNameAndCategory(itemCATEGORY,itemNAME);
 
         if(items.isEmpty())
             return new appException(ERRORCODE.NO_ITEM_FOUND);

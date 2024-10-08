@@ -1,7 +1,4 @@
-import 'package:application/Screens/Cart/cart_screen.dart';
-import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
-import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,10 +8,10 @@ class DetailServiceScreen extends StatefulWidget {
   final int userID; // Added userID field
 
   const DetailServiceScreen({
-    Key? key,
+    super.key,
     required this.serviceCODE,
     required this.userID, // Make userID required as well
-  }) : super(key: key);
+  });
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -23,7 +20,7 @@ class DetailServiceScreen extends StatefulWidget {
 class _DetailPageState extends State<DetailServiceScreen> {
   bool _loading = true;
   dynamic serviceDetails; // Change the type based on your response
-  List<Comment> _comments = [];
+  final List<Comment> _comments = [];
   @override
   void initState() {
     super.initState();

@@ -31,6 +31,20 @@ public class appointmentServices {
         return list.stream().map(appointmentVM::from).toList();
     }
 
+    public Object getUserAppointment(Long userID){
+        profile p = profileRepository.getProfileById(userID);
+
+        if(p == null)
+            return  new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+
+        List<appointment> list = appointmentRepository.getUserAppointment(userID);
+
+        if (list.isEmpty())
+            return new appException(ERRORCODE.NO_APPOINTMENT_FOUND);
+
+        return list.stream().map(appointmentVM::from).toList();
+    }
+
     public Object getWeekAppointments(){
         List<appointment> list = appointmentRepository.getThisWeekAppointment();
 

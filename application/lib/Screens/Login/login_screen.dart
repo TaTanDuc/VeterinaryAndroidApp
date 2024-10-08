@@ -1,11 +1,8 @@
 import 'dart:convert'; // Thêm import để xử lý JSON
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
-import 'package:application/components/customButton.dart';
 import 'package:application/components/customInputField.dart';
 import 'package:application/main.dart';
-import 'package:application/pages/Homepage/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async'; // Import http package
 
@@ -105,6 +102,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _login,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Color(0xFF000000), // Màu chữ
+                      backgroundColor: Color(0xFF5CB15A), // Màu nền
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       child: Text(
@@ -115,14 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontFamily: 'Fredoka',
                         ),
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Color(0xFF000000), // Màu chữ
-                      backgroundColor: Color(0xFF5CB15A), // Màu nền
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                   ),
                   const SizedBox(height: 30),

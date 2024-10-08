@@ -1,6 +1,4 @@
 import 'package:application/Screens/Login/login_screen.dart';
-import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/pages/Homepage/explore.dart';
 import 'package:application/pages/Homepage/home.dart';
 //import 'package:application/profile.dart';
@@ -29,7 +27,7 @@ class MyApp extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final int userID; // Nhận userID từ trang trước
 
-  const MainPage({required this.userID});
+  const MainPage({super.key, required this.userID});
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -100,7 +98,7 @@ class _MainPageState extends State<MainPage> {
 class HomePage1 extends StatelessWidget {
   final int userID; // Nhận userID qua constructor
 
-  HomePage1({required this.userID});
+  const HomePage1({super.key, required this.userID});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +110,7 @@ class HomePage1 extends StatelessWidget {
 class ExplorePage1 extends StatelessWidget {
   final int userID; // Nhận userID qua constructor
 
-  ExplorePage1({required this.userID});
+  const ExplorePage1({super.key, required this.userID});
   @override
   Widget build(BuildContext context) {
     return Center(child: ExplorePage(userID: userID));
@@ -122,7 +120,7 @@ class ExplorePage1 extends StatelessWidget {
 class ManagePage1 extends StatelessWidget {
   final int userID; // Nhận userID qua constructor
 
-  ManagePage1({required this.userID});
+  const ManagePage1({super.key, required this.userID});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +132,7 @@ class ManagePage1 extends StatelessWidget {
 class ProfilePage1 extends StatelessWidget {
   final int userID; // Nhận userID qua constructor
 
-  ProfilePage1({required this.userID});
+  const ProfilePage1({super.key, required this.userID});
 
   @override
   Widget build(BuildContext context) {

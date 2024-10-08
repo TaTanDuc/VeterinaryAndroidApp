@@ -18,7 +18,7 @@ class Category {
 class ExplorePage extends StatefulWidget {
   final int userID;
 
-  const ExplorePage({required this.userID});
+  const ExplorePage({super.key, required this.userID});
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
