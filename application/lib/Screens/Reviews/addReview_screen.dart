@@ -87,30 +87,30 @@ class _MyWidgetState extends State<AddReviewScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    CustomButton(
-                        text: 'Post Review',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReviewsScreen()), // Điều hướng đến trang mới
-                          ); //
-                        })
+                    // CustomButton(
+                    //     text: 'Post Review',
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) =>
+                    //                 ReviewsScreen()), // Điều hướng đến trang mới
+                    //       ); //
+                    //     })
                   ]),
             ),
           ),
         ),
-        CustomNavContent(
-            navText: 'Add Review',
-            onBackPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ReviewsScreen()), // Điều hướng đến trang mới
-              ); //
-            })
+        // CustomNavContent(
+        //     navText: 'Add Review',
+        //     onBackPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) =>
+        //                 ReviewsScreen()), // Điều hướng đến trang mới
+        //       ); //
+        //     })
       ],
     );
   }

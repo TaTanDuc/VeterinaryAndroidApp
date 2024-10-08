@@ -18,9 +18,10 @@ public record serviceVM (String serviceCODE, String serviceNAME, double serviceR
         );
     }
 
-    public record detail (String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE, List<commentVM> comments){
+    public record detail (String serviceCODE,String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE, List<commentVM> comments){
         public static detail from (service s){
             return new detail(
+                    s.getServiceCODE(),
                     s.getServiceNAME(),
                     s.getServiceRATING(),
                     s.getComments().size(),

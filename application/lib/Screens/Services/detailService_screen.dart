@@ -1,10 +1,12 @@
 import 'package:application/Screens/Cart/cart_screen.dart';
+import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class DetailServiceScreen extends StatefulWidget {
   final String serviceCODE;
@@ -39,11 +41,22 @@ class _DetailPageState extends State<DetailServiceScreen> {
           await http.get(url, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
         setState(() {
           serviceDetails =
               jsonDecode(response.body); // Update with your response structure
-          _loading = false; // Stop loading when data is fetched
+          _loading = false;
+          if (data['comments'] != null) {
+            _comments = (data['comments'] as List)
+                .map((commentData) => Comment.fromJson(commentData))
+                .toList();
+          }
+
+          print("Parsed comments: $_comments.");
+
+// Stop loading when data is fetched
         });
+        print("data: ${serviceDetails}");
       } else {
         throw Exception('Failed to load service details');
       }
@@ -149,6 +162,21 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
+  Widget _buildStarRatingForUser(int rating) {
+    List<Widget> stars = [];
+    for (int i = 0; i < 5; i++) {
+      stars.add(
+        Icon(
+          i < rating ? Icons.star : Icons.star_border,
+          color: Colors.yellow,
+        ),
+      );
+    }
+    return Row(
+      children: stars,
+    );
+  }
+
   Widget _buildServiceDetailView() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -162,6 +190,39 @@ class _DetailPageState extends State<DetailServiceScreen> {
               serviceDetails['commentCOUNT'],
               serviceDetails['serviceDATE']),
 
+          const SizedBox(height: 20),
+
+          SingleChildScrollView(
+            child: Column(
+              children: List.generate(_comments.length, (index) {
+                print('user image: ${_comments[index].profileIMG}');
+                return _Review(_comments[index]);
+              }),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          // Center(
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             //builder: (context) => DetailServiceScreen(
+          //             //serviceCODE:  serviceDetails['serviceNAME'],
+          //             //userID: service.userID,
+          //             ), // Pass serviceC),
+          //       );
+          //     },
+          //     child: const Text(
+          //       'See and add more comments', // Nhãn
+          //       style: TextStyle(
+          //         fontSize: 17,
+          //         fontFamily: 'Fredoka',
+          //       ),
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 20),
           _buttonBook(),
         ],
@@ -271,9 +332,91 @@ class _DetailPageState extends State<DetailServiceScreen> {
       ),
     );
   }
-//   Widget _cartComment(){
 
-//   }
+  Widget _Review(Comment comment) {
+    DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+
+    // Parse and format the comment date
+    String formattedDate = dateFormat.format(comment.commentDATE);
+    return Container(
+      height: 200,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Avatar tròn
+                CircleAvatar(
+                  radius: 25,
+                  backgroundImage: AssetImage(
+                    comment.profileIMG != null && comment.profileIMG.isNotEmpty
+                        ? comment.profileIMG
+                        : 'assets/images/avatar02.jpg',
+                    // Thay đổi URL với hình thật
+                  ),
+                ),
+                SizedBox(width: 10),
+                // Tên người dùng và thời gian
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      comment.profileNAME,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      formattedDate,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Divider(),
+            SizedBox(height: 8),
+            // Hiển thị điểm số và các ngôi sao
+            Row(
+              children: [
+                Text(
+                  comment.commentRATING.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                SizedBox(width: 8),
+                _buildStarRatingForUser(comment.commentRATING),
+              ],
+            ),
+            SizedBox(height: 8),
+            // Phần bình luận
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  comment.CONTENT,
+                  style: TextStyle(
+                      color: Color(0xff191919),
+                      fontSize: 16,
+                      fontFamily: 'Fredoka'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class BottomRoundedClipper extends CustomClipper<Path> {

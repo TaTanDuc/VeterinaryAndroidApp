@@ -1,5 +1,4 @@
 class Comment {
-  final int? userID;
   final int? commentID;
   final String profileIMG;
   final String profileNAME;
@@ -8,7 +7,6 @@ class Comment {
   final String CONTENT;
 
   Comment({
-    required this.userID,
     required this.commentID,
     required this.profileIMG,
     required this.profileNAME,
@@ -19,10 +17,10 @@ class Comment {
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      userID: json['userID'] ?? 0, // Provide default values if necessary
-      commentID: json['commentID'] ?? 0,
+      commentID: json['commentID'] ?? 0, // Provide default values if necessary
+
       profileIMG: json['profileIMG'] ?? '',
-      profileNAME: json['profileNAME'] ?? '',
+      profileNAME: json['profileNAME'] ?? 'Anonymous',
       commentDATE: json['commentDATE'] != null
           ? DateTime.tryParse(json['commentDATE']) ??
               DateTime.now() // Handle parsing
@@ -31,8 +29,8 @@ class Comment {
       CONTENT: json['CONTENT'] ?? '',
     );
   }
-  // @override
-  // String toString() {
-  //   return 'Pet(userID: $userID, petID: $petID, petIMAGE: $petIMAGE, petSPECIE: $petSPECIE, petNAME: $petNAME, petAGE: $petAGE)';
-  // }
+  @override
+  String toString() {
+    return 'Comment(commentID: $commentID, profileIMG: $profileIMG, profileNAME: $profileNAME, commentDATE: $commentDATE, commentRATING: $commentRATING, CONTENT: $CONTENT)';
+  }
 }

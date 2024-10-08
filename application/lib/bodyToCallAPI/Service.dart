@@ -21,7 +21,7 @@ class Service {
   factory Service.fromJson(Map<String, dynamic> json) {
     return Service(
       serviceCODE:
-          json['serviceCODE'] ?? 0, // Provide default values if necessary
+          json['serviceCODE'] ?? '', // Provide default values if necessary
       serviceNAME: json['serviceNAME'] ?? 0,
       serviceRATING: json['serviceRATING'] ?? 0.0,
       commentCOUNT: json['commentCOUNT'] ?? 0,
