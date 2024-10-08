@@ -4,8 +4,14 @@ import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 
 class ReviewsScreen extends StatefulWidget {
-  const ReviewsScreen({super.key});
+  final String serviceCODE;
+  final int userID; // Added userID field
 
+  const ReviewsScreen({
+    Key? key,
+    required this.serviceCODE,
+    required this.userID, // Make userID required as well
+  }) : super(key: key);
   @override
   State<ReviewsScreen> createState() => _MyWidgetState();
 }
@@ -13,7 +19,7 @@ class ReviewsScreen extends StatefulWidget {
 class _MyWidgetState extends State<ReviewsScreen> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: double.infinity,
       child: Scaffold(
         backgroundColor: Color(0xffEBEBEB),

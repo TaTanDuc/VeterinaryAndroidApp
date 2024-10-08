@@ -202,27 +202,28 @@ class _DetailPageState extends State<DetailServiceScreen> {
           ),
 
           const SizedBox(height: 20),
-          // Center(
-          //   child: ElevatedButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             //builder: (context) => DetailServiceScreen(
-          //             //serviceCODE:  serviceDetails['serviceNAME'],
-          //             //userID: service.userID,
-          //             ), // Pass serviceC),
-          //       );
-          //     },
-          //     child: const Text(
-          //       'See and add more comments', // Nhãn
-          //       style: TextStyle(
-          //         fontSize: 17,
-          //         fontFamily: 'Fredoka',
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailServiceScreen(
+                      serviceCODE: serviceDetails['serviceCODE'],
+                      userID: serviceDetails['userID'],
+                    ),
+                  ),
+                );
+              },
+              child: const Text(
+                'See and add more comments', // Nhãn
+                style: TextStyle(
+                  fontSize: 17,
+                  fontFamily: 'Fredoka',
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
           _buttonBook(),
         ],

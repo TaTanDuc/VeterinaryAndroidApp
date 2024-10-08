@@ -9,7 +9,7 @@ import java.util.List;
 
 public record serviceVM (String serviceCODE, String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE){
 
-    private static commentRepository commentRepository;
+
 
     public static serviceVM from (service s){
         return new serviceVM(
@@ -22,6 +22,9 @@ public record serviceVM (String serviceCODE, String serviceNAME, double serviceR
     }
 
     public record detail (String serviceCODE,String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE, List<commentVM> comments){
+
+        private static commentRepository commentRepository;
+
         public static detail from (service s){
 
             List<commentVM> recentCommentList = commentRepository.getRecentComments(s.getServiceCODE())
