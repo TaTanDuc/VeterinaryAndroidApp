@@ -5,10 +5,12 @@ import com.team12.veterinaryWebServices.dto.itemDTO;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.cart;
+import com.team12.veterinaryWebServices.model.cartDetail;
 import com.team12.veterinaryWebServices.model.profile;
 import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.cartDetailRepository;
 import com.team12.veterinaryWebServices.repository.cartRepository;
+import com.team12.veterinaryWebServices.repository.storageRepository;
 import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class cartServices {
 
     private final cartRepository cartRepository;
     private final storageServices storageServices;
+    private final cartDetailRepository cartDetailRepository;
+    private final storageRepository storageRepository;
 
     public void createUserCart(profile p){
         cart c = new cart();
@@ -48,15 +52,44 @@ public class cartServices {
     }
 
     public Object addItemToCart(itemDTO request){
-        Object o = storageServices.checkItemStock(request);
-
-        if (!Objects.equals(cartRepository.getUserCart(request.getUserID()).getCartID(), request.getCartID()))
+        cart cart = cartRepository.getUserCart(request.getUserID());
+        if (!Objects.equals(cart.getCartID(), request.getCartID()))
             return new appException(ERRORCODE.NOT_CART_OWNER);
 
-        if (o instanceof ERRORCODE e)
-            return new appException(e);
+        storage item = storageRepository.getItem(request.getItemCODE(), request.getItemID());
 
-        return itemVM.from((storage) o) ;
+        cartDetail cartItem = cartDetailRepository.getItemInCart(request.getCartID(), request.getItemCODE(), request.getItemID());
+
+        if (cartItem != null) {
+            int tempQuantity = cartItem.getItemQUANTIY() + request.getQuantity();
+            if (item.getINSTOCK() < tempQuantity)
+            {
+                cartItem.setItemQUANTIY(1);
+                return new appException(ERRORCODE.ITEM_OVER_STOCK);
+            }
+            if (item.getINSTOCK() == 0)
+            {
+                cartItem.setItemQUANTIY(0);
+                return new appException(ERRORCODE.ITEM_OVER_STOCK);
+            }
+            cartItem.setItemQUANTIY(tempQuantity);
+            cartDetailRepository.save(cartItem);
+            return itemVM.from(item);
+        }
+
+        if (item.getINSTOCK() == 0)
+            return new appException(ERRORCODE.SOLD_OUT);
+        if (item.getINSTOCK() < request.getQuantity())
+            return new appException(ERRORCODE.ITEM_OVER_STOCK);
+
+        cartDetail cartItems = new cartDetail();
+
+        cartItems.setCart(cart);
+        cartItems.setStorage(item);
+        cartItems.setItemQUANTIY(request.getQuantity());
+
+        cartDetailRepository.save(cartItems);
+        return itemVM.from(item) ;
     }
 
     public Object updateCart(cartDTO request){

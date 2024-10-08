@@ -34,6 +34,16 @@ public class appointmentAPI {
         return ResponseEntity.ok(o);
     }
 
+    @GetMapping("/getUserAppointment")
+    public ResponseEntity<Object> getUserAppointment(@RequestParam("userID") Long userID){
+        Object o = appointmentServices.getUserAppointment(userID);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Object> addAppointment(@RequestBody appointmentDTO request){
         appException e = appointmentServices.addAppointment(request);

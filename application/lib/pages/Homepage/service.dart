@@ -7,7 +7,7 @@ import 'dart:convert';
 class ServicePage extends StatefulWidget {
   final int userID;
 
-  const ServicePage({required this.userID});
+  const ServicePage({super.key, required this.userID});
   @override
   _ServicePageState createState() => _ServicePageState();
 }

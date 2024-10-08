@@ -39,4 +39,14 @@ public class serviceAPI {
 
         return ResponseEntity.ok(o);
     }
+
+    @GetMapping("/comments")
+    public ResponseEntity<Object> getServiceComments(@RequestParam("serviceCODE") String serviceCODE){
+        Object o = serviceServices.getServiceComments(serviceCODE);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
 }

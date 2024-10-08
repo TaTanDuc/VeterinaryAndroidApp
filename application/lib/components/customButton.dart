@@ -6,7 +6,7 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
 
-  CustomButton({
+  const CustomButton({super.key, 
     required this.text,
     required this.onPressed,
     this.backgroundColor = const Color(0xFF5CB15A),
@@ -17,6 +17,14 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: textColor, // Màu chữ
+        backgroundColor: backgroundColor, // Màu nền
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+      ),
       child: SizedBox(
         width: double.infinity,
         child: Text(
@@ -27,14 +35,6 @@ class CustomButton extends StatelessWidget {
             fontFamily: 'Fredoka',
           ),
         ),
-      ),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: textColor, // Màu chữ
-        backgroundColor: backgroundColor, // Màu nền
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
       ),
     );
   }

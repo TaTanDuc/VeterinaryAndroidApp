@@ -8,7 +8,7 @@ class CustomInput extends StatelessWidget {
   final Color textColor;
   final TextEditingController controller;
   final bool isPassword;
-  const CustomInput({
+  const CustomInput({super.key, 
     required this.hintText,
     required this.hintTextColor,
     required this.controller,

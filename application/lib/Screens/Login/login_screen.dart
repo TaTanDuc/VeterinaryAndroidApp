@@ -1,15 +1,14 @@
 import 'dart:convert'; // Thêm import để xử lý JSON
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
-import 'package:application/components/customButton.dart';
 import 'package:application/components/customInputField.dart';
 import 'package:application/main.dart';
-import 'package:application/pages/Homepage/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async'; // Import http package
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -103,6 +102,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _login,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Color(0xFF000000), // Màu chữ
+                      backgroundColor: Color(0xFF5CB15A), // Màu nền
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       child: Text(
@@ -113,14 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontFamily: 'Fredoka',
                         ),
                       ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Color(0xFF000000), // Màu chữ
-                      backgroundColor: Color(0xFF5CB15A), // Màu nền
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -178,14 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _loginBtn() {
     return ElevatedButton(
       onPressed: () {
-        debugPrint("Username: " + usernameController.text);
-        debugPrint("Password: " + passwordController.text);
+        debugPrint("Username: ${usernameController.text}");
+        debugPrint("Password: ${passwordController.text}");
       },
-      child: const SizedBox(
-          width: double.infinity,
-          child: Text("LOGIN",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontFamily: 'Fredoka'))),
       style: ElevatedButton.styleFrom(
           foregroundColor: Color(0xFF000000),
           backgroundColor: Color(0xFF5CB15A),
@@ -193,6 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16)),
+      child: const SizedBox(
+          width: double.infinity,
+          child: Text("LOGIN",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontFamily: 'Fredoka'))),
     );
   }
 
@@ -211,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Positioned(
           top: -40, // Vị trí của ảnh thứ hai
           right: 20, // Điều chỉnh khoảng cách giữa hai ảnh
-          child: Container(
+          child: SizedBox(
             width: 100,
             height: 100,
             child: Image.asset('assets/icons/icon2.png'), // Ảnh thứ hai
@@ -221,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
           top: -50, // Vị trí của ảnh thứ nhất
           right: -75,
           // Xoay 30 độ cho ảnh đầu tiên
-          child: Container(
+          child: SizedBox(
             width: 200, // Đặt chiều rộng của hình ảnh
             height: 200, // Đặt chiều cao của hình ảnh
             child: Image.asset('assets/icons/icon1.png'), // Ảnh đầu tiên
