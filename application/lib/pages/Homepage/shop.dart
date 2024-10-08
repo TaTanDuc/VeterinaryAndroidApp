@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ShopPage extends StatefulWidget {
   final int userID;
@@ -10,7 +13,41 @@ class ShopPage extends StatefulWidget {
 }
 
 class _ShopPageState extends State<ShopPage> {
-  int _selectedCategoryIndex = 0; // Track the selected category index
+  int _selectedCategoryIndex = 0;
+  String _currentCategory = 'FOOD';
+  List<dynamic> _categoryItems = [];
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategory(); // Call fetchPets when the widget is initialized
+  }
+
+  // Track the selected category index
+  Future<void> _fetchCategory() async {
+    print("Fetching category: $_currentCategory");
+    try {
+      final url = Uri.parse(
+          "http://localhost:8080/api/storage/getItems?category=${_currentCategory}");
+      // Gửi yêu cầu POST tới API
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+      // Kiểm tra trạng thái của API trả về
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _categoryItems = data;
+        });
+      } else {
+        setState(() {
+          _categoryItems = [];
+        });
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +97,12 @@ class _ShopPageState extends State<ShopPage> {
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(12.0),
                   prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search Items By Category',
+                  hintStyle: TextStyle(
+                      fontFamily: 'Fredoka',
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -69,13 +112,14 @@ class _ShopPageState extends State<ShopPage> {
             ),
             // My Pets Section
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // const SizedBox(height: 20),
                   _buildCategoryItem(
                       0, 'Food', 'assets/icons/food.png', screenWidth),
-                  _buildCategoryItem(1, 'Vet Item',
+                  _buildCategoryItem(1, 'Medicine',
                       'assets/icons/petmedicine.png', screenWidth),
                   _buildCategoryItem(2, 'Accessory',
                       'assets/icons/accessories.png', screenWidth),
@@ -91,8 +135,8 @@ class _ShopPageState extends State<ShopPage> {
             Padding(
                 padding: const EdgeInsets.all(
                     16.0), // Set the desired padding (which acts like a margin)
-                child: const Text(
-                  "Our Product",
+                child: Text(
+                  "Our $_currentCategory",
                   style: TextStyle(
                       fontFamily: 'Fredoka',
                       fontWeight: FontWeight.bold,
@@ -106,16 +150,30 @@ class _ShopPageState extends State<ShopPage> {
                 direction: Axis.horizontal,
                 alignment: WrapAlignment.center,
                 runAlignment: WrapAlignment.center,
-                children: [
-                  _buildShopCard('Josera', 'Josera Dog Master Mix 500g',
-                      'assets/icons/logo.png'),
-                  _buildShopCard('Happy Pet', 'Happy Dog High Energy 30-20',
-                      'assets/icons/logo.png'),
-                  _buildShopCard('Josera', 'Josera Dog Master Mix 500g',
-                      'assets/icons/logo.png'),
-                  _buildShopCard('Happy Pet', 'Happy Dog High Energy 30-20',
-                      'assets/icons/logo.png'),
-                ],
+                children: _categoryItems.isEmpty
+                    ? [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("No items available",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontFamily: 'Fredoka',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24)),
+                            const SizedBox(height: 30),
+                            Image.asset('assets/images/empty_image.png')
+                          ],
+                        )
+                      ] // Hiển thị nếu không có dữ liệu
+                    : _categoryItems.map((item) {
+                        print(item);
+                        return _buildShopCard(
+                            item['itemNAME'],
+                            item['itemDESCRIPTION'],
+                            item['itemPRICE'].toString(),
+                            'assets/icons/logo.png');
+                      }).toList(),
               ),
             ),
           ],
@@ -135,10 +193,11 @@ class _ShopPageState extends State<ShopPage> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _selectedCategoryIndex =
-                index; // Update the selected category index
+            _selectedCategoryIndex = index;
+            _currentCategory =
+                title.toUpperCase(); // Update the selected category index
           });
-          print('$title category clicked'); // Handle the click event
+          _fetchCategory(); // Handle the click event
         },
         child: Column(
           children: [
@@ -176,7 +235,8 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildShopRow(String brand, String description, String imagePath) {
+  Widget _buildShopRow(
+      String brand, String description, String price, String imagePath) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Column(
@@ -192,15 +252,25 @@ class _ShopPageState extends State<ShopPage> {
             margin: const EdgeInsets.only(bottom: 4.0),
             child: Text(
               brand,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Fredoka'),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 4.0),
             child: Text(
               description,
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: 14, color: Colors.grey, fontFamily: 'Fredoka'),
             ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Price: $price",
+            style: TextStyle(
+                color: Color(0xff000000), fontSize: 16, fontFamily: 'Fredoka'),
           ),
           Divider(
             color: Colors.black, // Change color temporarily for visibility
@@ -217,9 +287,10 @@ class _ShopPageState extends State<ShopPage> {
                 Text(
                   'Add to cart',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Fredoka'),
                 ),
                 const SizedBox(width: 8),
                 Icon(Icons.shopping_cart_outlined, color: Colors.black),
@@ -231,7 +302,8 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildShopCard(String brand, String description, String imagePath) {
+  Widget _buildShopCard(
+      String brand, String description, String price, String imagePath) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -242,7 +314,7 @@ class _ShopPageState extends State<ShopPage> {
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            _buildShopRow(brand, description, imagePath),
+            _buildShopRow(brand, description, price, imagePath),
           ],
         ),
       ),
