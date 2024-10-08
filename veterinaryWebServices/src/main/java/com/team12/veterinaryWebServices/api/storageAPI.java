@@ -25,8 +25,8 @@ public class storageAPI {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItemsByName (@RequestParam ("itemName") String itemCATEGORY,
-                                                     @RequestParam ("itemCategory") String itemNAME){
+    public ResponseEntity<Object> searchItemsByName (@RequestParam ("itemNAME") String itemCATEGORY,
+                                                     @RequestParam ("itemCATEGORY") String itemNAME){
         Object o = storageServices.findItemsByName(itemCATEGORY,itemNAME);
 
         if (o instanceof appException e)

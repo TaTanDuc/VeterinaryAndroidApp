@@ -1,11 +1,11 @@
 package com.team12.veterinaryWebServices.viewmodel;
 
 
+import com.team12.veterinaryWebServices.model.comment;
 import com.team12.veterinaryWebServices.model.service;
-import com.team12.veterinaryWebServices.repository.commentRepository;
 
+import java.util.Comparator;
 import java.util.List;
-
 
 public record serviceVM (String serviceCODE, String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE){
 
@@ -27,16 +27,19 @@ public record serviceVM (String serviceCODE, String serviceNAME, double serviceR
 
         public static detail from (service s){
 
-            List<commentVM> recentCommentList = commentRepository.getRecentComments(s.getServiceCODE())
-                    .stream().map(commentVM::from).toList();
+            List<commentVM> recentComments = s.getComments().stream()
+                    .sorted(Comparator.comparing(comment::getCommentDATE).reversed()) // Sort by date in descending order
+                    .limit(3) // Limit to the 3 most recent comments
+                    .map(commentVM::from) // Map to commentVM
+                    .toList();
 
             return new detail(
                     s.getServiceCODE(),
                     s.getServiceNAME(),
                     s.getServiceRATING(),
                     s.getComments().size(),
-                    s.getServiceDATE(),
-                    recentCommentList
+                    s.getServiceDATE(), 
+                    recentComments
             );
         }
     }
