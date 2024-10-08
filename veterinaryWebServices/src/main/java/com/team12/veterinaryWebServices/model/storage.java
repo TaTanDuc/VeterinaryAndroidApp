@@ -24,6 +24,9 @@ public class storage {
     @Column(name = "itemNAME")
     private String itemNAME;
 
+    @Column(name = "itemIMAGE")
+    private String itemIMAGE;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "itemCATEGORY")
     private category itemCATEGORY;
