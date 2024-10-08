@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface storageRepository extends JpaRepository<storage, storageCK> {
 
-    @Query(value = "SELECT * FROM storage WHERE storage.itemname LIKE %?1%",nativeQuery = true)
-    List<storage> getAllByItemName (String itemNAME);
+    @Query(value = "SELECT * FROM storage WHERE storage.category = ?1 AND storage.itemname LIKE %?2%",nativeQuery = true)
+    List<storage> getAllByItemNameAndCategory (String itemCATEGORY , String itemNAME);
 
     @Query(value = "SELECT storage.* FROM storage WHERE storage.itemcode = ?1 AND storage.itemid = ?2",nativeQuery = true)
     storage getItem (String itemCODE, Long itemID);

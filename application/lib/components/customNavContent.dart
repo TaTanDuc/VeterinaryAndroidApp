@@ -9,8 +9,8 @@ class CustomNavContent extends StatelessWidget {
   final IconData? iconNav;
   final VoidCallback? onNextPressed;
 
-  CustomNavContent(
-      {required this.navText,
+  const CustomNavContent(
+      {super.key, required this.navText,
       required this.onBackPressed,
       this.backgroundColor = const Color(0xFF5CB15A),
       this.hideImage = false,

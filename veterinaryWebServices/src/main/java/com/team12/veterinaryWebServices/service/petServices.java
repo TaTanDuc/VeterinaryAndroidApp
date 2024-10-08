@@ -38,6 +38,7 @@ public class petServices {
             return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
         pet pet = new pet();
+        pet.setProfile(p);
         pet.setPetIMAGE(request.getPetIMAGE());
         pet.setPetSPECIE(request.getPetSPECIE());
         pet.setPetNAME(request.getPetNAME());

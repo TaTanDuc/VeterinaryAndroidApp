@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.team12.veterinaryWebServices.viewmodel.appointmentVM;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -20,10 +20,24 @@ public class appointmentServices {
     private final appointmentDetailRepository appointmentDetailRepository;
     private final profileRepository profileRepository;
     private final invoiceRepository invoiceRepository;
-    private final serviceRepository serviceRepository;
+    private final petRepository petRepository;
 
     public Object getAllAppointments(){
         List<appointment> list = appointmentRepository.findAll();
+
+        if (list.isEmpty())
+            return new appException(ERRORCODE.NO_APPOINTMENT_FOUND);
+
+        return list.stream().map(appointmentVM::from).toList();
+    }
+
+    public Object getUserAppointment(Long userID){
+        profile p = profileRepository.getProfileById(userID);
+
+        if(p == null)
+            return  new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+
+        List<appointment> list = appointmentRepository.getUserAppointment(userID);
 
         if (list.isEmpty())
             return new appException(ERRORCODE.NO_APPOINTMENT_FOUND);
@@ -43,9 +57,16 @@ public class appointmentServices {
     public appException addAppointment(appointmentDTO request){
 
         profile p = profileRepository.getProfileById(request.getProfileID());
+        pet pet = petRepository.getPetById(request.getPetID());
 
-        if(p == null)
+        if (p == null)
             return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+
+        if (pet == null)
+            return new appException(ERRORCODE.PET_DOES_NOT_EXIST);
+
+        if (!Objects.equals(pet.getProfile().getProfileID(), p.getProfileID()))
+            return new appException(ERRORCODE.NOT_PET_OWNER);
 
         List<appointment> list = appointmentRepository.getAppointmentByDateAndTime(request.getAppointmentDATE(),request.getAppointmentTIME());
 
@@ -57,6 +78,7 @@ public class appointmentServices {
 
         appointment a = new appointment();
         a.setProfile(p);
+        a.setPet(pet);
         a.setAppointmentDATE(request.getAppointmentDATE());
         a.setAppointmentTIME(request.getAppointmentTIME());
         appointmentRepository.save(a);

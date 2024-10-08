@@ -33,8 +33,8 @@ public class storageServices {
         return items.stream().map(itemVM::from).toList();
     }
 
-    public Object findItemsByName(String itemNAME){
-        List<storage> items = storageRepository.getAllByItemName(itemNAME);
+    public Object findItemsByName(String itemCATEGORY, String itemNAME){
+        List<storage> items = storageRepository.getAllByItemNameAndCategory(itemCATEGORY,itemNAME);
 
         if(items.isEmpty())
             return new appException(ERRORCODE.NO_ITEM_FOUND);
@@ -58,16 +58,6 @@ public class storageServices {
             return new appException(ERRORCODE.NO_ITEM_FOUND);
 
         return item.stream().map(itemVM::from).toList();
-    }
-
-    public Object checkItemStock(itemDTO item){
-        storage result = storageRepository.getItem(item.getItemCODE(), item.getItemID());
-
-        if (result.getINSTOCK() == 0)
-            return ERRORCODE.SOLD_OUT;
-        if (result.getINSTOCK() < item.getQuantity())
-            return ERRORCODE.ITEM_OVER_STOCK;
-        return result;
     }
 
     public Object checkCartStock(cartDTO cart){

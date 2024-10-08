@@ -7,7 +7,7 @@ import 'dart:convert';
 class HomePage extends StatefulWidget {
   final int userID;
 
-  const HomePage({required this.userID});
+  const HomePage({super.key, required this.userID});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                         ? Center(child: CircularProgressIndicator())
                         : _pets.isEmpty
                             ? Center(child: Text('No pets found.'))
-                            : Container(
+                            : SizedBox(
                                 height:
                                     100, // Set a fixed height for the horizontal ListView
                                 child: ListView.builder(
@@ -214,11 +214,11 @@ class _HomePageState extends State<HomePage> {
             Column(
               children: [
                 ClipOval(
-                  child: Container(
+                  child: SizedBox(
                     width: 60, // Same as CircleAvatar diameter (2 * radius)
                     height: 60,
                     child: Image.asset(
-                      pet.petIMAGE != null && pet.petIMAGE.isNotEmpty
+                      pet.petIMAGE.isNotEmpty
                           ? pet.petIMAGE
                           : 'assets/icons/house.png', // Fallback image if null or empty
                       fit: BoxFit.cover, // Ensures the image fills the circle

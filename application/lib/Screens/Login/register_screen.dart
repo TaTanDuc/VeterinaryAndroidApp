@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
@@ -214,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Positioned(
           top: -40, // Vị trí của ảnh thứ hai
           right: 20, // Điều chỉnh khoảng cách giữa hai ảnh
-          child: Container(
+          child: SizedBox(
             width: 100,
             height: 100,
             child: Image.asset('assets/icons/icon2.png'), // Ảnh thứ hai
@@ -224,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           top: -50, // Vị trí của ảnh thứ nhất
           right: -75,
           // Xoay 30 độ cho ảnh đầu tiên
-          child: Container(
+          child: SizedBox(
             width: 200, // Đặt chiều rộng của hình ảnh
             height: 200, // Đặt chiều cao của hình ảnh
             child: Image.asset('assets/icons/icon1.png'), // Ảnh đầu tiên
