@@ -1,10 +1,15 @@
 import 'dart:convert'; // Thêm import để xử lý JSON
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+
 import 'package:application/components/customInputField.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async'; // Import http package
+import 'dart:async';
+
+import 'package:provider/provider.dart'; // Import http package
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,9 +52,25 @@ class _LoginScreenState extends State<LoginScreen> {
         final data = jsonDecode(response.body);
         final userId = data['userID'];
         // Nếu đăng nhập thành công, chuyển tới MainPage
+        User user = User.fromJson(data);
+        final userManager = UserManager();
+
+        UserManager().setUser(user); // Set the user in UserManager
+
+        // Debugging statement
+        print("User logged in: ${user.username}, ID: ${user.userID}");
+
+        User? currentUser = UserManager().user;
+        if (currentUser != null) {
+          print("User ID after setting: ${currentUser.userID}");
+        } else {
+          print("No user is logged in after setting.");
+        }
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainPage(userID: userId)),
+          MaterialPageRoute(
+              builder: (context) => MainPage(userID: user.userID)),
         );
       } else {
         setState(() {

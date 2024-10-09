@@ -1,8 +1,12 @@
 import 'package:application/bodyToCallAPI/Pet.dart';
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:application/pages/Homepage/shop.dart';
 import 'dart:convert';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final int userID;
@@ -16,7 +20,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _loading = true;
   List<Pet> _pets = [];
-
   @override
   void initState() {
     super.initState();
@@ -39,7 +42,14 @@ class _HomePageState extends State<HomePage> {
         final List<dynamic> petData = jsonDecode(response.body);
         print(
             'Fetched Pet Data: $petData'); // This should show the fetched data
+        final userManager = UserManager(); // Ensure singleton access
+        User? currentUser = userManager.user;
 
+        if (currentUser != null) {
+          print("User ID in HomePage: ${currentUser.userID}");
+        } else {
+          print("No user is logged in in HomePage.");
+        }
         setState(() {
           _pets = petData.map((json) => Pet.fromJson(json)).toList();
           _loading = false;
