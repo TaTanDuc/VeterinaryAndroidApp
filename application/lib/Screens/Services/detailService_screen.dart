@@ -2,6 +2,7 @@ import 'package:application/Screens/Cart/cart_screen.dart';
 import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
+import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -29,6 +30,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
   @override
   void initState() {
     super.initState();
+
     fetchServiceDetails(); // Fetch details when the page initializes
   }
 
@@ -53,6 +55,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
           }
 
           print("Parsed comments: $_comments.");
+          print('User ID nerjdfhjhjhj: ${widget.userID}');
 
 // Stop loading when data is fetched
         });
@@ -70,6 +73,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Service service = Service.fromJson(serviceDetails);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF5CB15A),
@@ -113,7 +117,19 @@ class _DetailPageState extends State<DetailServiceScreen> {
               child: _loading
                   ? Center(child: CircularProgressIndicator())
                   : serviceDetails != null
-                      ? _buildServiceDetailView()
+                      ? Column(
+                          children: [
+                            _buildServiceDetailView(),
+                            const SizedBox(
+                                height:
+                                    20), // Spacing between service details and button
+                            // Add button here
+                            _button(service),
+                            const SizedBox(height: 20),
+                            _buttonBook(),
+                            const SizedBox(height: 20),
+                          ],
+                        )
                       : Center(child: Text('No details available')),
             )
           ],
@@ -200,32 +216,6 @@ class _DetailPageState extends State<DetailServiceScreen> {
               }),
             ),
           ),
-
-          const SizedBox(height: 20),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailServiceScreen(
-                      serviceCODE: serviceDetails['serviceCODE'],
-                      userID: serviceDetails['userID'],
-                    ),
-                  ),
-                );
-              },
-              child: const Text(
-                'See and add more comments', // Nhãn
-                style: TextStyle(
-                  fontSize: 17,
-                  fontFamily: 'Fredoka',
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          _buttonBook(),
         ],
       ),
     );
@@ -290,6 +280,33 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
+  Widget _button(Service service) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          print("User ID: ${widget.userID}");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewsScreen(
+                serviceCODE: serviceDetails['serviceCODE'],
+                userID:
+                    service.userID, // Ensure you have userID in serviceDetails
+              ),
+            ),
+          );
+        },
+        child: const Text(
+          'See and add more comments', // Button label
+          style: TextStyle(
+            fontSize: 17,
+            fontFamily: 'Fredoka',
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buttonBook() {
     return ElevatedButton(
       onPressed: () {},
@@ -339,8 +356,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
     // Parse and format the comment date
     String formattedDate = dateFormat.format(comment.commentDATE);
-    return Container(
-      height: 200,
+    return Card(
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),

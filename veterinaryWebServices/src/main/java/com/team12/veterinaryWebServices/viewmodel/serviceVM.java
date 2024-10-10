@@ -9,8 +9,6 @@ import java.util.List;
 
 public record serviceVM (String serviceCODE, String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE){
 
-
-
     public static serviceVM from (service s){
         return new serviceVM(
                 s.getServiceCODE(),
@@ -22,6 +20,8 @@ public record serviceVM (String serviceCODE, String serviceNAME, double serviceR
     }
 
     public record detail (String serviceCODE,String serviceNAME, double serviceRATING, int commentCOUNT, String serviceDATE, List<commentVM> comments){
+
+
 
         public static detail from (service s){
 

@@ -1,5 +1,6 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
+import 'package:application/bodyToCallAPI/User.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -41,7 +42,7 @@ class _ServicePageState extends State<ServicePage> {
           _services = serviceData
               .map((json) => Service.fromJson(json))
               .toList(); // Populate the services list
-          _loading = false; // Stop loading indicator
+          _loading = false;
         });
       } else {
         throw Exception('Failed to load services');
@@ -170,6 +171,8 @@ class _ServicePageState extends State<ServicePage> {
                           ), // Pass serviceCODE
                         ),
                       );
+                      print(
+                          "Navigating to DetailServiceScreen with userID: ${service.userID}");
                     },
                     child: const Text(
                       'Show more',
