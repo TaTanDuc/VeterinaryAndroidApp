@@ -1,6 +1,7 @@
 package com.team12.veterinaryWebServices.service;
 
 import com.team12.veterinaryWebServices.dto.cartDTO;
+import com.team12.veterinaryWebServices.dto.cartItemsDTO;
 import com.team12.veterinaryWebServices.dto.itemDTO;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
@@ -15,6 +16,7 @@ import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +54,7 @@ public class cartServices {
     }
 
     public Object addItemToCart(itemDTO request){
+
         cart cart = cartRepository.getUserCart(request.getUserID());
         if (!Objects.equals(cart.getCartID(), request.getCartID()))
             return new appException(ERRORCODE.NOT_CART_OWNER);
@@ -89,14 +92,28 @@ public class cartServices {
         cartItems.setItemQUANTIY(request.getQuantity());
 
         cartDetailRepository.save(cartItems);
-        return itemVM.from(item) ;
+        return itemVM.from(item);
     }
 
     public Object updateCart(cartDTO request){
+
+        cart cart = cartRepository.getUserCart(request.getUserID());
+        if (!Objects.equals(cart.getCartID(), request.getCartID()))
+            return new appException(ERRORCODE.NOT_CART_OWNER);
+
         Object o = storageServices.checkCartStock(request);
 
-        if(o instanceof ERRORCODE e)
-            return new appException(e);
+        List<cartDetail> cartDetails = new ArrayList<>();
+
+        for (cartItemsDTO i : ((cartDTO) o).getCartItems())
+        {
+            cartDetail cartItem = cartDetailRepository.getItemInCart(request.getCartID(), i.getItemCODE(), i.getItemID());
+            cartItem.setItemQUANTIY(i.getItemQUANTITY());
+            cartDetails.add(cartItem);
+        }
+
+        cart.setCartDetails(cartDetails);
+        cartRepository.save(cart);
 
         
 

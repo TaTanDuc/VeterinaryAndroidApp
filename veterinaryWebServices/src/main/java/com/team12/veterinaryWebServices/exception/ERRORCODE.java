@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ERRORCODE {
 
+    CART_NO_ITEM("The items you want to update haven't been added to cart or doesn't exist!",HttpStatus.NO_CONTENT),
     CONTENT_ERROR("Content must be between 20 - 200 characters",HttpStatus.BAD_REQUEST),
     RATING_ERROR("Rating must be between 1 to 5 stars!",HttpStatus.BAD_REQUEST),
     NO_SERVICE_IN_APPOINTMENT("There is no service in the appointment!", HttpStatus.BAD_REQUEST),
