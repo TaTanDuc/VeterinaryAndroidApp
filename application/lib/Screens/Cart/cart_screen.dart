@@ -22,6 +22,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
   dynamic cartID;
   List<dynamic> cartItemUser = [];
   bool isIncreasing = false;
+  bool isDecreasing= false
 
   @override
   void initState() {
@@ -31,7 +32,68 @@ class _CartViewScreenState extends State<CartViewScreen> {
     isClickedList =
         List.generate(5, (index) => false); // Tùy thuộc vào số lượng items
   }
+  Future<void> handleDecreaseItem(int index, bool isDecreasing){
+     try {
+      int currentQuantity;
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        userID = currentUser.userID;
+        cartID = currentUser.cartID;
+      } else {
+        print("No user is logged in in HomePage.");
+        return;
+      }
 
+      // Lấy thông tin của item đang được cập nhật
+      var item = cartItemUser[index];
+      currentQuantity = item['itemQUANTITY'];
+      ;
+      print(item);
+
+      // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
+      if (isIncreasing) {
+        currentQuantity++;
+      } else {
+        currentQuantity = currentQuantity > 1
+            ? currentQuantity - 1
+            : 1; // Không để số lượng nhỏ hơn 1
+      }
+
+      // Gọi API để cập nhật số lượng mới
+      final url = Uri.parse("http://localhost:8080/api/cart/updateCart");
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "userID": userID,
+          "cartID": cartID,
+          "cartItems": [
+            {
+              "itemCODE": item['itemCODE'], // Mã item
+              "itemID": item['itemID'], // ID item
+              "itemQUANTITY": currentQuantity.toString() // Số lượng mới
+            }
+          ]
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Item updated successfully!");
+        final data = jsonDecode(response.body);
+        print(data);
+        setState(() {
+          cartItemUser[index] =
+              data['cartDetails'][0]; // Hiển thị thông báo lỗi
+        });
+        print(cartItemUser);
+      } else {
+        print("Failed to update item.");
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
   Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
     try {
       int currentQuantity;
@@ -81,8 +143,10 @@ class _CartViewScreenState extends State<CartViewScreen> {
       if (response.statusCode == 200) {
         print("Item updated successfully!");
         final data = jsonDecode(response.body);
+        print(data);
         setState(() {
-          cartItemUser[index] = data; // Hiển thị thông báo lỗi
+          cartItemUser[index] =
+              data['cartDetails'][0]; // Hiển thị thông báo lỗi
         });
         print(cartItemUser);
       } else {
@@ -302,7 +366,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
         IconButton(
           icon: Icon(Icons.remove),
           onPressed: () {
-            print("Icon button clicked!");
+          handleDecreaseItem(index, isDecreasing)
           },
         )
       ],
