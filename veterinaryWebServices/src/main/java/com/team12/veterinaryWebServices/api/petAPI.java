@@ -33,4 +33,14 @@ public class petAPI {
 
         return ResponseEntity.ok(o);
     }
+
+    @PostMapping("/updatePet")
+    public ResponseEntity<Object> updatePet (@RequestBody petDTO request){
+        Object o = petServices.updatePet(request);
+
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
 }
