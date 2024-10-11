@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -47,5 +48,26 @@ public class petServices {
         petRepository.save(pet);
 
         return new appException("Pet added successfully!");
+    }
+
+    public Object updatePet (petDTO request){
+        profile p = profileRepository.getProfileById(request.getUserID());
+        if(p == null)
+            return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
+
+        pet pet = petRepository.getPetById(request.getPetID());
+        if(pet == null)
+            return new appException(ERRORCODE.NO_PET_FOUND);
+
+        if(!Objects.equals(pet.getProfile().getProfileID(), p.getProfileID()))
+            return new appException(ERRORCODE.NOT_PET_OWNER);
+
+        pet.setPetIMAGE(request.getPetIMAGE());
+        pet.setPetNAME(request.getPetNAME());
+        pet.setPetSPECIE(request.getPetSPECIE());
+        pet.setPetAGE(request.getPetAGE());
+        petRepository.save(pet);
+
+        return new appException("Pet updated successfully!");
     }
 }
