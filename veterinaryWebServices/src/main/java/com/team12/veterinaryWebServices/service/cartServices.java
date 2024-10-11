@@ -111,14 +111,18 @@ public class cartServices {
 
         List<cartDetail> cartDetails = new ArrayList<>();
 
+        long temp = 0;
+
         for (cartItemsDTO i : ((cartDTO) o).getCartItems())
         {
             cartDetail cartItem = cartDetailRepository.getItemInCart(request.getCartID(), i.getItemCODE(), i.getItemID());
             cartItem.setItemQUANTIY(i.getItemQUANTITY());
             cartDetails.add(cartItem);
+            temp = i.getItemQUANTITY() * cartItem.getStorage().getItemPRICE();
         }
 
         cart.setCartDetails(cartDetails);
+        cart.setTOTAL(temp);
         cartRepository.save(cart);
 
         return cartVM.from(cart);
