@@ -51,12 +51,15 @@ public class cartServices {
         if(error != null)
             return error;
 
-        return c;
+        return cartVM.from(c);
     }
 
     public Object addItemToCart(itemDTO request){
 
         cart cart = cartRepository.getUserCart(request.getUserID());
+        if(cart == null)
+            return new appException(ERRORCODE.CART_DOES_NOT_EXIST);
+
         if (!Objects.equals(cart.getCartID(), request.getCartID()))
             return new appException(ERRORCODE.NOT_CART_OWNER);
 
@@ -99,8 +102,10 @@ public class cartServices {
     public Object updateCart(cartDTO request){
 
         cart cart = cartRepository.getUserCart(request.getUserID());
-        if (!Objects.equals(cart.getCartID(), request.getCartID()))
-            return new appException(ERRORCODE.NOT_CART_OWNER);
+        appException error = cartERROR(request,cart);
+
+        if(error != null)
+            return error;
 
         Object o = storageServices.checkCartStock(request);
 
@@ -116,7 +121,6 @@ public class cartServices {
         cart.setCartDetails(cartDetails);
         cartRepository.save(cart);
 
-        return cart;
+        return cartVM.from(cart);
     }
-
 }

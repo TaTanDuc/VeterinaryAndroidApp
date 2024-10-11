@@ -28,5 +28,5 @@ public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails
         );
     }
 
-    private record cartDetails(String itemCODE, Long itemID, String itemIMAGE, String itemNAME,long itemPRICE, int itemQUANTITY) {}
+    private record cartDetails(String itemCODE, Long itemID ,String itemIMAGE, String itemNAME,long itemPRICE, int itemQUANTITY) {}
 }
