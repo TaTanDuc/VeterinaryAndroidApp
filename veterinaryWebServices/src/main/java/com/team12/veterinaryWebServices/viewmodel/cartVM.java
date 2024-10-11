@@ -11,8 +11,10 @@ public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails
         List<cartDetails> cartDetails = c.getCartDetails()
                 .stream()
                 .map(cD ->  new cartDetails(
+                        cD.getStorage().getItemIMAGE(),
                         cD.getStorage().getItemNAME(),
-                        cD.getStorage().getItemPRICE()
+                        cD.getStorage().getItemPRICE(),
+                        cD.getItemQUANTIY()
                 )
                 ).toList();
 
@@ -24,5 +26,5 @@ public record cartVM (Long cartID, Long profileID, List<cartDetails> cartDetails
         );
     }
 
-    private record cartDetails(String itemNAME, long itemPRICE) {}
+    private record cartDetails(String itemIMAGE, String itemNAME,long itemPRICE, int itemQUANTITY) {}
 }
