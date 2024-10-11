@@ -3,7 +3,10 @@ import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final int userID;
+  const ProfileScreen(
+    {required this.userID,
+      super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

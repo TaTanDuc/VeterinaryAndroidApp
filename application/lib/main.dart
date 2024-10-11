@@ -134,13 +134,13 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
+ final int userID; // Nhận userID qua constructor
 
   ProfilePage1({required this.userID});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: ProfilePage1(userID: userID)); // Truyền userID xuống HomePage
+        child: ProfileScreen(userID: userID)); // Truyền userID xuống HomePage
   }
 }
