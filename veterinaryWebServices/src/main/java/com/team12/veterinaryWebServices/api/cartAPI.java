@@ -19,7 +19,7 @@ public class cartAPI {
 
     private final cartServices cartServices;
 
-    @GetMapping("/getUserCart")
+    @PostMapping("/getUserCart")
     public ResponseEntity<Object> getUserCart(@RequestBody cartDTO request){
         Object o = cartServices.getUserCart(request);
 
