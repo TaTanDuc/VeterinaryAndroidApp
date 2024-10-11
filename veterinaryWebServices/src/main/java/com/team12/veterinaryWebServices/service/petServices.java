@@ -68,6 +68,6 @@ public class petServices {
         pet.setPetAGE(request.getPetAGE());
         petRepository.save(pet);
 
-        return new appException("Pet added successfully!");
+        return new appException("Pet updated successfully!");
     }
 }
