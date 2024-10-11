@@ -20,6 +20,8 @@ class _CartViewScreenState extends State<CartViewScreen> {
   dynamic userID;
   dynamic cartID;
   List<dynamic> cartItemUser = [];
+  bool isIncreasing = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +29,67 @@ class _CartViewScreenState extends State<CartViewScreen> {
     _fetchCartUser();
     isClickedList =
         List.generate(5, (index) => false); // Tùy thuộc vào số lượng items
+  }
+
+  Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
+    try {
+      int currentQuantity;
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        userID = currentUser.userID;
+        cartID = currentUser.cartID;
+      } else {
+        print("No user is logged in in HomePage.");
+        return;
+      }
+
+      // Lấy thông tin của item đang được cập nhật
+      var item = cartItemUser[index];
+      currentQuantity = int.parse(item['itemQUANTITY']);
+      ;
+      print(item);
+
+      // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
+      if (isIncreasing) {
+        currentQuantity++;
+      } else {
+        currentQuantity = currentQuantity > 1
+            ? currentQuantity - 1
+            : 1; // Không để số lượng nhỏ hơn 1
+      }
+
+      // Cập nhật lại số lượng item trong danh sách `cartItemUser`
+      setState(() {
+        cartItemUser[index]['itemQUANTITY'] = currentQuantity.toString();
+      });
+
+      // Gọi API để cập nhật số lượng mới
+      final url = Uri.parse("http://localhost:8080/api/cart/updateCart");
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "userID": userID,
+          "cartID": cartID,
+          "cartItems": [
+            {
+              "itemCODE": item['itemCODE'], // Mã item
+              "itemID": item['itemID'], // ID item
+              "itemQUANTITY": currentQuantity.toString() // Số lượng mới
+            }
+          ]
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Item updated successfully!");
+      } else {
+        print("Failed to update item.");
+      }
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future<void> _fetchCartUser() async {
@@ -99,12 +162,15 @@ class _CartViewScreenState extends State<CartViewScreen> {
                                 cartItemUser.length, // Số lượng items từ API
                             itemBuilder: (context, index) {
                               final item = cartItemUser[index];
+                              final imagePath =
+                                  'assets/images/${item['itemIMAGE']}';
                               return _itemsCart(
-                                item['itemIMAGE'], // Dữ liệu hình ảnh từ API
+                                imagePath, // Dữ liệu hình ảnh từ API
                                 item['itemQUANTITY']
                                     .toString(), // Số lượng từ API
+                                item['itemNAME'],
                                 item[
-                                    'itemNAME'], // Tên item từ API // Trọng lượng từ API
+                                    'itemPRICE'], // Tên item từ API // Trọng lượng từ API
                                 index,
                               );
                             },
@@ -139,7 +205,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
     );
   }
 
-  Widget _itemsCart(pathImage, quantityItem, nameItem, index) {
+  Widget _itemsCart(pathImage, quantityItem, nameItem, priceItem, index) {
     int itemIndex = index as int;
     return GestureDetector(
       onTap: () {
@@ -174,11 +240,11 @@ class _CartViewScreenState extends State<CartViewScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(pathImage, width: 70, height: 70),
+                  Image.asset(pathImage, width: 200, height: 150),
                   const SizedBox(width: 30),
-                  _contentItem(quantityItem, nameItem),
+                  _contentItem(priceItem, nameItem),
                   const SizedBox(width: 15),
-                  _counter(),
+                  _counter(quantityItem, index),
                 ],
               ),
             ),
@@ -199,32 +265,45 @@ class _CartViewScreenState extends State<CartViewScreen> {
     );
   }
 
-  Widget _contentItem(quantityItem, nameItem) {
+  Widget _contentItem(priceItem, nameItem) {
     return Column(
       children: [
-        Text(
-          quantityItem,
-          style: TextStyle(
-              color: Color(0xff5CB15A), fontSize: 16, fontFamily: 'Fredoka'),
-        ),
-        const SizedBox(height: 5),
         Text(nameItem,
             style: TextStyle(
-                color: Color(0xff000000), fontSize: 20, fontFamily: 'Fredoka')),
-        const SizedBox(height: 5),
+                color: Color(0xff000000),
+                fontSize: 30,
+                fontFamily: 'Fredoka',
+                fontWeight: FontWeight.w600)),
+        const SizedBox(height: 15),
+        Text(
+          "${priceItem}\$",
+          style: TextStyle(
+              color: Color(0xff5CB15A), fontSize: 20, fontFamily: 'Fredoka'),
+        ),
       ],
     );
   }
 
-  Widget _counter() {
+  Widget _counter(quantityItem, index) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.add),
+        IconButton(
+          icon: Icon(Icons.add), // Biểu tượng nút
+          onPressed: () {
+            handleIncreaseItem(index, true);
+          },
+        ),
         const SizedBox(height: 10),
-        Text('3', style: TextStyle(fontSize: 16, color: Color(0xff868889))),
+        Text("${quantityItem}",
+            style: TextStyle(fontSize: 16, color: Color(0xff868889))),
         const SizedBox(height: 10),
-        Icon(Icons.remove)
+        IconButton(
+          icon: Icon(Icons.remove),
+          onPressed: () {
+            print("Icon button clicked!");
+          },
+        )
       ],
     );
   }
