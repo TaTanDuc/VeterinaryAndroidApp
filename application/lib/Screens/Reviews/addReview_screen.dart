@@ -4,7 +4,14 @@ import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 
 class AddReviewScreen extends StatefulWidget {
-  const AddReviewScreen({super.key});
+  final String serviceCODE;
+  final int userID;
+  const AddReviewScreen(
+      {Key? key,
+      required this.serviceCODE,
+      required this.userID // Make userID required as well
+      })
+      : super(key: key);
 
   @override
   State<AddReviewScreen> createState() => _MyWidgetState();
@@ -104,7 +111,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
           ),
         ),
         // CustomNavContent(
-        //     navText: 'Add Review',
+        //     navText: 'Add Your Review Here',
         //     onBackPressed: () {
         //       Navigator.push(
         //         context,

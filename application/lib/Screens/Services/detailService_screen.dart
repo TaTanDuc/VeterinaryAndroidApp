@@ -55,7 +55,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
           }
 
           print("Parsed comments: $_comments.");
-          print('User ID nerjdfhjhjhj: ${widget.userID}');
+          print('User ID nerjdfhjhjhj: ${data['serviceCODE']}');
 
 // Stop loading when data is fetched
         });
