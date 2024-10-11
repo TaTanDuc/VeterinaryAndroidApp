@@ -1,4 +1,5 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
+import 'package:application/Screens/Checkout/checkout_screen.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Services/detailService_screen.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: CheckoutScreen(),
       //home: ShopPage(),
       //home: ExplorePage(),
       //home: ServicePage(),
@@ -135,7 +136,7 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
- final int userID; // Nhận userID qua constructor
+  final int userID; // Nhận userID qua constructor
 
   ProfilePage1({required this.userID});
 

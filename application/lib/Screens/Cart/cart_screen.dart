@@ -22,7 +22,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
   dynamic cartID;
   List<dynamic> cartItemUser = [];
   bool isIncreasing = false;
-  bool isDecreasing= false
+  bool isDecreasing = false;
+  int totalPrice = 0;
+  int shipPrice = 2;
 
   @override
   void initState() {
@@ -32,8 +34,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
     isClickedList =
         List.generate(5, (index) => false); // Tùy thuộc vào số lượng items
   }
-  Future<void> handleDecreaseItem(int index, bool isDecreasing){
-     try {
+
+  Future<void> handleDecreaseItem(int index, bool isDecreasing) async {
+    try {
       int currentQuantity;
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
@@ -52,12 +55,12 @@ class _CartViewScreenState extends State<CartViewScreen> {
       print(item);
 
       // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
-      if (isIncreasing) {
-        currentQuantity++;
+      if (isDecreasing) {
+        currentQuantity--;
       } else {
-        currentQuantity = currentQuantity > 1
-            ? currentQuantity - 1
-            : 1; // Không để số lượng nhỏ hơn 1
+        currentQuantity = currentQuantity == 1
+            ? currentQuantity
+            : currentQuantity - 1; // Không để số lượng nhỏ hơn 1
       }
 
       // Gọi API để cập nhật số lượng mới
@@ -79,21 +82,18 @@ class _CartViewScreenState extends State<CartViewScreen> {
       );
 
       if (response.statusCode == 200) {
-        print("Item updated successfully!");
         final data = jsonDecode(response.body);
-        print(data);
         setState(() {
+          totalPrice = data["TOTAL"];
           cartItemUser[index] =
               data['cartDetails'][0]; // Hiển thị thông báo lỗi
         });
-        print(cartItemUser);
-      } else {
-        print("Failed to update item.");
       }
     } catch (err) {
       print(err);
     }
   }
+
   Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
     try {
       int currentQuantity;
@@ -145,6 +145,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
         final data = jsonDecode(response.body);
         print(data);
         setState(() {
+          totalPrice = data["TOTAL"];
           cartItemUser[index] =
               data['cartDetails'][0]; // Hiển thị thông báo lỗi
         });
@@ -181,7 +182,8 @@ class _CartViewScreenState extends State<CartViewScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          cartItemUser = data["cartDetails"]; // Hiển thị thông báo lỗi
+          cartItemUser = data["cartDetails"];
+          totalPrice = data["TOTAL"]; // Hiển thị thông báo lỗi
         });
       }
     } catch (error) {
@@ -241,11 +243,11 @@ class _CartViewScreenState extends State<CartViewScreen> {
                           ),
                         ),
                   const SizedBox(height: 70),
-                  _priceItem('Subtotal', 'Rs.530.540'),
+                  _priceItem('Subtotal', "${totalPrice}\$"),
                   const SizedBox(height: 20),
-                  _priceItem('Shipping charges', 'Rs 520.00'),
+                  _priceItem('Shipping charges', "${shipPrice}\$"),
                   const SizedBox(height: 50),
-                  _priceItem('Total', 'Rs 53,860'),
+                  _priceItem('Total', "${totalPrice + shipPrice}\$"),
                   const SizedBox(height: 50),
                   CustomButton(text: 'Checkout', onPressed: () {})
                 ],
@@ -349,27 +351,27 @@ class _CartViewScreenState extends State<CartViewScreen> {
   }
 
   Widget _counter(quantityItem, index) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Icon(Icons.add), // Biểu tượng nút
-          onPressed: () {
-            handleIncreaseItem(index, true);
-            // _fetchCartUser();
-          },
-        ),
-        const SizedBox(height: 10),
-        Text("${quantityItem}",
-            style: TextStyle(fontSize: 16, color: Color(0xff868889))),
-        const SizedBox(height: 10),
-        IconButton(
-          icon: Icon(Icons.remove),
-          onPressed: () {
-          handleDecreaseItem(index, isDecreasing)
-          },
-        )
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: Icon(Icons.add), // Biểu tượng nút
+            onPressed: () {
+              handleIncreaseItem(index, true);
+              // _fetchCartUser();
+            },
+          ),
+          Text("${quantityItem}",
+              style: TextStyle(fontSize: 16, color: Color(0xff868889))),
+          IconButton(
+            icon: Icon(Icons.remove),
+            onPressed: () {
+              handleDecreaseItem(index, isDecreasing);
+            },
+          )
+        ],
+      ),
     );
   }
 
