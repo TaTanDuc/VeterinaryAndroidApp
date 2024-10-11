@@ -1,9 +1,11 @@
 import 'package:application/Screens/Login/register_screen.dart';
 import 'package:application/Screens/Reviews/addReview_screen.dart';
+import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/pages/Homepage/service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -27,13 +29,56 @@ class _MyWidgetState extends State<ReviewsScreen> {
   bool _loading = true; // Change the type based on your response
   List<Comment> _comments = [];
   dynamic serviceCommnets;
+  Map<int, int> _ratings = {};
   dynamic ID;
   @override
   void initState() {
     super.initState();
-
+    fetchRatings();
     fetchCommentsService();
     fetchserviceCommnets(); // Fetch details when the page initializes
+  }
+
+  Future<void> fetchRatings() async {
+    final url =
+        'http://localhost:8080/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        setState(() {
+          _ratings = {
+            1: data['1'] ?? 0,
+            2: data['2'] ?? 0,
+            3: data['3'] ?? 0,
+            4: data['4'] ?? 0,
+            5: data['5'] ?? 0,
+          };
+          _loading = false;
+          print('xin chao jhdjfdhjfhjfdhfjdfhdjfhdjfhdjhfdjhfgfdj: $data');
+        });
+      } else {
+        throw Exception('Failed to load ratings');
+      }
+    } catch (error) {
+      print(error);
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Map<int, double> calculatePercentages(Map<int, int> ratings) {
+    int totalRatings = ratings.values.fold(0, (sum, count) => sum + count);
+
+    if (totalRatings == 0) {
+      return {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0, 5: 0.0};
+    }
+
+    return ratings.map((star, count) {
+      return MapEntry(star, count / totalRatings);
+    });
   }
 
   Future<void> fetchserviceCommnets() async {
@@ -80,21 +125,20 @@ class _MyWidgetState extends State<ReviewsScreen> {
     try {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
-
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        print("User ID in review: ${currentUser.userID}");
+        ID = currentUser.userID;
+      } else {
+        print("No user is logged in in HomePage.");
+      }
       if (response.statusCode == 200) {
-        final userManager = UserManager(); // Ensure singleton access
-        User? currentUser = userManager.user;
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
           _loading = false;
           _comments = data.map((json) => Comment.fromJson(json)).toList();
           print("Parsed comments: $_comments.");
-          if (currentUser != null) {
-            print("User ID in review: ${currentUser.userID}");
-            ID = currentUser.userID;
-          } else {
-            print("No user is logged in in HomePage.");
-          }
 
 // Stop loading when data is fetched
         });
@@ -129,24 +173,22 @@ class _MyWidgetState extends State<ReviewsScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(12.0), // Apply padding
+                  padding:
+                      const EdgeInsets.fromLTRB(0, 95, 0, 0), // Apply padding
                   child: Column(
                     // Wrap the widgets inside a Column
                     children: [
-                      const SizedBox(height: 80),
                       _evaluate(serviceCommnets['serviceRATING'],
                           serviceCommnets['commentCOUNT']),
-                      const SizedBox(height: 30),
-                      _buildRatingRow('Excellent', Color(0xff2D9A3E), .9),
-                      const SizedBox(height: 20),
-                      _buildRatingRow('Good', Color(0xff4FD339), .7),
-                      const SizedBox(height: 20),
-                      _buildRatingRow('Average', Color(0xffCCDF56), .5),
-                      const SizedBox(height: 20),
-                      _buildRatingRow('Below Average', Color(0xffCDBF3E), .4),
-                      const SizedBox(height: 20),
-                      _buildRatingRow('Poor', Color(0xffEA6868), .2),
-                      const SizedBox(height: 20),
+                      Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: _loading
+                            ? Center(child: CircularProgressIndicator())
+                            : Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: buildStarRatingSummary(_ratings),
+                              ),
+                      )
                     ],
                   ),
                 ),
@@ -171,7 +213,10 @@ class _MyWidgetState extends State<ReviewsScreen> {
             onBackPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RegisterScreen()),
+                MaterialPageRoute(
+                    builder: (context) => DetailServiceScreen(
+                          serviceCODE: widget.serviceCODE,
+                        )),
               ); // Navigate to the previous screen
             },
           ),
@@ -188,6 +233,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
                             userID: ID,
                           )),
                 );
+                print('This is ID: ${serviceCommnets['serviceCODE']}');
               },
               child: Image.asset(
                 'assets/icons/add_review.png', // Path to your icon
@@ -271,10 +317,28 @@ class _MyWidgetState extends State<ReviewsScreen> {
     );
   }
 
+  Widget buildStarRatingSummary(Map<int, int> ratings) {
+    Map<int, double> ratingPercentages = calculatePercentages(ratings);
+
+    return Column(
+      children: [
+        _buildRatingRow('Excellent', Color(0xff2D9A3E), ratingPercentages[5]!),
+        SizedBox(height: 20),
+        _buildRatingRow('Good', Color(0xff4FD339), ratingPercentages[4]!),
+        SizedBox(height: 20),
+        _buildRatingRow('Average', Color(0xffCCDF56), ratingPercentages[3]!),
+        SizedBox(height: 20),
+        _buildRatingRow(
+            'Below Average', Color(0xffCDBF3E), ratingPercentages[2]!),
+        SizedBox(height: 20),
+        _buildRatingRow('Poor', Color(0xffEA6868), ratingPercentages[1]!),
+      ],
+    );
+  }
+
   Widget _buildRatingRow(String label, Color color, double percentage) {
     return Row(
       children: [
-        // Text label
         SizedBox(
           width: 200,
           child: Text(
@@ -287,7 +351,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
           ),
         ),
         SizedBox(width: 10),
-        // Progress Bar
         Expanded(
           child: Container(
             height: 12,
@@ -306,48 +369,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _navReview() {
-    return Container(
-      width: double.infinity,
-      height: 100,
-      color: Color(0xff5CB15A),
-      child: Center(
-          child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Icon(Icons.arrow_back, color: Colors.white, size: 30),
-            const SizedBox(width: 30),
-            Expanded(
-              child: Text(
-                'Review',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 30,
-                    fontFamily: 'Fredoka',
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-      )),
-    );
-  }
-
-  Widget _descItem(String des) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          des,
-          style: TextStyle(
-              color: Color(0xff191919), fontSize: 16, fontFamily: 'Fredoka'),
         ),
       ],
     );

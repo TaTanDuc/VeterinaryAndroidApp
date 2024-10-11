@@ -1,7 +1,9 @@
 import 'package:application/bodyToCallAPI/Service.dart';
 
+import 'package:intl/intl.dart';
+
 class Appointment {
-  final int profileID;
+  final int userID;
   final int petID;
   final DateTime appointmentDATE;
   final String
@@ -9,17 +11,15 @@ class Appointment {
   final List<Service> services;
 
   Appointment({
-    required this.profileID,
+    required this.userID,
     required this.petID,
     required this.appointmentDATE,
     required this.appointmentTIME,
     required this.services,
   });
-
-  // Convert JSON to AppointmentDTO
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      profileID: json['profileID'],
+      userID: json['userID'],
       petID: json['petID'],
       appointmentDATE: DateTime.parse(json['appointmentDATE']),
       appointmentTIME: json['appointmentTIME'],
@@ -32,11 +32,14 @@ class Appointment {
   // Convert AppointmentDTO to JSON
   Map<String, dynamic> toJson() {
     return {
-      'profileID': profileID,
+      'userID': userID,
       'petID': petID,
-      'appointmentDATE': appointmentDATE.toIso8601String(),
+      // Format appointmentDATE to only include the date (yyyy-MM-dd)
+      'appointmentDATE': DateFormat('yyyy-MM-dd').format(appointmentDATE),
       'appointmentTIME': appointmentTIME,
-      'services': services.map((service) => service.toJson()).toList(),
+      'services': services
+          .map((service) => {'serviceCODE': service.serviceCODE})
+          .toList()
     };
   }
 }

@@ -8,8 +8,7 @@ import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
-import 'package:provider/provider.dart'; // Import http package
+// Import http package
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
