@@ -81,6 +81,9 @@ public class cartServices {
             }
             cartItem.setItemQUANTIY(tempQuantity);
             cartDetailRepository.save(cartItem);
+
+            cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
+            cartRepository.save(cart);
             return itemVM.from(item);
         }
 
@@ -96,6 +99,9 @@ public class cartServices {
         cartItems.setItemQUANTIY(request.getQuantity());
 
         cartDetailRepository.save(cartItems);
+
+        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
+        cartRepository.save(cart);
         return itemVM.from(item);
     }
 
@@ -111,18 +117,33 @@ public class cartServices {
 
         List<cartDetail> cartDetails = new ArrayList<>();
 
-        long temp = 0;
-
         for (cartItemsDTO i : ((cartDTO) o).getCartItems())
         {
             cartDetail cartItem = cartDetailRepository.getItemInCart(request.getCartID(), i.getItemCODE(), i.getItemID());
             cartItem.setItemQUANTIY(i.getItemQUANTITY());
             cartDetails.add(cartItem);
-            temp = i.getItemQUANTITY() * cartItem.getStorage().getItemPRICE();
         }
 
         cart.setCartDetails(cartDetails);
-        cart.setTOTAL(temp);
+        cartRepository.save(cart);
+
+        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
+        cartRepository.save(cart);
+
+        return cartVM.from(cart);
+    }
+
+    public Object deleteItemInCart(itemDTO request){
+        cart cart = cartRepository.getUserCart(request.getUserID());
+        if(cart == null)
+            return new appException(ERRORCODE.CART_DOES_NOT_EXIST);
+
+        if (!Objects.equals(cart.getCartID(), request.getCartID()))
+            return new appException(ERRORCODE.NOT_CART_OWNER);
+
+        cartDetail cD = cartDetailRepository.getItemInCart(request.getCartID(), request.getItemCODE(), request.getItemID());
+        cartDetailRepository.delete(cD);
+        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
         cartRepository.save(cart);
 
         return cartVM.from(cart);

@@ -48,4 +48,14 @@ public class cartAPI {
 
         return ResponseEntity.ok(o);
     }
+
+    @PatchMapping("/deleteItem")
+    public ResponseEntity<Object> deleteItemInCart(@RequestBody itemDTO request){
+        Object o = cartServices.deleteItemInCart(request);
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
 }
