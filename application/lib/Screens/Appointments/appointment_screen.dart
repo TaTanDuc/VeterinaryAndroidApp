@@ -101,6 +101,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             );
           },
           hideImage: true,
+          pathImage: 'assets/images/avatar01.jpg',
         ),
       ],
     );

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:application/Screens/Cart/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -89,9 +90,20 @@ class _ShopPageState extends State<ShopPage> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
-              child: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.white, // Set icon color
+              child: IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Điều hướng đến trang mới
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CartViewScreen()), // Thay NewPage bằng trang bạn muốn mở
+                  );
+                },
               ),
             ),
           ),
@@ -191,7 +203,6 @@ class _ShopPageState extends State<ShopPage> {
                         )
                       ] // Hiển thị nếu không có dữ liệu
                     : _categoryItems.map((item) {
-                        print(item);
                         String imagePath = 'assets/images/${item['itemIMAGE']}';
                         return _buildShopRow(
                             item['itemNAME'],

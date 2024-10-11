@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:application/Screens/Login/register_screen.dart';
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CartViewScreen extends StatefulWidget {
   const CartViewScreen({super.key});
@@ -12,12 +17,49 @@ class CartViewScreen extends StatefulWidget {
 
 class _CartViewScreenState extends State<CartViewScreen> {
   List<bool> isClickedList = [];
+  dynamic userID;
+  dynamic cartID;
+  List<dynamic> cartItemUser = [];
   @override
   void initState() {
     super.initState();
     // Giả sử có 5 item, khởi tạo danh sách trạng thái cho tất cả items
+    _fetchCartUser();
     isClickedList =
         List.generate(5, (index) => false); // Tùy thuộc vào số lượng items
+  }
+
+  Future<void> _fetchCartUser() async {
+    try {
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        userID = currentUser.userID;
+        cartID = currentUser.cartID;
+      } else {
+        print("No user is logged in in HomePage.");
+      }
+      final url = Uri.parse("http://localhost:8080/api/cart/getUserCart");
+      // Gửi yêu cầu POST tới API
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "userID": userID,
+          "cartID": cartID // Lấy text từ usernameController
+        }),
+      );
+      // Kiểm tra trạng thái của API trả về
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          cartItemUser = data["cartDetails"]; // Hiển thị thông báo lỗi
+        });
+        print(data);
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -40,28 +82,40 @@ class _CartViewScreenState extends State<CartViewScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 120),
-                  SizedBox(
-                    // Bọc ListView.builder trong SizedBox với chiều cao cố định
-                    height: 400, // Hoặc dùng chiều cao bạn muốn giới hạn
-                    child: ListView.builder(
-                      itemCount: 5, // Số lượng items trong cart
-                      itemBuilder: (context, index) {
-                        return _itemsCart(
-                          'assets/images/food2.png', // pathImage
-                          '2', // quantityItem
-                          'Item $index', // nameItem
-                          '1.5', // heavyItem
-                          index,
-                        );
-                      },
-                    ),
-                  ),
+                  cartItemUser.isEmpty
+                      ? Text(
+                          'Hiện tại bạn không có item nào trong cart',
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: Colors.black,
+                            fontFamily: 'Fredoka',
+                          ),
+                        )
+                      : SizedBox(
+                          height:
+                              400, // Giới hạn chiều cao cho ListView.builder
+                          child: ListView.builder(
+                            itemCount:
+                                cartItemUser.length, // Số lượng items từ API
+                            itemBuilder: (context, index) {
+                              final item = cartItemUser[index];
+                              return _itemsCart(
+                                item['itemIMAGE'], // Dữ liệu hình ảnh từ API
+                                item['itemQUANTITY']
+                                    .toString(), // Số lượng từ API
+                                item[
+                                    'itemNAME'], // Tên item từ API // Trọng lượng từ API
+                                index,
+                              );
+                            },
+                          ),
+                        ),
                   const SizedBox(height: 70),
-                  _priceItem('Subtotal', 'Rs.530.540', 16),
+                  _priceItem('Subtotal', 'Rs.530.540'),
                   const SizedBox(height: 20),
-                  _priceItem('Shipping charges', 'Rs 520.00', 16),
+                  _priceItem('Shipping charges', 'Rs 520.00'),
                   const SizedBox(height: 50),
-                  _priceItem('Total', 'Rs 53,860', 20),
+                  _priceItem('Total', 'Rs 53,860'),
                   const SizedBox(height: 50),
                   CustomButton(text: 'Checkout', onPressed: () {})
                 ],
@@ -85,7 +139,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
     );
   }
 
-  Widget _itemsCart(pathImage, quantityItem, nameItem, heavyItem, index) {
+  Widget _itemsCart(pathImage, quantityItem, nameItem, index) {
     int itemIndex = index as int;
     return GestureDetector(
       onTap: () {
@@ -122,7 +176,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
                 children: [
                   Image.asset(pathImage, width: 70, height: 70),
                   const SizedBox(width: 30),
-                  _contentItem(quantityItem, nameItem, heavyItem),
+                  _contentItem(quantityItem, nameItem),
                   const SizedBox(width: 15),
                   _counter(),
                 ],
@@ -145,7 +199,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
     );
   }
 
-  Widget _contentItem(quantityItem, nameItem, heavyItem) {
+  Widget _contentItem(quantityItem, nameItem) {
     return Column(
       children: [
         Text(
@@ -158,11 +212,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
             style: TextStyle(
                 color: Color(0xff000000), fontSize: 20, fontFamily: 'Fredoka')),
         const SizedBox(height: 5),
-        Text(heavyItem,
-            style: TextStyle(
-                color: Color(0xff868889),
-                fontWeight: FontWeight.w300,
-                fontFamily: 'Fredoka'))
       ],
     );
   }
@@ -180,14 +229,14 @@ class _CartViewScreenState extends State<CartViewScreen> {
     );
   }
 
-  Widget _priceItem(subItem, priceItem, fzItem) {
+  Widget _priceItem(subItem, priceItem) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           subItem,
           style: TextStyle(
-              fontSize: fzItem,
+              fontSize: 20,
               color: Color(0xff000000),
               fontFamily: 'Fredoka',
               fontWeight: FontWeight.w600),
@@ -195,9 +244,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
         Text(
           priceItem,
           style: TextStyle(
-              fontSize: fzItem,
-              color: Color(0xff000000),
-              fontFamily: 'Fredoka'),
+              fontSize: 20, color: Color(0xff000000), fontFamily: 'Fredoka'),
         ),
       ],
     );
