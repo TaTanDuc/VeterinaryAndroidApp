@@ -191,6 +191,7 @@ class _ShopPageState extends State<ShopPage> {
                         )
                       ] // Hiển thị nếu không có dữ liệu
                     : _categoryItems.map((item) {
+                        print(item);
                         String imagePath = 'assets/images/${item['itemIMAGE']}';
                         return _buildShopRow(
                             item['itemNAME'],
