@@ -5,6 +5,7 @@ import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/service/fetchAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,7 +47,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
       // Lấy thông tin của item đang được cập nhật
       var item = cartItemUser[index];
-      currentQuantity = int.parse(item['itemQUANTITY']);
+      currentQuantity = item['itemQUANTITY'];
       ;
       print(item);
 
@@ -58,11 +59,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
             ? currentQuantity - 1
             : 1; // Không để số lượng nhỏ hơn 1
       }
-
-      // Cập nhật lại số lượng item trong danh sách `cartItemUser`
-      setState(() {
-        cartItemUser[index]['itemQUANTITY'] = currentQuantity.toString();
-      });
 
       // Gọi API để cập nhật số lượng mới
       final url = Uri.parse("http://localhost:8080/api/cart/updateCart");
@@ -84,6 +80,11 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
       if (response.statusCode == 200) {
         print("Item updated successfully!");
+        final data = jsonDecode(response.body);
+        setState(() {
+          cartItemUser[index] = data; // Hiển thị thông báo lỗi
+        });
+        print(cartItemUser);
       } else {
         print("Failed to update item.");
       }
@@ -118,7 +119,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
         setState(() {
           cartItemUser = data["cartDetails"]; // Hiển thị thông báo lỗi
         });
-        print(data);
       }
     } catch (error) {
       print(error);
@@ -292,6 +292,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
           icon: Icon(Icons.add), // Biểu tượng nút
           onPressed: () {
             handleIncreaseItem(index, true);
+            // _fetchCartUser();
           },
         ),
         const SizedBox(height: 10),

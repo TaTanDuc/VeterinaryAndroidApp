@@ -12,6 +12,7 @@ import com.team12.veterinaryWebServices.model.storage;
 import com.team12.veterinaryWebServices.repository.cartDetailRepository;
 import com.team12.veterinaryWebServices.repository.cartRepository;
 import com.team12.veterinaryWebServices.repository.storageRepository;
+import com.team12.veterinaryWebServices.viewmodel.cartVM;
 import com.team12.veterinaryWebServices.viewmodel.itemVM;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -115,9 +116,7 @@ public class cartServices {
         cart.setCartDetails(cartDetails);
         cartRepository.save(cart);
 
-        
-
-        return o;
+        return cart;
     }
 
 }
