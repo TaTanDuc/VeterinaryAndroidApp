@@ -36,7 +36,7 @@ public record serviceVM (String serviceCODE, String serviceNAME, double serviceR
                     s.getServiceNAME(),
                     s.getServiceRATING(),
                     s.getComments().size(),
-                    s.getServiceDATE(),
+                    s.getServiceDATE(), 
                     recentComments
             );
         }

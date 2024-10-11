@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ERRORCODE {
 
+    CONTENT_ERROR("Content must be between 20 - 200 characters",HttpStatus.BAD_REQUEST),
+    RATING_ERROR("Rating must be between 1 to 5 stars!",HttpStatus.BAD_REQUEST),
     NO_SERVICE_IN_APPOINTMENT("There is no service in the appointment!", HttpStatus.BAD_REQUEST),
     USER_EXISTED("User already existed!", HttpStatus.BAD_REQUEST),
     USER_DOES_NOT_EXIST("User doesn't exist!", HttpStatus.BAD_REQUEST),
