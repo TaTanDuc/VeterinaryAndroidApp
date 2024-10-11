@@ -26,7 +26,7 @@ public class cartAPI {
         if(o instanceof appException e)
             return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
 
-        return ResponseEntity.ok(cartVM.from((cart) o));
+        return ResponseEntity.ok(o);
     }
 
     @PostMapping("/addItem")
