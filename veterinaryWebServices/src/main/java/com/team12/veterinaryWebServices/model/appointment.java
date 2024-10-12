@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,4 +34,9 @@ public class appointment {
     @ManyToOne
     @JoinColumn(name = "petID", referencedColumnName = "petID")
     private pet pet;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appointmentID); // Use a unique identifier instead
+    }
 }

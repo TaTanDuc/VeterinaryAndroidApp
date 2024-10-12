@@ -14,7 +14,9 @@ import com.team12.veterinaryWebServices.repository.cartRepository;
 import com.team12.veterinaryWebServices.repository.storageRepository;
 import com.team12.veterinaryWebServices.viewmodel.cartVM;
 import com.team12.veterinaryWebServices.viewmodel.itemVM;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -82,8 +84,7 @@ public class cartServices {
             cartItem.setItemQUANTIY(tempQuantity);
             cartDetailRepository.save(cartItem);
 
-            cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
-            cartRepository.save(cart);
+            cartRepository.updateCartTotal(request.getCartID());
             return itemVM.from(item);
         }
 
@@ -99,9 +100,7 @@ public class cartServices {
         cartItems.setItemQUANTIY(request.getQuantity());
 
         cartDetailRepository.save(cartItems);
-
-        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
-        cartRepository.save(cart);
+        cartRepository.updateCartTotal(request.getCartID());
         return itemVM.from(item);
     }
 
@@ -126,9 +125,7 @@ public class cartServices {
 
         cart.setCartDetails(cartDetails);
         cartRepository.save(cart);
-
-        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
-        cartRepository.save(cart);
+        cartRepository.updateCartTotal(request.getCartID());
 
         return cartVM.from(cart);
     }
@@ -143,8 +140,7 @@ public class cartServices {
 
         cartDetail cD = cartDetailRepository.getItemInCart(request.getCartID(), request.getItemCODE(), request.getItemID());
         cartDetailRepository.delete(cD);
-        cart.setTOTAL(cartRepository.getCartTotal(request.getCartID()));
-        cartRepository.save(cart);
+        cartRepository.updateCartTotal(request.getCartID());
 
         return cartVM.from(cart);
     }

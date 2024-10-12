@@ -36,7 +36,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
 
     try {
       final response =
