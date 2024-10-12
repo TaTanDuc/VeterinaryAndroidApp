@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:application/pages/Homepage/shop.dart';
 import 'dart:convert';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final int userID;

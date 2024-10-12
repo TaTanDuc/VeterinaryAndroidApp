@@ -1,22 +1,22 @@
+import 'package:application/Screens/Appointments/appointment_screen.dart';
 import 'package:application/Screens/Cart/cart_screen.dart';
 import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/pages/Homepage/service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class DetailServiceScreen extends StatefulWidget {
-  final String serviceCODE;
-  final int userID; // Added userID field
+  final String serviceCODE; // Added userID field
 
   const DetailServiceScreen({
     Key? key,
-    required this.serviceCODE,
-    required this.userID, // Make userID required as well
+    required this.serviceCODE, // Make userID required as well
   }) : super(key: key);
 
   @override
@@ -42,24 +42,23 @@ class _DetailPageState extends State<DetailServiceScreen> {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
 
-      if (response.statusCode == 200) {
+      if (response.body != null && response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
           serviceDetails =
               jsonDecode(response.body); // Update with your response structure
           _loading = false;
+          if (serviceDetails == null) {
+            print('No service found');
+          }
           if (data['comments'] != null) {
             _comments = (data['comments'] as List)
                 .map((commentData) => Comment.fromJson(commentData))
                 .toList();
           }
 
-          print("Parsed comments: $_comments.");
-          print('User ID nerjdfhjhjhj: ${widget.userID}');
-
 // Stop loading when data is fetched
         });
-        print("data: ${serviceDetails}");
       } else {
         throw Exception('Failed to load service details');
       }
@@ -74,7 +73,79 @@ class _DetailPageState extends State<DetailServiceScreen> {
   @override
   Widget build(BuildContext context) {
     Service service = Service.fromJson(serviceDetails);
-    return Scaffold(
+    // return Scaffold(
+    //     appBar: AppBar(
+    //       backgroundColor: const Color(0xFF5CB15A),
+    //       title: const Center(
+    //         child: Text(
+    //           'Detail',
+    //           style: TextStyle(
+    //             color: Colors.white,
+    //             fontSize: 16,
+    //             fontFamily: 'Fredoka',
+    //           ),
+    //         ),
+    //       ),
+    //       actions: [
+    //         Padding(
+    //           padding: const EdgeInsets.all(8.0),
+    //           child: SizedBox(
+    //             height:
+    //                 AppBar().preferredSize.height, // Match the AppBar height
+    //             child: Image.asset(
+    //               'assets/icons/logo.png',
+    //               fit: BoxFit.contain,
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //     body: SingleChildScrollView(
+    //         child: Column(
+    //       children: [
+    //         ClipPath(
+    //           clipper: BottomRoundedClipper(),
+    //           child: Image.asset(
+    //             'assets/icons/Icon.jpg',
+    //             width: double.infinity,
+    //             height: 350,
+    //             fit: BoxFit.cover,
+    //           ),
+    //         ),
+    //         Center(
+    //           child: _loading
+    //               ? Center(child: CircularProgressIndicator())
+    //               : serviceDetails != null
+    //                   ? Column(
+    //                       children: [
+    //                         _buildServiceDetailView(),
+    //                         const SizedBox(
+    //                             height:
+    //                                 20), // Spacing between service details and button
+    //                         // Add button here
+    //                         _button(service),
+    //                         const SizedBox(height: 20),
+    //                         _buttonBook(),
+    //                         const SizedBox(height: 20),
+    //                       ],
+    //                     )
+    //                   : Center(child: Text('No details available')),
+    //         )
+    //       ],
+    //     )));
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate to ShopPage when back button is pressed
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ServicePage(
+                    userID: service.userID,
+                  )), // Replace ShopPage with the actual widget for your shop page
+        );
+        return false; // Prevent the default pop action
+      },
+      child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF5CB15A),
           title: const Center(
@@ -102,38 +173,40 @@ class _DetailPageState extends State<DetailServiceScreen> {
           ],
         ),
         body: SingleChildScrollView(
-            child: Column(
-          children: [
-            ClipPath(
-              clipper: BottomRoundedClipper(),
-              child: Image.asset(
-                'assets/icons/Icon.jpg',
-                width: double.infinity,
-                height: 350,
-                fit: BoxFit.cover,
+          child: Column(
+            children: [
+              ClipPath(
+                clipper: BottomRoundedClipper(),
+                child: Image.asset(
+                  'assets/icons/Icon.jpg',
+                  width: double.infinity,
+                  height: 350,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            Center(
-              child: _loading
-                  ? Center(child: CircularProgressIndicator())
-                  : serviceDetails != null
-                      ? Column(
-                          children: [
-                            _buildServiceDetailView(),
-                            const SizedBox(
-                                height:
-                                    20), // Spacing between service details and button
-                            // Add button here
-                            _button(service),
-                            const SizedBox(height: 20),
-                            _buttonBook(),
-                            const SizedBox(height: 20),
-                          ],
-                        )
-                      : Center(child: Text('No details available')),
-            )
-          ],
-        )));
+              Center(
+                child: _loading
+                    ? Center(child: CircularProgressIndicator())
+                    : serviceDetails != null
+                        ? Column(
+                            children: [
+                              _buildServiceDetailView(),
+                              const SizedBox(
+                                  height:
+                                      20), // Spacing between service details and button
+                              _button(service),
+                              const SizedBox(height: 20),
+                              _buttonBook(),
+                              const SizedBox(height: 20),
+                            ],
+                          )
+                        : Center(child: Text('No details available')),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildStarRating(double rating) {
@@ -284,12 +357,11 @@ class _DetailPageState extends State<DetailServiceScreen> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          print("User ID: ${widget.userID}");
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ReviewsScreen(
-                serviceCODE: serviceDetails['serviceCODE'],
+                serviceCODE: service.serviceCODE,
                 userID:
                     service.userID, // Ensure you have userID in serviceDetails
               ),
@@ -309,7 +381,16 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
   Widget _buttonBook() {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AppointmentScreen(
+                // Ensure you have userID in serviceDetails
+                ),
+          ),
+        );
+      },
       child: SizedBox(
         width: double.infinity,
         child: Row(

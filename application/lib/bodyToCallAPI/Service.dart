@@ -20,9 +20,9 @@ class Service {
 
   factory Service.fromJson(Map<String, dynamic> json) {
     return Service(
-      serviceCODE:
-          json['serviceCODE'] ?? '', // Provide default values if necessary
-      serviceNAME: json['serviceNAME'] ?? 0,
+      serviceCODE: json['serviceCODE'] ??
+          'Unkown', // Provide default values if necessary
+      serviceNAME: json['serviceNAME'] ?? 'null',
       serviceRATING: json['serviceRATING'] ?? 0.0,
       commentCOUNT: json['commentCOUNT'] ?? 0,
       serviceDATE: json['serviceDATE'] ?? '',
@@ -30,8 +30,19 @@ class Service {
       userID: json['userID'] ?? 0,
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'serviceCODE': serviceCODE,
+      'serviceNAME': serviceNAME,
+      'serviceRATING': serviceRATING,
+      'commentCOUNT': commentCOUNT,
+      'serviceDATE': serviceDATE,
+      'imageService': imageService,
+      'userID': userID,
+    };
+  }
+}
   // @override
   // String toString() {
   //   return 'Pet(userID: $serviceCODE, petID: $serviceNAME, petIMAGE: $serviceRATING, petSPECIE: $commentCOUNT, petNAME: $serviceDATE)';
   // }
-}

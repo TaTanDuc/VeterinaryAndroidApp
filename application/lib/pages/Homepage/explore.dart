@@ -1,3 +1,4 @@
+import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:application/pages/Homepage/service.dart';
 import 'package:application/pages/Homepage/shop.dart';
@@ -45,76 +46,104 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF5CB15A),
-        title: const Center(
-          child: Text(
-            'Explore', // Title of the page
-            style: TextStyle(
-              color: Colors.white, // Text color
-              fontSize: 16,
-              fontFamily: 'Fredoka', // Font family
+
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate to ShopPage when back button is pressed
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MainPage(
+                    userID: widget.userID,
+                  )), // Replace ShopPage with the actual widget for your shop page
+        );
+        return false; // Prevent the default pop action
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF5CB15A),
+          title: const Center(
+            child: Text(
+              'Detail',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Fredoka',
+              ),
             ),
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Column(
-            children: categories.map((category) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height:
+                    AppBar().preferredSize.height, // Match the AppBar height
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                  fit: BoxFit.contain,
                 ),
-                elevation: 5,
-                child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                category.title,
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                category.description,
-                                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Column(
+              children: categories.map((category) {
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 5,
+                  child: Container(
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  category.title,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  category.description,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          OverflowBar(
+                            alignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              ElevatedButton(
+                                child: const Text('Explore'),
+                                onPressed: () {
+                                  // Navigate to the target page
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => category
+                                          .targetPageBuilder(widget.userID),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
-                        ),
-                        OverflowBar(
-                          alignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            ElevatedButton(
-                              child: const Text('Explore'),
-                              onPressed: () {
-                                // Navigate to the target page
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => category
-                                        .targetPageBuilder(widget.userID),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(), // Create cards dynamically from the list
+                );
+              }).toList(), // Create cards dynamically from the list
+            ),
           ),
         ),
       ),
