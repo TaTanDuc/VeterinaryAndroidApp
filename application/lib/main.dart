@@ -1,3 +1,4 @@
+import 'package:application/Screens/Appointments/appointment_screen.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Services/detailService_screen.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
+      // home: AppointmentScreen(),
       //home: ShopPage(),
       //home: ExplorePage(),
       //home: ServicePage(),

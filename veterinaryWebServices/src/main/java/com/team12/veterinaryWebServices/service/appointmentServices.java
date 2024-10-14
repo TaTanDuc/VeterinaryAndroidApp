@@ -56,7 +56,7 @@ public class appointmentServices {
 
     public appException addAppointment(appointmentDTO request){
 
-        profile p = profileRepository.getProfileById(request.getProfileID());
+        profile p = profileRepository.getProfileById(request.getUserID());
         pet pet = petRepository.getPetById(request.getPetID());
 
         if (p == null)
