@@ -32,7 +32,7 @@ public class profileServices {
         if (profile == null)
             return new appException(ERRORCODE.NO_PROFILE_FOUND);
 
-        if(request.getGENDER() == true)
+        if(request.isGENDER())
             profile.setGENDER(gender.MALE);
         else
             profile.setGENDER(gender.FEMALE);
