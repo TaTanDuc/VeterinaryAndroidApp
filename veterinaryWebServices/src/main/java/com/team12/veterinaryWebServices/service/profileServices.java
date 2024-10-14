@@ -2,6 +2,7 @@ package com.team12.veterinaryWebServices.service;
 
 import com.team12.veterinaryWebServices.dto.profileDTO;
 import com.team12.veterinaryWebServices.dto.userDTO;
+import com.team12.veterinaryWebServices.enums.gender;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.profile;
@@ -30,6 +31,11 @@ public class profileServices {
 
         if (profile == null)
             return new appException(ERRORCODE.NO_PROFILE_FOUND);
+
+        if(request.getGENDER() == true)
+            profile.setGENDER(gender.MALE);
+        else
+            profile.setGENDER(gender.FEMALE);
 
         profile.setProfileIMG(request.getProfileIMG());
         profile.setProfileNAME(request.getProfileNAME());

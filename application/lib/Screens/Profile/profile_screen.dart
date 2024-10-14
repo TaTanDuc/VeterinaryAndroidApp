@@ -280,9 +280,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => UpdatePage(
-                              userID: ID,
-                            )),
+                        builder: (context) =>
+                            UpdateProfileScreen(profile: profile)),
                   );
                 },
                 child: _optionItem(Icons.person, 'Update Information'),
