@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:application/Screens/Login/register_screen.dart';
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/pages/Homepage/shop.dart';
 import 'package:application/service/fetchAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -83,10 +85,22 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        var updatedItem = data['cartDetails'][0];
         setState(() {
-          totalPrice = data["TOTAL"];
-          cartItemUser[index] =
-              data['cartDetails'][0]; // Hiển thị thông báo lỗi
+          cartItemUser = cartItemUser.map((existingItem) {
+            if (existingItem['itemNAME'] == updatedItem['itemNAME']) {
+              return updatedItem; // Thay thế item có cùng tên
+            }
+            return existingItem; // Không thay đổi các item khác
+          }).toList();
+          setState(() {
+            totalPrice = 0; // Reset lại totalPrice
+            cartItemUser.forEach((item) {
+              int itemPrice = int.parse(item['itemPRICE'].toString());
+              int itemQuantity = int.parse(item['itemQUANTITY'].toString());
+              totalPrice += itemPrice * itemQuantity;
+            });
+          });
         });
       }
     } catch (err) {
@@ -111,7 +125,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
       var item = cartItemUser[index];
       currentQuantity = item['itemQUANTITY'];
       ;
-      print(item);
 
       // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
       if (isIncreasing) {
@@ -141,15 +154,24 @@ class _CartViewScreenState extends State<CartViewScreen> {
       );
 
       if (response.statusCode == 200) {
-        print("Item updated successfully!");
         final data = jsonDecode(response.body);
-        print(data);
+        var updatedItem = data['cartDetails'][0];
         setState(() {
-          totalPrice = data["TOTAL"];
-          cartItemUser[index] =
-              data['cartDetails'][0]; // Hiển thị thông báo lỗi
+          cartItemUser = cartItemUser.map((existingItem) {
+            if (existingItem['itemNAME'] == updatedItem['itemNAME']) {
+              return updatedItem; // Thay thế item có cùng tên
+            }
+            return existingItem; // Không thay đổi các item khác
+          }).toList();
         });
-        print(cartItemUser);
+        setState(() {
+          totalPrice = 0; // Reset lại totalPrice
+          cartItemUser.forEach((item) {
+            int itemPrice = int.parse(item['itemPRICE'].toString());
+            int itemQuantity = int.parse(item['itemQUANTITY'].toString());
+            totalPrice += itemPrice * itemQuantity;
+          });
+        });
       } else {
         print("Failed to update item.");
       }
@@ -182,8 +204,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
+          totalPrice = data['TOTAL'];
           cartItemUser = data["cartDetails"];
-          totalPrice = data["TOTAL"]; // Hiển thị thông báo lỗi
+          // totalPrice = int.parse(data['TOTAL']);
         });
       }
     } catch (error) {
@@ -261,8 +284,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    RegisterScreen(), // Điều hướng đến trang mới
+                builder: (context) => ShopPage(
+                  userID: userID,
+                ), // Điều hướng đến trang mới
               ),
             );
           },
