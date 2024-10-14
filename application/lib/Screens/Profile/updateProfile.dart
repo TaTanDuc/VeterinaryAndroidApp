@@ -399,7 +399,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  String? selectedGender;
+  bool? selectedGender;
   String? imagePath;
   dynamic ID;
   bool _loading = false;
@@ -424,7 +424,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       print("User ID in here: ${currentUser.userID}");
       ID = currentUser.userID;
     } else {
-      print("No user is logged in in this.");
+      print("No user is logged in.");
       return;
     }
 
@@ -435,14 +435,45 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     final url = Uri.parse('http://localhost:8080/api/profile/user/update');
 
     try {
+      int? age;
+      if (ageController.text.isNotEmpty) {
+        age = int.tryParse(ageController.text);
+        if (age == null) {
+          DelightToastBar(
+            builder: (context) {
+              return const ToastCard(
+                leading: Icon(Icons.check, size: 20),
+                title: Text(
+                  'Error AGE must be  sign',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Fredoka',
+                    color: Color.fromARGB(255, 243, 2, 2),
+                  ),
+                ),
+              );
+            },
+            position: DelightSnackbarPosition.top,
+            autoDismiss: true,
+            snackbarDuration: Durations.extralong4,
+          ).show(context);
+          print('Invalid age input: ${ageController.text}');
+          return; // Exit early if age is invalid
+        }
+      } else {
+        print('Age input is empty.');
+        return; // Exit early if age is empty
+      }
+
       Profile profileDTO = Profile(
         userID: currentUser.userID,
         profileIMG: imagePath!,
         profileNAME: nameController.text,
         profileEMAIL: emailController.text,
-        AGE: int.parse(ageController.text),
+        AGE: age,
         PHONE: phoneController.text,
-        GENDER: selectedGender!, // Include gender here
+        GENDER: selectedGender!,
       );
 
       final response = await http.patch(
@@ -453,10 +484,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         body: jsonEncode(profileDTO.toJson()), // Convert ProfileDTO to JSON
       );
 
+      print('Raw response: ${response.body}'); // Log the raw response
+
       if (response.statusCode == 200) {
         // Handle successful response
-        final data = jsonDecode(response.body);
-        print('User profile updated successfully: $data');
+        print('User profile updated successfully: ${response.body}');
+        // No need to decode, as the response is a plain string
 
         // Navigate to the ProfilePage and pass the updated ID
         Navigator.pushReplacement(
@@ -465,9 +498,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             builder: (context) => ProfileScreen(userID: ID),
           ),
         );
+        print("data update: $profileDTO");
       } else {
         // Handle error response
-        final errorMessage = jsonDecode(response.body);
+        print('Update failed with status code: ${response.statusCode}');
+        final errorMessage = response.body; // Log raw error message
         print('Error updating profile: $errorMessage');
       }
     } catch (e) {
@@ -508,18 +543,23 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 decoration: InputDecoration(labelText: 'Phone'),
               ),
               const SizedBox(height: 20),
-              DropdownButton<String>(
-                value: selectedGender,
+              DropdownButton<bool>(
+                value: selectedGender, // Set the value based on the boolean
                 hint: Text('Select Gender'),
-                items: ['MALE', 'FEMALE', 'OTHER'].map((String gender) {
-                  return DropdownMenuItem<String>(
-                    value: gender,
-                    child: Text(gender),
-                  );
-                }).toList(),
+                items: [
+                  DropdownMenuItem<bool>(
+                    value: true, // Corresponds to "MALE"
+                    child: Text('MALE'),
+                  ),
+                  DropdownMenuItem<bool>(
+                    value: false, // Corresponds to "FEMALE"
+                    child: Text('FEMALE'),
+                  ),
+                ],
                 onChanged: (newValue) {
                   setState(() {
-                    selectedGender = newValue;
+                    selectedGender =
+                        newValue; // Set the selected gender as a boolean
                   });
                 },
               ),

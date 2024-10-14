@@ -55,11 +55,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('Received data: $data'); // Log the received data for debugging
 
         setState(() {
-          profile = Profile.fromJson(data); // Assume you have a fromJson method
+          profile = Profile.fromJson(
+              data); // Ensure you are calling fromJson correctly
           _loading = false;
-          print('body: $data');
           print("Parsed profile: $profile.");
         });
       } else {
