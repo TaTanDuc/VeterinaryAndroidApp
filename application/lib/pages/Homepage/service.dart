@@ -238,6 +238,7 @@ class _ServicePageState extends State<ServicePage> {
                           ),
                         );
                       } else {
+                        print('Error: service or serviceCODE is null');
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text(
