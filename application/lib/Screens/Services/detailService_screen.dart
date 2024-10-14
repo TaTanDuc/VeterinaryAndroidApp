@@ -25,12 +25,13 @@ class DetailServiceScreen extends StatefulWidget {
 
 class _DetailPageState extends State<DetailServiceScreen> {
   bool _loading = true;
-  dynamic serviceDetails; // Change the type based on your response
+  Service? serviceDetails; // Change the type based on your response
   List<Comment> _comments = [];
   @override
   void initState() {
     super.initState();
-
+    print(
+        'Building DetailServiceScreen with serviceCODE: ${widget.serviceCODE}');
     fetchServiceDetails(); // Fetch details when the page initializes
   }
 
@@ -42,22 +43,23 @@ class _DetailPageState extends State<DetailServiceScreen> {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
 
-      if (response.body != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        setState(() {
-          serviceDetails =
-              jsonDecode(response.body); // Update with your response structure
-          _loading = false;
-          if (serviceDetails == null) {
-            print('No service found');
-          }
-          if (data['comments'] != null) {
-            _comments = (data['comments'] as List)
-                .map((commentData) => Comment.fromJson(commentData))
-                .toList();
-          }
 
-// Stop loading when data is fetched
+        // Create the Service object
+        serviceDetails = Service.fromJson(data);
+
+        // Now handle comments if they exist
+        if (data['comments'] != null) {
+          _comments = (data['comments'] as List)
+              .map((commentData) => Comment.fromJson(commentData))
+              .toList();
+        } else {
+          _comments = []; // Initialize to empty if no comments
+        }
+        print("Testttttt: $serviceDetails");
+        setState(() {
+          _loading = false; // Stop loading when data is fetched
         });
       } else {
         throw Exception('Failed to load service details');
@@ -70,9 +72,52 @@ class _DetailPageState extends State<DetailServiceScreen> {
     }
   }
 
+//   Future<void> fetchServiceDetails() async {
+//     final url = Uri.parse(
+//         'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+
+//     try {
+//       final response =
+//           await http.get(url, headers: {'Content-Type': 'application/json'});
+
+//       if (response.body != null && response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         setState(() {
+//           serviceDetails =
+//               jsonDecode(response.body); // Update with your response structure
+//           _loading = false;
+//           if (serviceDetails == null) {
+//             print('No service found');
+//           }
+//           if (data['comments'] != null) {
+//             _comments = (data['comments'] as List)
+//                 .map((commentData) => Comment.fromJson(commentData))
+//                 .toList();
+//           }
+//           print("Testttttt: $serviceDetails");
+// // Stop loading when data is fetched
+//         });
+//       } else {
+//         throw Exception('Failed to load service details');
+//       }
+//     } catch (e) {
+//       print('Error fetching service details: $e');
+//       setState(() {
+//         _loading = false; // Stop loading on error
+//       });
+//     }
+//   }
+
   @override
   Widget build(BuildContext context) {
-    Service service = Service.fromJson(serviceDetails);
+    Service? service = serviceDetails;
+    if (serviceDetails == null) {
+      return Scaffold(
+        body: Center(
+          child: Text('No service details available'),
+        ),
+      );
+    }
     // return Scaffold(
     //     appBar: AppBar(
     //       backgroundColor: const Color(0xFF5CB15A),
@@ -140,7 +185,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => ServicePage(
-                    userID: service.userID,
+                    userID: service?.userID ?? 0,
                   )), // Replace ShopPage with the actual widget for your shop page
         );
         return false; // Prevent the default pop action
@@ -194,7 +239,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
                               const SizedBox(
                                   height:
                                       20), // Spacing between service details and button
-                              _button(service),
+                              _button(service!),
                               const SizedBox(height: 20),
                               _buttonBook(),
                               const SizedBox(height: 20),
@@ -273,11 +318,8 @@ class _DetailPageState extends State<DetailServiceScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Adjust or remove this SizedBox for smaller spacing
-          _infoItem(
-              serviceDetails['serviceNAME'],
-              serviceDetails['serviceRATING'],
-              serviceDetails['commentCOUNT'],
-              serviceDetails['serviceDATE']),
+          _infoItem(serviceDetails?.serviceNAME, serviceDetails?.serviceRATING,
+              serviceDetails?.commentCOUNT, serviceDetails?.serviceDATE),
 
           const SizedBox(height: 20),
 
@@ -294,7 +336,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
-  Widget _infoItem(String name, double rating, int number, String des) {
+  Widget _infoItem(String? name, double? rating, int? number, String? des) {
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 128),
       child: Container(
@@ -303,36 +345,39 @@ class _DetailPageState extends State<DetailServiceScreen> {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 8, horizontal: 15), // Reduced vertical padding
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                name,
+                name ??
+                    'Service Name Unavailable', // Default value for null name
                 style: TextStyle(
                   color: Color(0xff000000),
                   fontWeight: FontWeight.w700,
                   fontSize: 30,
                   fontFamily: 'Fredoka',
                 ),
+                overflow: TextOverflow.ellipsis, // Handle overflow
+                maxLines: 1, // Limit to one line
               ),
-              const SizedBox(
-                  height: 8), // Reduced from 20 to 8 for closer spacing
+              const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStarRating(rating),
+                  _buildStarRating(
+                      rating ?? 0), // Default to 0 if rating is null
                   const SizedBox(width: 10),
                   Text(
-                    '($number reviews)',
+                    '(${number ?? 0} reviews)', // Default to 0 if number is null
                     style: TextStyle(color: Color(0xffA6A6A6)),
                   ),
                 ],
               ),
               const SizedBox(height: 15),
-              _descItem(des),
+              _descItem(des ??
+                  'Description Unavailable'), // Default value for null description
             ],
           ),
         ),
