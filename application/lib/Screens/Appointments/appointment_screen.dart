@@ -119,7 +119,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> submitAppointment() async {
-    DateTime appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
+    // Parse the appointment date from the date picker
+    DateTime appointmentDATE;
+    try {
+      appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
+    } catch (e) {
+      throw FormatException('Date format is invalid');
+    }
 
     // Split the timePicker text to get hours and minutes
     List<String> timeParts = timePicker.text.split(':');
@@ -133,7 +139,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     int selectedHour =
         int.tryParse(timeParts[0]) ?? 0; // Default to 0 if parsing fails
     int selectedMinute =
-        int.tryParse(timeParts[1].split(' ')[0]) ?? 0; // Split to handle AM/PM
+        int.tryParse(timeParts[1].split(' ')[0]) ?? 0; // Handle AM/PM
 
     // Get AM/PM part for correct hour conversion
     String amPm =
@@ -144,39 +150,37 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       selectedHour = 0; // Convert 12 AM to 0 hours
     }
 
-    // Create a DateTime object using the selected date and time
-    // DateTime appointmentTIME = DateTime(
-    //   appointmentDATE.year,
-    //   appointmentDATE.month,
-    //   appointmentDATE.day,
-    //   selectedHour,
-    //   selectedMinute,
-    // );
-    int selectedSecond = 0; // Set to 0 or your desired value
+    // Initialize seconds (set to 0 or desired value)
+    int selectedSecond = 0;
 
     // Create a formatted string for appointmentTIME with seconds
-    String appointmentTIME =
-        '${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}:${selectedSecond.toString().padLeft(2, '0')}'; // Format as HH:mm:ss
+    String appointmentTIME = '${selectedHour.toString().padLeft(2, '0')}:'
+        '${selectedMinute.toString().padLeft(2, '0')}:'
+        '${selectedSecond.toString().padLeft(2, '0')}'; // Format as HH:mm:ss
 
+    // Create the appointment object
     Appointment appointment = Appointment(
       userID: ID,
       petID: _selectedPetID,
       appointmentDATE: appointmentDATE,
-      appointmentTIME:
-          appointmentTIME, // Use the DateTime string representation
+      appointmentTIME: appointmentTIME, // Use the formatted time string
       services: _selectedServices,
     );
 
+    // Set the API endpoint
     final url =
         'http://localhost:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
+
     try {
+      // Send the appointment data to the API
       final response = await http.post(
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},
         body: body,
       );
 
+      // Handle the response
       if (response.statusCode == 200) {
         Navigator.push(
           context,
