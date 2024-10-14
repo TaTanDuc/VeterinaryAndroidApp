@@ -1,4 +1,5 @@
 import 'package:application/Screens/Login/login_screen.dart';
+import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
@@ -274,8 +275,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
-              _optionItem(Icons.person, 'Update information'),
-              const SizedBox(height: 30),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UpdatePage(
+                              userID: ID,
+                            )),
+                  );
+                },
+                child: _optionItem(Icons.person, 'Update Information'),
+              ),
             ],
           )),
     );
