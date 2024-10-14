@@ -233,7 +233,7 @@ class _ServicePageState extends State<ServicePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => DetailServiceScreen(
-                              serviceCODE: service.serviceCODE!,
+                              serviceCODE: service.serviceCODE,
                             ),
                           ),
                         );

@@ -40,7 +40,7 @@ class Service {
       'serviceCODE':
           serviceCODE ?? 'Unknown', // Provide a default value if null
       'serviceNAME': serviceNAME ?? 'Unknown',
-      'serviceRATING': serviceRATING ?? 0, // Example: use 0 if rating is null
+      'serviceRATING': serviceRATING ?? 0.0, // Example: use 0 if rating is null
       'commentCOUNT': commentCOUNT ?? 0,
       'serviceDATE':
           serviceDATE?.toString() ?? '', // Convert to String if necessary

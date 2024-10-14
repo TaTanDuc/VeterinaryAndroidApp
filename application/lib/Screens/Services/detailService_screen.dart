@@ -38,27 +38,29 @@ class _DetailPageState extends State<DetailServiceScreen> {
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
         'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
-
+    setState(() {
+      _loading = true; // Start loading
+    });
     try {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        // Create the Service object
-        serviceDetails = Service.fromJson(data);
-
-        // Now handle comments if they exist
-        if (data['comments'] != null) {
-          _comments = (data['comments'] as List)
-              .map((commentData) => Comment.fromJson(commentData))
-              .toList();
-        } else {
-          _comments = []; // Initialize to empty if no comments
-        }
-        print("Testttttt: $serviceDetails");
         setState(() {
+          final data = jsonDecode(response.body);
+
+          // Create the Service object
+          serviceDetails = Service.fromJson(data);
+
+          // Now handle comments if they exist
+          if (data['comments'] != null) {
+            _comments = (data['comments'] as List)
+                .map((commentData) => Comment.fromJson(commentData))
+                .toList();
+          } else {
+            _comments = []; // Initialize to empty if no comments
+          }
+          print("Testttttt: $serviceDetails");
           _loading = false; // Stop loading when data is fetched
         });
       } else {
@@ -111,13 +113,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
   @override
   Widget build(BuildContext context) {
     Service? service = serviceDetails;
-    if (serviceDetails == null) {
-      return Scaffold(
-        body: Center(
-          child: Text('No service details available'),
-        ),
-      );
-    }
+
     // return Scaffold(
     //     appBar: AppBar(
     //       backgroundColor: const Color(0xFF5CB15A),
