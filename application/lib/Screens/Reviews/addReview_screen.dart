@@ -1,17 +1,94 @@
 import 'package:application/Screens/Reviews/reviews_screen.dart';
+import 'package:application/bodyToCallAPI/AddComment.dart';
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AddReviewScreen extends StatefulWidget {
-  const AddReviewScreen({super.key});
+  final String serviceCODE;
+  final int userID;
+  const AddReviewScreen(
+      {Key? key,
+      required this.serviceCODE,
+      required this.userID // Make userID required as well
+      })
+      : super(key: key);
 
   @override
   State<AddReviewScreen> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<AddReviewScreen> {
-  int hoveredIndex = -1;
+  int hoveredIndex = -1; // Keeps track of the hovered star index
+  int selectedIndex = -1; // Keeps track of the selected star rating
+  bool _loading = true;
+  dynamic serviceCommnets;
+  dynamic ID;
+  String content = '';
+  bool _isContentValid = true;
+  String name = '';
+  final TextEditingController _commentController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    print("ServiceCode in add: ${widget.serviceCODE}");
+    fetchAddComment();
+  }
+
+  Future<void> fetchAddComment() async {
+    final userManager = UserManager(); // Ensure singleton access
+    User? currentUser = userManager.user;
+
+    if (currentUser != null) {
+      print("User ID in here: ${currentUser.userID}");
+      ID = currentUser.userID;
+      name = currentUser.username;
+    } else {
+      print("No user is logged in in this.");
+    }
+    AddComment comment = AddComment(
+      userID: ID,
+      serviceCODE: widget.serviceCODE,
+      rating: selectedIndex, // Use the DateTime string representation
+      content: content,
+    );
+
+    final url = Uri.parse('http://localhost:8080/api/service/addComment');
+    final body = jsonEncode(comment.toJson());
+    print('Body: $body');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body, // Replace with your actual userID
+      );
+      print('Response Body: ${response.body}');
+      if (response.statusCode == 200) {
+        print('Appointment saved successfully!');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReviewsScreen(
+              userID: ID,
+              serviceCODE: widget.serviceCODE,
+            ), // Pass serviceCODE
+          ),
+        );
+      } else {
+        throw Exception('Failed to load pets');
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -33,7 +110,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
                   // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 120),
-                    _infoUser(),
+                    _infoUser(name),
                     const SizedBox(height: 20),
                     _listStars(),
                     const SizedBox(
@@ -52,68 +129,139 @@ class _MyWidgetState extends State<AddReviewScreen> {
                       ),
                     ),
                     TextField(
-                      autofillHints: [
-                        'Share details of your own experience at this place'
-                      ],
+                      controller:
+                          _commentController, // Attach controller to TextField
                       minLines: 8,
-                      maxLines:
-                          null, // Để TextField tự điều chỉnh độ cao khi nội dung lớn hơn
+                      maxLines: null, // Auto-adjust height based on content
+                      maxLength: 200, // Set maximum character limit
                       style: TextStyle(fontSize: 20),
+                      onChanged: (value) {
+                        setState(() {
+                          content =
+                              value; // Update content variable on text change
+                          _isContentValid = content.length >= 20 &&
+                              content.length <=
+                                  200; // Validate length between 20 and 200
+                        });
+                      },
                       decoration: InputDecoration(
-                        filled: true, // Cho phép nền
-                        fillColor: Colors.grey[200], // Màu nền của TextField
+                        filled: true,
+                        fillColor: Colors.grey[200],
                         hintText:
-                            'Share details of your own experience at this place', // Gợi ý văn bản
+                            'Share details of your own experience at this place',
+                        counterText:
+                            '${content.length}/200', // Show character count
                         border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(12), // Góc bo tròn cho viền
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: Colors.grey, // Màu viền
-                            width: 2, // Độ dày của viền
+                            color: Colors.grey,
+                            width: 2,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: Colors.grey, // Viền khi chưa được chọn
+                            color: Colors.grey,
                             width: 2,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                            color: Colors.green, // Viền khi TextField được chọn
+                            color: _isContentValid
+                                ? Colors.green
+                                : Colors.red, // Green if valid, red if not
                             width: 2,
                           ),
                         ),
+                        errorText: !_isContentValid
+                            ? 'Please enter between 20 and 200 characters.' // Show error if text is out of bounds
+                            : null, // No error if content is valid
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // CustomButton(
-                    //     text: 'Post Review',
-                    //     onPressed: () {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //             builder: (context) =>
-                    //                 ReviewsScreen()), // Điều hướng đến trang mới
-                    //       ); //
-                    //     })
+                    _buttonPostReview(),
                   ]),
             ),
           ),
         ),
-        // CustomNavContent(
-        //     navText: 'Add Review',
-        //     onBackPressed: () {
-        //       Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //             builder: (context) =>
-        //                 ReviewsScreen()), // Điều hướng đến trang mới
-        //       ); //
-        //     })
+        CustomNavContent(
+            navText: 'Add Your Review Here',
+            onBackPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ReviewsScreen(
+                        serviceCODE: widget.serviceCODE,
+                        userID: ID)), // Điều hướng đến trang mới
+              ); //
+            })
       ],
+    );
+  }
+
+  Widget _buttonPostReview() {
+    return ElevatedButton(
+      onPressed: _loading
+          ? null
+          : () async {
+              setState(() {
+                _loading = true; // Start loading
+              });
+
+              try {
+                await fetchAddComment(); // Call submitAppointment asynchronously
+                // Optionally show a success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Comment Added successfully!')),
+                );
+              } catch (error) {
+                // Handle the error, show an error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to add comment: $error')),
+                );
+              } finally {
+                setState(() {
+                  _loading = false; // Stop loading
+                });
+              }
+            },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white, // Text color
+        backgroundColor: Color(0xff5CB15A), // Background color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Center text and icon
+          children: [
+            Text(
+              _loading
+                  ? 'Posting...'
+                  : 'Post Review', // Change text when loading
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+                fontFamily: 'Fredoka',
+              ),
+            ),
+            const SizedBox(width: 10),
+            _loading
+                ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2, // Adjust size
+                  )
+                : Icon(
+                    Icons.rate_review, // Icon for posting review
+                    size: 24, // Icon size
+                  ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -125,28 +273,39 @@ class _MyWidgetState extends State<AddReviewScreen> {
           children: List.generate(
             5,
             (index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: MouseRegion(
-                  onEnter: (_) {
-                    setState(() {
-                      hoveredIndex =
-                          index; // Khi hover vào một ngôi sao, cập nhật index
-                    });
-                  },
-                  onExit: (_) {
-                    setState(() {
-                      hoveredIndex =
-                          -1; // Trở lại trạng thái ban đầu khi rời khỏi ngôi sao
-                    });
-                  },
-                  child: Image.asset(
-                    hoveredIndex >=
-                            index // Kiểm tra nếu index hiện tại nhỏ hơn hoặc bằng hoveredIndex
-                        ? 'assets/icons/star_yellow.png' // Hình ảnh màu vàng khi hover
-                        : 'assets/icons/star_icon1.png', // Hình ảnh bình thường
-                    width: 50,
-                    height: 50,
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedIndex =
+                        index + 1; // Set rating based on selected star (1 to 5)
+                  });
+                  print(
+                      'Rating: ${selectedIndex}'); // Print the rating for debugging
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: MouseRegion(
+                    onEnter: (_) {
+                      setState(() {
+                        hoveredIndex =
+                            index; // Update hovered index when hovering
+                      });
+                    },
+                    onExit: (_) {
+                      setState(() {
+                        hoveredIndex =
+                            -1; // Reset to default when exiting hover
+                      });
+                    },
+                    child: Image.asset(
+                      (hoveredIndex >= index ||
+                              selectedIndex >
+                                  index) // If hovered or selected, display yellow star
+                          ? 'assets/icons/star_yellow.png'
+                          : 'assets/icons/star_icon1.png', // Default grey star
+                      width: 50,
+                      height: 50,
+                    ),
                   ),
                 ),
               );
@@ -157,34 +316,21 @@ class _MyWidgetState extends State<AddReviewScreen> {
     );
   }
 
-  Widget _infoUser() {
+  Widget _infoUser(String name) {
     return Container(
       child: Row(
         children: [
           // Avatar tròn
-          CircleAvatar(
-            radius: 25,
-            backgroundImage: NetworkImage(
-              'assets/images/avatar01.jpg', // Thay đổi URL với hình thật
-            ),
-          ),
-          SizedBox(width: 10),
+
           // Tên người dùng và thời gian
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Haylie Aminoff',
+                name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                ),
-              ),
-              Text(
-                'Just now',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
                 ),
               ),
             ],

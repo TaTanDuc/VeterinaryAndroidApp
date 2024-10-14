@@ -14,7 +14,9 @@ import com.team12.veterinaryWebServices.repository.cartRepository;
 import com.team12.veterinaryWebServices.repository.storageRepository;
 import com.team12.veterinaryWebServices.viewmodel.cartVM;
 import com.team12.veterinaryWebServices.viewmodel.itemVM;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,6 +83,8 @@ public class cartServices {
             }
             cartItem.setItemQUANTIY(tempQuantity);
             cartDetailRepository.save(cartItem);
+
+            cartRepository.updateCartTotal(request.getCartID());
             return itemVM.from(item);
         }
 
@@ -96,6 +100,7 @@ public class cartServices {
         cartItems.setItemQUANTIY(request.getQuantity());
 
         cartDetailRepository.save(cartItems);
+        cartRepository.updateCartTotal(request.getCartID());
         return itemVM.from(item);
     }
 
@@ -111,19 +116,31 @@ public class cartServices {
 
         List<cartDetail> cartDetails = new ArrayList<>();
 
-        long temp = 0;
-
         for (cartItemsDTO i : ((cartDTO) o).getCartItems())
         {
             cartDetail cartItem = cartDetailRepository.getItemInCart(request.getCartID(), i.getItemCODE(), i.getItemID());
             cartItem.setItemQUANTIY(i.getItemQUANTITY());
             cartDetails.add(cartItem);
-            temp = i.getItemQUANTITY() * cartItem.getStorage().getItemPRICE();
         }
 
         cart.setCartDetails(cartDetails);
-        cart.setTOTAL(temp);
         cartRepository.save(cart);
+        cartRepository.updateCartTotal(request.getCartID());
+
+        return new appException("Cart updated successfully");
+    }
+
+    public Object deleteItemInCart(itemDTO request){
+        cart cart = cartRepository.getUserCart(request.getUserID());
+        if(cart == null)
+            return new appException(ERRORCODE.CART_DOES_NOT_EXIST);
+
+        if (!Objects.equals(cart.getCartID(), request.getCartID()))
+            return new appException(ERRORCODE.NOT_CART_OWNER);
+
+        cartDetail cD = cartDetailRepository.getItemInCart(request.getCartID(), request.getItemCODE(), request.getItemID());
+        cartDetailRepository.delete(cD);
+        cartRepository.updateCartTotal(request.getCartID());
 
         return cartVM.from(cart);
     }

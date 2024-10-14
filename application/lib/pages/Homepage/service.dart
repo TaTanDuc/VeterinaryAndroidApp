@@ -1,6 +1,7 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/pages/Homepage/explore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,7 +27,7 @@ class _ServicePageState extends State<ServicePage> {
   // Method to fetch services from API
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/service/all'); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/service/all'); // Replace with your actual API URL
     try {
       final response = await http.get(
         url,
@@ -57,57 +58,121 @@ class _ServicePageState extends State<ServicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF5CB15A),
-        title: const Center(
-          child: Text(
-            'Service',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: 'Fredoka',
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height, // Match the AppBar height
-              child: Image.asset(
-                'assets/icons/logo.png',
-                fit: BoxFit.contain,
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate to ShopPage when back button is pressed
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ExplorePage(
+                    userID: widget.userID,
+                  )), // Replace ShopPage with the actual widget for your shop page
+        );
+        return false; // Prevent the default pop action
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF5CB15A),
+          title: const Center(
+            child: Text(
+              'Detail',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Fredoka',
               ),
             ),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Our Service",
-                style: TextStyle(
-                    fontFamily: 'Fredoka',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height:
+                    AppBar().preferredSize.height, // Match the AppBar height
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
-            Center(
-              child: _loading
-                  ? Center(child: CircularProgressIndicator())
-                  : _services.isEmpty
-                      ? Center(child: Text('No services found.'))
-                      : _buildServiceList(),
             ),
           ],
         ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Our Service",
+                  style: TextStyle(
+                      fontFamily: 'Fredoka',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              Center(
+                child: _loading
+                    ? Center(child: CircularProgressIndicator())
+                    : _services.isEmpty
+                        ? Center(child: Text('No services found.'))
+                        : _buildServiceList(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     backgroundColor: const Color(0xFF5CB15A),
+    //     title: const Center(
+    //       child: Text(
+    //         'Service',
+    //         style: TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 16,
+    //           fontFamily: 'Fredoka',
+    //         ),
+    //       ),
+    //     ),
+    //     actions: [
+    //       Padding(
+    //         padding: const EdgeInsets.all(8.0),
+    //         child: SizedBox(
+    //           height: AppBar().preferredSize.height, // Match the AppBar height
+    //           child: Image.asset(
+    //             'assets/icons/logo.png',
+    //             fit: BoxFit.contain,
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    //   body: SingleChildScrollView(
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         const Padding(
+    //           padding: EdgeInsets.all(16.0),
+    //           child: Text(
+    //             "Our Service",
+    //             style: TextStyle(
+    //                 fontFamily: 'Fredoka',
+    //                 fontWeight: FontWeight.bold,
+    //                 fontSize: 20),
+    //           ),
+    //         ),
+    //         Center(
+    //           child: _loading
+    //               ? Center(child: CircularProgressIndicator())
+    //               : _services.isEmpty
+    //                   ? Center(child: Text('No services found.'))
+    //                   : _buildServiceList(),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildServiceList() {
@@ -159,20 +224,27 @@ class _ServicePageState extends State<ServicePage> {
                   const SizedBox(height: 8),
                   _buildStarRating(service.serviceRATING.toInt()),
                   const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {
-                      print("User ID: ${widget.userID}");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailServiceScreen(
-                            serviceCODE: service.serviceCODE,
-                            userID: service.userID,
-                          ), // Pass serviceCODE
-                        ),
-                      );
+                  ElevatedButton(
+                    onPressed: () {
                       print(
-                          "Navigating to DetailServiceScreen with userID: ${service.userID}");
+                          'Navigating to DetailServiceScreen with serviceCODE: ${service.serviceCODE}');
+                      if (service != null && service.serviceCODE != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailServiceScreen(
+                              serviceCODE: service.serviceCODE,
+                            ),
+                          ),
+                        );
+                      } else {
+                        print('Error: service or serviceCODE is null');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Service or service code is not available')),
+                        );
+                      }
                     },
                     child: const Text(
                       'Show more',

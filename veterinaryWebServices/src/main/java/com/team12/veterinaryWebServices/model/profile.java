@@ -1,10 +1,12 @@
 package com.team12.veterinaryWebServices.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team12.veterinaryWebServices.enums.gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -59,4 +61,9 @@ public class profile {
 
     @OneToOne(mappedBy = "profile")
     private cart cart;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(profileID); // Use a unique identifier instead
+    }
 }

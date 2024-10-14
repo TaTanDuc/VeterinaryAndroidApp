@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
+      // home: AppointmentScreen(),
       //home: ShopPage(),
       //home: ExplorePage(),
       //home: ServicePage(),

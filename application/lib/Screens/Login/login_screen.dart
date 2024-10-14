@@ -8,8 +8,7 @@ import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
-import 'package:provider/provider.dart'; // Import http package
+// Import http package
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://localhost:8080/api/user/login");
+      final url = Uri.parse("http://10.0.2.2:8080/api/user/login");
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
           _errorMessage =

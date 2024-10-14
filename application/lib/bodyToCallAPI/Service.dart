@@ -18,11 +18,15 @@ class Service {
     required this.userID,
   });
 
-  factory Service.fromJson(Map<String, dynamic> json) {
+  factory Service.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      throw ArgumentError("JSON data cannot be null");
+    }
+
     return Service(
-      serviceCODE:
-          json['serviceCODE'] ?? '', // Provide default values if necessary
-      serviceNAME: json['serviceNAME'] ?? 0,
+      serviceCODE: json['serviceCODE'] ??
+          'Unknown', // Provide default values if necessary
+      serviceNAME: json['serviceNAME'] ?? 'Unknown',
       serviceRATING: json['serviceRATING'] ?? 0.0,
       commentCOUNT: json['commentCOUNT'] ?? 0,
       serviceDATE: json['serviceDATE'] ?? '',
@@ -30,8 +34,27 @@ class Service {
       userID: json['userID'] ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'serviceCODE':
+          serviceCODE ?? 'Unknown', // Provide a default value if null
+      'serviceNAME': serviceNAME ?? 'Unknown',
+      'serviceRATING': serviceRATING ?? 0.0, // Example: use 0 if rating is null
+      'commentCOUNT': commentCOUNT ?? 0,
+      'serviceDATE':
+          serviceDATE?.toString() ?? '', // Convert to String if necessary
+      'imageService': imageService ?? 'Not Found',
+      'userID': userID ?? '0',
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Service(serviceCODE: $serviceCODE, serviceNAME: $serviceNAME, serviceRATING: $serviceRATING, commentCOUNT: $commentCOUNT, serviceDATE: $serviceDATE, imageService: $imageService, userID: $userID)';
+  }
+}
   // @override
   // String toString() {
   //   return 'Pet(userID: $serviceCODE, petID: $serviceNAME, petIMAGE: $serviceRATING, petSPECIE: $commentCOUNT, petNAME: $serviceDATE)';
   // }
-}
