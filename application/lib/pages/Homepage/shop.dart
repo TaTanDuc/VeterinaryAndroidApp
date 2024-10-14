@@ -1,5 +1,11 @@
 import 'dart:convert';
 
+import 'package:application/Screens/Cart/cart_screen.dart';
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,12 +21,64 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
   int _selectedCategoryIndex = 0;
   String _currentCategory = 'FOOD';
+  dynamic ID;
+  dynamic cartID;
   List<dynamic> _categoryItems = [];
+
   TextEditingController inputValueController = TextEditingController();
   @override
   void initState() {
     super.initState();
     _fetchCategory(); // Call fetchPets when the widget is initialized
+  }
+
+  Future<void> handleAddCart(value) async {
+    try {
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        ID = currentUser.userID;
+        cartID = currentUser.cartID;
+      } else {
+        print("No user is logged in in HomePage.");
+        return;
+      }
+      final url = Uri.parse("http://localhost:8080/api/cart/addItem");
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "userID": ID,
+          "cartID": cartID,
+          "itemCODE": value['itemCODE'],
+          "itemID": value['itemID'],
+          "quantity": 1
+        }),
+      );
+      if (response.statusCode == 200) {
+        DelightToastBar(
+          builder: (context) {
+            return const ToastCard(
+              leading: Icon(Icons.check, size: 20),
+              title: Text(
+                'Add successful',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Fredoka',
+                  color: Color(0xff5CB15A),
+                ),
+              ),
+            );
+          },
+          position: DelightSnackbarPosition.top,
+          autoDismiss: true,
+          snackbarDuration: Durations.extralong4,
+        ).show(context);
+      }
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future<void> handleSearch(value) async {
@@ -89,9 +147,20 @@ class _ShopPageState extends State<ShopPage> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
-              child: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.white, // Set icon color
+              child: IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Điều hướng đến trang mới
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CartViewScreen()), // Thay NewPage bằng trang bạn muốn mở
+                  );
+                },
               ),
             ),
           ),
@@ -190,15 +259,17 @@ class _ShopPageState extends State<ShopPage> {
                           ],
                         )
                       ] // Hiển thị nếu không có dữ liệu
-                    : _categoryItems.map((item) {
+                    : List.generate(_categoryItems.length, (index) {
+                        var item = _categoryItems[index];
                         String imagePath = 'assets/images/${item['itemIMAGE']}';
                         return _buildShopRow(
+                            index,
                             item['itemNAME'],
                             item['itemDESCRIPTION'],
                             item['itemPRICE'].toString(),
                             imagePath,
                             item['itemQUANTITY'].toString());
-                      }).toList(),
+                      }),
               ),
             ),
           ],
@@ -260,8 +331,8 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildShopRow(String brand, String description, String price,
-      String imagePath, quantity) {
+  Widget _buildShopRow(int index, String brand, String description,
+      String price, String imagePath, quantity) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -274,7 +345,8 @@ class _ShopPageState extends State<ShopPage> {
           crossAxisAlignment:
               CrossAxisAlignment.start, // Căn chỉnh các widget sang bên trái
           children: [
-            _buildShopCard(brand, description, price, imagePath, quantity),
+            _buildShopCard(
+                brand, description, price, imagePath, quantity, index),
           ],
         ),
       ),
@@ -282,7 +354,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Widget _buildShopCard(String brand, String description, String price,
-      String imagePath, quantity) {
+      String imagePath, quantity, index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Container(
@@ -364,21 +436,50 @@ class _ShopPageState extends State<ShopPage> {
             if (int.tryParse(quantity) != 0) // Câu lệnh điều kiện
               GestureDetector(
                 onTap: () {
-                  // Action for the button
+                  DelightToastBar(
+                          builder: (context) {
+                            return const ToastCard(
+                              leading: Icon(Icons.check, size: 20),
+                              title: const Text(
+                                'Add successful',
+                                style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Fredoka',
+                                    color: Color(0xff5CB15A)),
+                              ),
+                            );
+                          },
+                          position: DelightSnackbarPosition.top,
+                          autoDismiss: true,
+                          snackbarDuration: Durations.extralong2)
+                      .show(context);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Add to cart',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Fredoka'),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(Icons.shopping_cart_outlined, color: Colors.red),
+                    GestureDetector(
+                      onTap: () {
+                        handleAddCart(_categoryItems[index]);
+                      },
+                      child: SizedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              'Add to cart',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Fredoka'),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(Icons.shopping_cart_outlined,
+                                color: Colors.red)
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

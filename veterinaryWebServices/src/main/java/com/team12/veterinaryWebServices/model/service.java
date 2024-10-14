@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -33,4 +34,9 @@ public class service {
 
     @OneToMany(mappedBy = "service")
     private List<appointmentDetail> appointmentDetails;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceCODE); // Use a unique identifier instead
+    }
 }

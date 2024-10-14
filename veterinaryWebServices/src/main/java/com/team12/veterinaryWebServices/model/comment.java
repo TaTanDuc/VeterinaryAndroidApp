@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -31,4 +32,9 @@ public class comment {
     @ManyToOne
     @JoinColumn(name = "profileID", referencedColumnName = "profileID")
     private profile profile;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commentID); // Use a unique identifier instead
+    }
 }

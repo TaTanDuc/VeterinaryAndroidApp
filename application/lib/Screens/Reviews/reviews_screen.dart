@@ -61,13 +61,11 @@ class _MyWidgetState extends State<ReviewsScreen> {
             5: data['5'] ?? 0,
           };
           _loading = false;
-          print('xin chao jhdjfdhjfhjfdhfjdfhdjfhdjfhdjhfdjhfgfdj: $data');
         });
       } else {
         throw Exception('Failed to load ratings');
       }
     } catch (error) {
-      print(error);
       setState(() {
         _loading = false;
       });
@@ -177,7 +175,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
       if (currentUser != null) {
-        print("User ID in review: ${currentUser.userID}");
         ID = currentUser.userID;
       } else {
         print("No user is logged in in here.");
@@ -286,7 +283,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
                             userID: ID,
                           )),
                 );
-                print('This is ID: ${serviceCommnets['serviceCODE']}');
               },
               child: Image.asset(
                 'assets/icons/add_review.png', // Path to your icon

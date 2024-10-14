@@ -30,14 +30,12 @@ class _DetailPageState extends State<DetailServiceScreen> {
   @override
   void initState() {
     super.initState();
-    print(
-        'Building DetailServiceScreen with serviceCODE: ${widget.serviceCODE}');
     fetchServiceDetails(); // Fetch details when the page initializes
   }
 
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
     setState(() {
       _loading = true; // Start loading
     });
@@ -60,14 +58,13 @@ class _DetailPageState extends State<DetailServiceScreen> {
           } else {
             _comments = []; // Initialize to empty if no comments
           }
-          print("Testttttt: $serviceDetails");
+
           _loading = false; // Stop loading when data is fetched
         });
       } else {
         throw Exception('Failed to load service details');
       }
     } catch (e) {
-      print('Error fetching service details: $e');
       setState(() {
         _loading = false; // Stop loading on error
       });
@@ -322,7 +319,6 @@ class _DetailPageState extends State<DetailServiceScreen> {
           SingleChildScrollView(
             child: Column(
               children: List.generate(_comments.length, (index) {
-                print('user image: ${_comments[index].profileIMG}');
                 return _Review(_comments[index]);
               }),
             ),

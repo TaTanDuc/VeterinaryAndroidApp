@@ -27,15 +27,13 @@ class _ServicePageState extends State<ServicePage> {
   // Method to fetch services from API
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/service/all'); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/service/all'); // Replace with your actual API URL
     try {
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'}, // Optional for GET
       );
-
-      print(
-          'Response Body: ${response.body}'); // Log the response body for debugging
+// Log the response body for debugging
 
       if (response.statusCode == 200) {
         final List<dynamic> serviceData = jsonDecode(response.body);
@@ -226,8 +224,6 @@ class _ServicePageState extends State<ServicePage> {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      print(
-                          'Navigating to DetailServiceScreen with serviceCODE: ${service.serviceCODE}');
                       if (service != null && service.serviceCODE != null) {
                         Navigator.push(
                           context,
@@ -238,7 +234,6 @@ class _ServicePageState extends State<ServicePage> {
                           ),
                         );
                       } else {
-                        print('Error: service or serviceCODE is null');
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text(

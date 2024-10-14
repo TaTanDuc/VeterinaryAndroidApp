@@ -54,9 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
         UserManager().setUser(user); // Set the user in UserManager
 
-        // Debugging statement
-        print("User logged in: ${user.username}, ID: ${user.userID}");
-
         User? currentUser = UserManager().user;
         if (currentUser != null) {
           print("User ID after setting: ${currentUser.userID}");
@@ -189,27 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'Fredoka',
         ),
       ),
-    );
-  }
-
-  Widget _loginBtn() {
-    return ElevatedButton(
-      onPressed: () {
-        debugPrint("Username: ${usernameController.text}");
-        debugPrint("Password: ${passwordController.text}");
-      },
-      style: ElevatedButton.styleFrom(
-          foregroundColor: Color(0xFF000000),
-          backgroundColor: Color(0xFF5CB15A),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16)),
-      child: const SizedBox(
-          width: double.infinity,
-          child: Text("LOGIN",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontFamily: 'Fredoka'))),
     );
   }
 
