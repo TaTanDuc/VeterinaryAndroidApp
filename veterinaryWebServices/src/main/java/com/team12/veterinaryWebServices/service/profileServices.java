@@ -39,6 +39,7 @@ public class profileServices {
 
         profile.setProfileIMG(request.getProfileIMG());
         profile.setProfileNAME(request.getProfileNAME());
+        profile.setProfileEMAIL(request.getProfileEMAIL());
         profile.setAGE(request.getAGE());
         profile.setPHONE(request.getPHONE());
         profileRepository.save(profile);
