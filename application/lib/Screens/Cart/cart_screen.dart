@@ -252,14 +252,17 @@ class _CartViewScreenState extends State<CartViewScreen> {
                               final item = cartItemUser[index];
                               final imagePath =
                                   'assets/images/${item['itemIMAGE']}';
-                              return _itemsCart(
-                                imagePath, // Dữ liệu hình ảnh từ API
-                                item['itemQUANTITY']
-                                    .toString(), // Số lượng từ API
-                                item['itemNAME'],
-                                item[
-                                    'itemPRICE'], // Tên item từ API // Trọng lượng từ API
-                                index,
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0), // Khoảng cách phía trên
+                                child: _itemsCart(
+                                  imagePath, // Dữ liệu hình ảnh từ API
+                                  item['itemQUANTITY']
+                                      .toString(), // Số lượng từ API
+                                  item['itemNAME'], // Tên item từ API
+                                  item['itemPRICE'], // Giá item từ API
+                                  index,
+                                ),
                               );
                             },
                           ),
