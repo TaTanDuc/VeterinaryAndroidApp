@@ -30,16 +30,21 @@ class _MyWidgetState extends State<ReviewsScreen> {
   List<Comment> _comments = [];
   dynamic serviceCommnets;
   Map<int, int> _ratings = {};
+  double Check = 0.0;
   dynamic ID;
   @override
   void initState() {
     super.initState();
+    fetchserviceCommnets();
     fetchRatings();
     fetchCommentsService();
-    fetchserviceCommnets(); // Fetch details when the page initializes
+    // Fetch details when the page initializes
   }
 
   Future<void> fetchRatings() async {
+    setState(() {
+      _loading = false;
+    });
     final url =
         'http://localhost:8080/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
     try {
@@ -79,9 +84,52 @@ class _MyWidgetState extends State<ReviewsScreen> {
     });
   }
 
+//   Future<void> fetchserviceCommnets() async {
+//     final url = Uri.parse(
+//         'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+//     setState(() {
+//       _loading = false;
+//     });
+//     try {
+//       final response =
+//           await http.get(url, headers: {'Content-Type': 'application/json'});
+
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         setState(() {
+//           serviceCommnets =
+//               jsonDecode(response.body); // Update with your response structure
+
+//           if (data['rating'] != null) {
+//             _comments = (data['comments'] as List)
+//                 .map((commentData) => Comment.fromJson(commentData))
+//                 .toList();
+//           }
+
+//           print("Parsed comments: $serviceCommnets.");
+//           print('User ID nerjdfhjhjhj: ${data['serviceCODE']}');
+
+// // Stop loading when data is fetched
+//         });
+//         print("data: ${serviceCommnets}");
+//         _loading = false;
+//       } else {
+//         throw Exception('Failed to load service details');
+//       }
+//     } catch (e) {
+//       print('Error fetching service details: $e');
+//       setState(() {
+//         _loading = false; // Stop loading on error
+//       });
+//     }
+//   }
   Future<void> fetchserviceCommnets() async {
     final url = Uri.parse(
         'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+
+    setState(() {
+      _loading = true; // Start loading
+    });
 
     try {
       final response =
@@ -89,29 +137,35 @@ class _MyWidgetState extends State<ReviewsScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        setState(() {
-          serviceCommnets =
-              jsonDecode(response.body); // Update with your response structure
-          _loading = false;
-          if (data['rating'] != null) {
-            _comments = (data['comments'] as List)
-                .map((commentData) => Comment.fromJson(commentData))
-                .toList();
-          }
 
-// Stop loading when data is fetched
-        });
+        // Process the comments only if available
+        if (data['comments'] != null) {
+          _comments = (data['comments'] as List)
+              .map((commentData) => Comment.fromJson(commentData))
+              .toList();
+          Check = data["serviceRATING"];
+        } else {
+          _comments = []; // No comments found
+        }
+
+        // Store the service comments if necessary
+        serviceCommnets = data; // Update with your response structure
       } else {
         throw Exception('Failed to load service details');
       }
     } catch (e) {
+      print('Error fetching service details: $e');
+    } finally {
       setState(() {
-        _loading = false; // Stop loading on error
+        _loading = false; // Stop loading in both success and error cases
       });
     }
   }
 
   Future<void> fetchCommentsService() async {
+    setState(() {
+      _loading = false;
+    });
     final url = Uri.parse(
         'http://localhost:8080/api/service/comments?serviceCODE=${widget.serviceCODE}');
 
@@ -123,14 +177,14 @@ class _MyWidgetState extends State<ReviewsScreen> {
       if (currentUser != null) {
         ID = currentUser.userID;
       } else {
-        print("No user is logged in in HomePage.");
+        print("No user is logged in in here.");
       }
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          _loading = false;
           _comments = data.map((json) => Comment.fromJson(json)).toList();
-
+          print("Parsed comments: $_comments.");
+          _loading = false;
 // Stop loading when data is fetched
         });
       } else {
@@ -169,8 +223,13 @@ class _MyWidgetState extends State<ReviewsScreen> {
                   child: Column(
                     // Wrap the widgets inside a Column
                     children: [
-                      _evaluate(serviceCommnets['serviceRATING'],
-                          serviceCommnets['commentCOUNT']),
+                      serviceCommnets == null
+                          ? Center(child: CircularProgressIndicator())
+                          : _evaluate(
+                              Check,
+                              serviceCommnets['commentCOUNT'] ??
+                                  0 // Added fallback
+                              ), // Fallback UI
                       Padding(
                         padding: EdgeInsets.all(12.0),
                         child: _loading
@@ -186,7 +245,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
                 _loading
                     ? Center(
                         child:
-                            Text('No comments found.')) // Show if no comments
+                            CircularProgressIndicator()) // Show if no comments
                     : Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -238,10 +297,13 @@ class _MyWidgetState extends State<ReviewsScreen> {
   }
 
   Widget _evaluate(double rating, int number) {
+    if (serviceCommnets == null) {
+      return Text("No ratings available");
+    }
     return Column(
       children: [
         Text(
-          rating.toString(),
+          rating.toString() ?? "N/A",
           style: TextStyle(
               fontSize: 50,
               fontWeight: FontWeight.w800,
@@ -250,11 +312,11 @@ class _MyWidgetState extends State<ReviewsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildStarRating(rating),
+            _buildStarRating(serviceCommnets['serviceRATING'] ?? 0.0),
           ],
         ),
         Text(
-          'Based on $number reviews',
+          'Based on ${serviceCommnets['commentCOUNT'] ?? 0} reviews',
           style: TextStyle(
               fontSize: 16,
               color: Color(0xFF868889),
