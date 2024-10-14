@@ -9,6 +9,7 @@ public class profileDTO {
     private Long userID;
     private String profileIMG;
     private String profileNAME;
+    private String profileEMAIL;
     private boolean GENDER;
     private Long AGE;
     private String PHONE;
