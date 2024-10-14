@@ -35,7 +35,6 @@ class _MyWidgetState extends State<AddReviewScreen> {
   @override
   void initState() {
     super.initState();
-    print("ServiceCode in add: ${widget.serviceCODE}");
     fetchAddComment();
   }
 
@@ -44,7 +43,6 @@ class _MyWidgetState extends State<AddReviewScreen> {
     User? currentUser = userManager.user;
 
     if (currentUser != null) {
-      print("User ID in here: ${currentUser.userID}");
       ID = currentUser.userID;
       name = currentUser.username;
     } else {
@@ -59,16 +57,14 @@ class _MyWidgetState extends State<AddReviewScreen> {
 
     final url = Uri.parse('http://localhost:8080/api/service/addComment');
     final body = jsonEncode(comment.toJson());
-    print('Body: $body');
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: body, // Replace with your actual userID
       );
-      print('Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
-        print('Appointment saved successfully!');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -279,8 +275,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
                     selectedIndex =
                         index + 1; // Set rating based on selected star (1 to 5)
                   });
-                  print(
-                      'Rating: ${selectedIndex}'); // Print the rating for debugging
+// Print the rating for debugging
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),

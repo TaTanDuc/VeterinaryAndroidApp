@@ -54,7 +54,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
       var item = cartItemUser[index];
       currentQuantity = item['itemQUANTITY'];
       ;
-      print(item);
 
       // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
       if (isDecreasing) {

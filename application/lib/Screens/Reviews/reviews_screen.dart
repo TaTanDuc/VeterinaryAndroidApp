@@ -56,13 +56,11 @@ class _MyWidgetState extends State<ReviewsScreen> {
             5: data['5'] ?? 0,
           };
           _loading = false;
-          print('xin chao jhdjfdhjfhjfdhfjdfhdjfhdjfhdjhfdjhfgfdj: $data');
         });
       } else {
         throw Exception('Failed to load ratings');
       }
     } catch (error) {
-      print(error);
       setState(() {
         _loading = false;
       });
@@ -101,17 +99,12 @@ class _MyWidgetState extends State<ReviewsScreen> {
                 .toList();
           }
 
-          print("Parsed comments: $_comments.");
-          print('User ID nerjdfhjhjhj: ${data['serviceCODE']}');
-
 // Stop loading when data is fetched
         });
-        print("data: ${serviceCommnets}");
       } else {
         throw Exception('Failed to load service details');
       }
     } catch (e) {
-      print('Error fetching service details: $e');
       setState(() {
         _loading = false; // Stop loading on error
       });
@@ -128,7 +121,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
       if (currentUser != null) {
-        print("User ID in review: ${currentUser.userID}");
         ID = currentUser.userID;
       } else {
         print("No user is logged in in HomePage.");
@@ -138,7 +130,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
         setState(() {
           _loading = false;
           _comments = data.map((json) => Comment.fromJson(json)).toList();
-          print("Parsed comments: $_comments.");
 
 // Stop loading when data is fetched
         });
@@ -233,7 +224,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
                             userID: ID,
                           )),
                 );
-                print('This is ID: ${serviceCommnets['serviceCODE']}');
               },
               child: Image.asset(
                 'assets/icons/add_review.png', // Path to your icon

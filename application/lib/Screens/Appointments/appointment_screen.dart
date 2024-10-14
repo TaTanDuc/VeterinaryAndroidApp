@@ -74,16 +74,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"userID": ID}), // Replace with your actual userID
       );
-      print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> petData = jsonDecode(response.body);
-        print(
-            'Fetched Pet Data: $petData'); // This should show the fetched data
+        ; // This should show the fetched data
 
         setState(() {
           _pets = petData.map((json) => Pet.fromJson(json)).toList();
-          _loading = false;
-          print('Mapped Pets: $_pets'); // Check the mapped pets
+          _loading = false; // Check the mapped pets
         });
       } else {
         throw Exception('Failed to load pets');
@@ -173,7 +170,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     final url =
         'http://localhost:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
-    print('Body: $body');
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -182,7 +178,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       );
 
       if (response.statusCode == 200) {
-        print('Appointment saved successfully!');
         Navigator.push(
           context,
           MaterialPageRoute(

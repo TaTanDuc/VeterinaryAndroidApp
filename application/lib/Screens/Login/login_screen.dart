@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://10.0.2.2:8080/api/user/login");
+      final url = Uri.parse("http://localhost:8080/api/user/login");
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
           _errorMessage =
@@ -53,9 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
         final userManager = UserManager();
 
         UserManager().setUser(user); // Set the user in UserManager
-
-        // Debugging statement
-        print("User logged in: ${user.username}, ID: ${user.userID}");
 
         User? currentUser = UserManager().user;
         if (currentUser != null) {
@@ -189,27 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
           fontFamily: 'Fredoka',
         ),
       ),
-    );
-  }
-
-  Widget _loginBtn() {
-    return ElevatedButton(
-      onPressed: () {
-        debugPrint("Username: ${usernameController.text}");
-        debugPrint("Password: ${passwordController.text}");
-      },
-      style: ElevatedButton.styleFrom(
-          foregroundColor: Color(0xFF000000),
-          backgroundColor: Color(0xFF5CB15A),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16)),
-      child: const SizedBox(
-          width: double.infinity,
-          child: Text("LOGIN",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontFamily: 'Fredoka'))),
     );
   }
 

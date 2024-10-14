@@ -34,7 +34,6 @@ class _ShopPageState extends State<ShopPage> {
 
   Future<void> handleAddCart(value) async {
     try {
-      print(value);
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
       if (currentUser != null) {
@@ -57,7 +56,25 @@ class _ShopPageState extends State<ShopPage> {
         }),
       );
       if (response.statusCode == 200) {
-        print("Add successfuly");
+        DelightToastBar(
+          builder: (context) {
+            return const ToastCard(
+              leading: Icon(Icons.check, size: 20),
+              title: Text(
+                'Add successful',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Fredoka',
+                  color: Color(0xff5CB15A),
+                ),
+              ),
+            );
+          },
+          position: DelightSnackbarPosition.top,
+          autoDismiss: true,
+          snackbarDuration: Durations.extralong4,
+        ).show(context);
       }
     } catch (err) {
       print(err);
@@ -97,7 +114,6 @@ class _ShopPageState extends State<ShopPage> {
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(data);
         setState(() {
           _categoryItems = data;
         });

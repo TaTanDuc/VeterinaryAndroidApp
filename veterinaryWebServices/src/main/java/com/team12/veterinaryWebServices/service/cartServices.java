@@ -127,7 +127,7 @@ public class cartServices {
         cartRepository.save(cart);
         cartRepository.updateCartTotal(request.getCartID());
 
-        return new appException("Cart updated successfully");
+        return  cartVM.from(cart);
     }
 
     public Object deleteItemInCart(itemDTO request){
