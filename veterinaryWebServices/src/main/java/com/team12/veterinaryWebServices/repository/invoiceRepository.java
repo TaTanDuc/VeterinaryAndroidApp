@@ -16,4 +16,7 @@ public interface invoiceRepository extends JpaRepository<invoice, invoiceCK> {
 
     @Query(value = "SELECT COUNT(*) FROM invoice WHERE invoicecode = ?1",nativeQuery = true)
     long countByCode(String invoiceCODE);
+
+    @Query(value = "SELECT * FROM invoice WHERE invoice.profileid = ?1 ORDER BY invoice.invoicedate DESC",nativeQuery = true)
+    List<invoice> getUserInvoices (Long userID);
 }
