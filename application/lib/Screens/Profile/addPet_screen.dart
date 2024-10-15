@@ -23,6 +23,7 @@ class AddPetScreen extends StatefulWidget {
 
 class _AddPetScreenState extends State<AddPetScreen> {
   List<dynamic> _UserPets = [];
+
   dynamic ID;
   bool _loading = true;
   File? _imageFile;
@@ -108,8 +109,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
       if (response.statusCode == 200) {
         final data = response.body; // No jsonDecode, treat as plain text
-        print('data received: $data');
-        print("hihihjihihi");
+
         setState(() {
           _dataMessage = data;
           Navigator.push(
