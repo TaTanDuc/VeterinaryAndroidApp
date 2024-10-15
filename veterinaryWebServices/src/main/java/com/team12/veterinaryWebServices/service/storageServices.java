@@ -24,6 +24,15 @@ public class storageServices {
 
     private final storageRepository storageRepository;
 
+    public Object get3Random(){
+        List<storage> list = storageRepository.get3Random();
+
+        if(list.isEmpty())
+            return new appException(ERRORCODE.NO_ITEM_FOUND);
+
+        return list.stream().map(itemVM::from).toList();
+    }
+
     public Object getAllItem(){
         List<storage> items = storageRepository.findAll();
 

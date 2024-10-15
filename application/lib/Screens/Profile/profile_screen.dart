@@ -1,5 +1,7 @@
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/addPet_screen.dart';
+import 'package:application/Screens/Profile/appointment_screen.dart';
+import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/User.dart';
@@ -36,7 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     User? currentUser = userManager.user;
 
     if (currentUser != null) {
+      print("User ID in here: ${currentUser.userID}");
       ID = currentUser.userID;
+      print("data: $ID");
     } else {
       print("No user is logged in in HomePage.");
       setState(() {
@@ -46,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final url =
-        Uri.parse('http://localhost:8080/api/profile/user/get?userID=$ID');
+        Uri.parse('http://10.0.2.2:8080/api/profile/user/get?userID=$ID');
 
     try {
       final response =
@@ -54,10 +58,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('Received data: $data'); // Log the received data for debugging
 
         setState(() {
-          profile = Profile.fromJson(data); // Assume you have a fromJson method
+          profile = Profile.fromJson(
+              data); // Ensure you are calling fromJson correctly
           _loading = false;
+          print("Parsed profile: $profile");
         });
       } else {
         throw Exception('Failed to load profile details');
@@ -97,6 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+        automaticallyImplyLeading: false,
       ),
       body: _page(),
     );
@@ -178,10 +186,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _infoUser(Profile user) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set button dimensions and responsive font size
+    double buttonWidth = screenWidth < 600 ? screenWidth * 0.8 : 100;
+    double buttonHeight = 40;
+    double responsiveFontSize = screenWidth < 600 ? 16 : 20;
+
     return Container(
       width: double.infinity,
-      height: 200,
-      // color: Color(0xffFFFFFF),
       decoration: BoxDecoration(
         color: Color(0xffFFFFFF),
         borderRadius: BorderRadius.circular(10),
@@ -190,76 +203,275 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(35, 15, 15, 30),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Information',
-                  style: TextStyle(
-                      fontSize: 26,
+            // Responsive layout for small and large screens
+            if (screenWidth < 600) ...[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.profileNAME ?? 'Unknown',
+                    style: TextStyle(
+                      fontSize: responsiveFontSize,
                       color: Color(0xff141415),
                       fontFamily: 'Fredoka',
-                      fontWeight: FontWeight.w700),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    _signOut(); // Call the sign-out function
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.red,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  label: Text(
-                    'Sign out',
+                  SizedBox(height: 10),
+                  SizedBox(
+                    width: buttonWidth,
+                    height: buttonHeight,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        _signOut();
+                      },
+                      icon: Icon(Icons.arrow_back, color: Colors.red),
+                      label: Text(
+                        'Sign out',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: responsiveFontSize,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        side: BorderSide(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    user.profileNAME ?? 'Unkonw',
                     style: TextStyle(
+                        fontSize: responsiveFontSize,
+                        color: Color(0xff141415),
+                        fontFamily: 'Fredoka',
+                        fontWeight: FontWeight.w700),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      print('Sign out button pressed');
+                      _signOut(); // Call the sign-out function
+                    },
+                    icon: Icon(
+                      Icons.arrow_back,
                       color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                    ),
+                    label: Text(
+                      'Sign out',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: responsiveFontSize,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(color: Colors.red),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                ],
+              ),
+            ],
+            const SizedBox(height: 20),
+            // Email Row
+            Row(
+              children: [
+                Icon(Icons.email),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    user.profileEMAIL,
+                    style: TextStyle(
+                      color: Color(0xff000000),
+                      fontSize: responsiveFontSize,
+                      fontFamily: 'Fredoka',
                     ),
-                    side: BorderSide(color: Colors.red),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                Icon(Icons.email),
-                const SizedBox(width: 30),
-                Text(
-                  user.profileEMAIL,
-                  style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 16,
-                      fontFamily: 'Fredoka'),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            // Phone Row
             Row(
               children: [
                 Icon(Icons.call),
-                const SizedBox(width: 30),
-                Text(
-                  user.PHONE ?? 'Unknown need to  update',
-                  style: TextStyle(
-                      fontSize: 16,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    user.phone ?? 'Unknown need to update',
+                    style: TextStyle(
+                      fontSize: responsiveFontSize,
                       color: Color(0xff000000),
-                      fontFamily: 'Fredoka'),
-                )
+                      fontFamily: 'Fredoka',
+                    ),
+                  ),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
+
+  // Widget _infoUser(Profile user) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   double buttonWidth = screenWidth < 600
+  //       ? screenWidth * 0.8
+  //       : 100; // 80% width on small screens
+  //   double buttonHeight = 40; // Fixed height for the button
+  //   // Calculate responsive font size, with a maximum value of 20
+  //   double responsiveFontSize =
+  //       screenWidth < 600 ? 16 : 20; // Adjust lower limit as needed
+  //   responsiveFontSize = responsiveFontSize > 20
+  //       ? 20
+  //       : responsiveFontSize; // Set max font size to 20
+  //   return Container(
+  //     width: double.infinity,
+  //     height: 200,
+  //     // color: Color(0xffFFFFFF),
+  //     decoration: BoxDecoration(
+  //       color: Color(0xffFFFFFF),
+  //       borderRadius: BorderRadius.circular(10),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.fromLTRB(35, 15, 15, 30),
+  //       child: Column(
+  //         children: [
+  //           if (screenWidth < 600) ...[
+  //             // Stack below for small screens
+  //             Column(
+  //               children: [
+  //                 Text(
+  //                   user.profileNAME ?? 'Unkonw',
+  //                   style: TextStyle(
+  //                       fontSize: responsiveFontSize,
+  //                       color: Color(0xff141415),
+  //                       fontFamily: 'Fredoka',
+  //                       fontWeight: FontWeight.w700),
+  //                 ),
+  //                 SizedBox(
+  //                   width: buttonWidth, // Set responsive width
+  //                   height: buttonHeight, // Set fixed height
+  //                   child: ElevatedButton.icon(
+  //                     onPressed: () {
+  //                       print('Sign out button pressed');
+  //                       _signOut(); // Call the sign-out function
+  //                     },
+  //                     icon: Icon(
+  //                       Icons.arrow_back,
+  //                       color: Colors.red,
+  //                     ),
+  //                     label: Text(
+  //                       'Sign out',
+  //                       style: TextStyle(
+  //                         color: Colors.red,
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: responsiveFontSize, // Responsive font size
+  //                       ),
+  //                     ),
+  //                     style: ElevatedButton.styleFrom(
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(8),
+  //                       ),
+  //                       side: BorderSide(color: Colors.red),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ] else ...[
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Text(
+  //                   user.profileNAME ?? 'Unkonw',
+  //                   style: TextStyle(
+  //                       fontSize: responsiveFontSize,
+  //                       color: Color(0xff141415),
+  //                       fontFamily: 'Fredoka',
+  //                       fontWeight: FontWeight.w700),
+  //                 ),
+  //                 ElevatedButton.icon(
+  //                   onPressed: () {
+  //                     print('Sign out button pressed');
+  //                     _signOut(); // Call the sign-out function
+  //                   },
+  //                   icon: Icon(
+  //                     Icons.arrow_back,
+  //                     color: Colors.red,
+  //                   ),
+  //                   label: Text(
+  //                     'Sign out',
+  //                     style: TextStyle(
+  //                       color: Colors.red,
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: responsiveFontSize,
+  //                     ),
+  //                   ),
+  //                   style: ElevatedButton.styleFrom(
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(8),
+  //                     ),
+  //                     side: BorderSide(color: Colors.red),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //           const SizedBox(height: 20),
+  //           Row(
+  //             children: [
+  //               Icon(Icons.email),
+  //               const SizedBox(width: 30),
+  //               Expanded(
+  //                 // Use Expanded to take available space
+  //                 child: Text(
+  //                   user.profileEMAIL,
+  //                   style: TextStyle(
+  //                     color: Color(0xff000000),
+  //                     fontSize: responsiveFontSize,
+  //                     fontFamily: 'Fredoka',
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const SizedBox(height: 20),
+  //           // Phone Row
+  //           Row(
+  //             children: [
+  //               Icon(Icons.call),
+  //               const SizedBox(width: 30),
+  //               Expanded(
+  //                 // Use Expanded to take available space
+  //                 child: Text(
+  //                   user.phone ?? 'Unknown need to update',
+  //                   style: TextStyle(
+  //                     fontSize: responsiveFontSize,
+  //                     color: Color(0xff000000),
+  //                     fontFamily: 'Fredoka',
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _optionUser() {
     return Container(
@@ -282,19 +494,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: _optionItem(Icons.person, 'Update Information'),
               ),
-              const SizedBox(height: 30),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UpdateProfileScreen(profile: profile)),
-                  );
-                },
-                child: _optionItem(Icons.storage, 'My Appointment'),
-              ),
-              const SizedBox(height: 30),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -302,36 +501,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     MaterialPageRoute(builder: (context) => AddPetScreen()),
                   );
                 },
-                child: _optionItem(Icons.pets, 'Add Pet'),
+                child: _optionItem(Icons.pets, 'Add your pet'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListApointment()),
+                  );
+                },
+                child: _optionItem(Icons.book, 'Show all apponitments'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListOrder()),
+                  );
+                },
+                child: _optionItem(Icons.gif_box, 'My orders'),
               ),
             ],
           )),
     );
   }
 
-  Widget _optionItem(icon, nameItem) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(icon),
-            const SizedBox(width: 30),
-            Text(
-              nameItem,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff000000),
-                  fontFamily: 'Fredoka'),
-            )
-          ],
-        ),
-        Icon(
-          Icons.chevron_right,
-          size: 30,
-        ),
-      ],
+  Widget _optionItem(IconData icon, String nameItem) {
+    // Get the screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate responsive font size, with a maximum value of 20
+    double responsiveFontSize = screenWidth < 600 ? 16 : 20;
+    responsiveFontSize = responsiveFontSize > 20 ? 20 : responsiveFontSize;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10), // Vertical padding
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Ensure spacing between elements
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Icon(icon, size: 24), // Icon size for consistency
+                const SizedBox(width: 30),
+                // The nameItem Text widget
+                Expanded(
+                  child: Text(
+                    nameItem,
+                    style: TextStyle(
+                      fontSize: responsiveFontSize,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff000000),
+                      fontFamily: 'Fredoka',
+                    ),
+                    overflow:
+                        TextOverflow.ellipsis, // Handle overflow gracefully
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            size: 30,
+          ),
+        ],
+      ),
     );
   }
 }

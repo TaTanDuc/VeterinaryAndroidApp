@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -21,7 +23,9 @@ class AddPetScreen extends StatefulWidget {
 
 class _AddPetScreenState extends State<AddPetScreen> {
   List<dynamic> _UserPets = [];
+
   dynamic ID;
+  bool _loading = true;
   File? _imageFile;
   String _dataMessage = '';
   TextEditingController petNameController = TextEditingController();
@@ -45,6 +49,10 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
   Future<void> fetchPetUser() async {
     try {
+      setState(() {
+        _loading:
+        false;
+      });
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
       if (currentUser != null) {
@@ -54,7 +62,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
         return;
       }
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/pet/getUserPets");
+      final url = Uri.parse("http://10.0.2.2:8080/api/pet/getUserPets");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -66,36 +74,54 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
         setState(() {
           _UserPets = data;
+          _loading = false;
         });
       }
     } catch (err) {
       print(err);
+      setState(() {
+        _loading:
+        false;
+      });
     }
   }
 
   Future<void> handleAddPet() async {
     try {
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/pet/addPet");
-      var nameParts = _imageFile!.path.split('\\');
-      var fileName = "assets/images/${nameParts.last}";
+      final url = Uri.parse("http://10.0.2.2:8080/api/pet/addPet");
+      // var nameParts = _imageFile!.path.split('\\');
+      // var fileName = "assets/images/${nameParts.last}";
+      // if (fileName == null) {
+      //   fileName = "assets/icons/logo.png";
+      // };
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "userID": ID,
-          "petIMAGE": fileName,
+          "petIMAGE": "assets/icons/logo.png",
           "petNAME": petNameController.text,
           "petSPECIE": petBreedController.text,
           "petAGE": int.parse(petAgeController.text)
         }),
       );
 
-      final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        final data = response.body; // No jsonDecode, treat as plain text
+
         setState(() {
           _dataMessage = data;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainPage(
+                userID: ID,
+              ), // Pass serviceCODE
+            ),
+          );
         });
+
         DelightToastBar(
           builder: (context) {
             return ToastCard(
@@ -116,9 +142,9 @@ class _AddPetScreenState extends State<AddPetScreen> {
           snackbarDuration: Durations.extralong4,
         ).show(context);
       } else {
-        setState(() {
-          _dataMessage = data;
-        });
+        // setState(() {
+        //   _dataMessage = data;
+        // });
         DelightToastBar(
           builder: (context) {
             return ToastCard(
@@ -149,7 +175,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path); // Lưu ảnh đã chọn
+        _imageFile = File(pickedFile.path); // Save the picked image
       });
     }
   }
@@ -215,17 +241,17 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     const SizedBox(height: 30),
                     _textField('Breed Name', petBreedController),
                     const SizedBox(height: 30),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .spaceBetween, // Căn chỉnh khoảng cách giữa các TextField
-                      children: [
-                        SizedBox(width: 10), // Khoảng cách giữa các TextField
-                        Expanded(
-                          child:
-                              _imagePicker(), // Thay thế _textField bằng widget chọn ảnh
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment
+                    //       .spaceBetween, // Căn chỉnh khoảng cách giữa các TextField
+                    //   children: [
+                    //     SizedBox(width: 10), // Khoảng cách giữa các TextField
+                    //     Expanded(
+                    //       child:
+                    //           _imagePicker(), // Thay thế _textField bằng widget chọn ảnh
+                    //     ),
+                    //   ],
+                    // ),
                     const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment
@@ -255,40 +281,48 @@ class _AddPetScreenState extends State<AddPetScreen> {
             onBackPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileScreen(userID: ID)),
+                MaterialPageRoute(builder: (context) => MainPage(userID: ID)),
               );
             })
       ],
     );
   }
 
-  Widget _imagePicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Select Image',
-          style: TextStyle(
-            fontFamily: 'Fredoka',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _imageFile != null
-            ? Image.file(
-                _imageFile!,
-                width: 100,
-                height: 100,
-              )
-            : IconButton(
-                icon: Icon(Icons.add_a_photo),
-                onPressed: _pickImage,
-              ),
-      ],
-    );
-  }
+  // Widget _imagePicker() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'Select Image',
+  //         style: TextStyle(
+  //           fontFamily: 'Fredoka',
+  //           fontSize: 16,
+  //           fontWeight: FontWeight.w600,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       _imageFile != null
+  //           ? Image.file(
+  //               _imageFile!,
+  //               width: 100,
+  //               height: 100,
+  //             )
+  //           : IconButton(
+  //               icon: Icon(Icons.add_a_photo),
+  //               onPressed: _pickImage,
+  //             ),
+  //       if (_imageFile != null)
+  //         TextButton(
+  //           onPressed: () {
+  //             setState(() {
+  //               _imageFile = null; // Clear the selected image
+  //             });
+  //           },
+  //           child: Text('Remove Image'),
+  //         ),
+  //     ],
+  //   );
+  // }
 
   Widget _itemPet(imagePath, namePet) {
     return Container(

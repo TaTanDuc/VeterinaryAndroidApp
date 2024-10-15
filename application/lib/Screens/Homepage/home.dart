@@ -1,4 +1,5 @@
 import 'package:application/bodyToCallAPI/Pet.dart';
+import 'package:application/bodyToCallAPI/Shop.dart';
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 
@@ -19,16 +20,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _loading = true;
   List<Pet> _pets = [];
+  List<Shop> _randItem = [];
   @override
   void initState() {
     super.initState();
-    fetchPets(); // Call fetchPets when the widget is initialized
+    fetchPets();
+    fetchShops(); // Call fetchPets when the widget is initialized
   }
 
   // Method to fetch pets from API
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final response = await http.post(
         url,
@@ -38,10 +41,9 @@ class _HomePageState extends State<HomePage> {
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
-        final List<dynamic> petData = jsonDecode(response.body);
-        print(
-            'Fetched Pet Data: $petData'); // This should show the fetched data
-        final userManager = UserManager(); // Ensure singleton access
+        final List<dynamic> shopData = jsonDecode(response.body);
+
+        final userManager = UserManager();
         User? currentUser = userManager.user;
 
         if (currentUser != null) {
@@ -50,12 +52,37 @@ class _HomePageState extends State<HomePage> {
           print("No user is logged in in HomePage.");
         }
         setState(() {
-          _pets = petData.map((json) => Pet.fromJson(json)).toList();
+          _pets = shopData.map((json) => Pet.fromJson(json)).toList();
           _loading = false;
-          print('Mapped Pets: $_pets'); // Check the mapped pets
         });
       } else {
         throw Exception('Failed to load pets');
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> fetchShops() async {
+    final url = Uri.parse('http://10.0.2.2:8080/api/storage/getRandom');
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'}, // Optional for GET
+      );
+      print('Response Body: ${response.body}');
+      if (response.statusCode == 200) {
+        final List<dynamic> shopData = jsonDecode(response.body);
+        setState(() {
+          _randItem = shopData.map((json) => Shop.fromJson(json)).toList();
+          _loading = false;
+          print('Mapped shops: $_randItem'); // Check the mapped pets
+        });
+      } else {
+        throw Exception('Failed to load shop');
       }
     } catch (e) {
       print('Error: $e');
@@ -71,21 +98,18 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF5CB15A),
         actions: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height:
-                    AppBar().preferredSize.height, // Match the AppBar height
-                child: Image.asset(
-                  'assets/icons/logo.png',
-                  fit:
-                      BoxFit.contain, // Fit the logo within the available space
-                ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height, // Match the AppBar height
+              child: Image.asset(
+                'assets/icons/logo.png',
+                fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -169,18 +193,17 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      _buildPetFoodCard('Josera', 'Josera Dog Master Mix 500g',
-                          'assets/icons/logo.png'),
-                      _buildPetFoodCard(
-                          'Happy Pet',
-                          'Happy Dog High Energy 30-20',
-                          'assets/icons/logo.png'),
-                      _buildPetFoodCard('Josera', 'Josera Dog Master Mix 500g',
-                          'assets/icons/logo.png'),
-                      _buildPetFoodCard(
-                          'Happy Pet',
-                          'Happy Dog High Energy 30-20',
-                          'assets/icons/logo.png'),
+                      _loading
+                          ? Center(child: CircularProgressIndicator())
+                          : SizedBox(
+                              height: 300,
+                              child: ListView.builder(
+                                itemCount: _randItem.length,
+                                itemBuilder: (context, index) {
+                                  return _buildPetFoodCard(_randItem[index]);
+                                },
+                              ),
+                            ),
                       const SizedBox(height: 10),
                       Center(
                         child: ElevatedButton(
@@ -250,12 +273,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPetFoodCard(String brand, String description, String imagePath) {
+  Widget _buildPetFoodCard(Shop shop) {
     return Card(
       child: ListTile(
-        leading: Image.asset(imagePath, width: 50),
-        title: Text(brand),
-        subtitle: Text(description),
+        leading: Image.asset(shop.itemIMAGE, width: 50),
+        title: Text(shop.itemNAME),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align to the start
+          children: [
+            Text(shop.itemDESCRIPTION), // Description
+            const SizedBox(height: 5), // Spacing between description and price
+            Text(
+              '\$${shop.itemPRICE.toString()}', // Price
+              style: TextStyle(
+                fontWeight: FontWeight.bold, // Make the price bold
+                color: Colors.green, // Color of the price
+              ),
+            ),
+          ],
+        ),
         trailing: const Icon(Icons.add_shopping_cart),
       ),
     );

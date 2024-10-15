@@ -82,8 +82,8 @@ class _MainPageState extends State<MainPage> {
           label: 'Explore',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.pets),
-          label: 'Manage',
+          icon: Icon(Icons.book_online_outlined),
+          label: 'Book appointment',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
@@ -131,8 +131,7 @@ class ManagePage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: ManagePage1(userID: userID)); // Truyền userID xuống HomePage
+    return Center(child: AppointmentScreen());
   }
 }
 

@@ -43,7 +43,7 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
-      final url = Uri.parse("http://localhost:8080/api/cart/addItem");
+      final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -56,25 +56,7 @@ class _ShopPageState extends State<ShopPage> {
         }),
       );
       if (response.statusCode == 200) {
-        DelightToastBar(
-          builder: (context) {
-            return const ToastCard(
-              leading: Icon(Icons.check, size: 20),
-              title: Text(
-                'Add successful',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Fredoka',
-                  color: Color(0xff5CB15A),
-                ),
-              ),
-            );
-          },
-          position: DelightSnackbarPosition.top,
-          autoDismiss: true,
-          snackbarDuration: Durations.extralong4,
-        ).show(context);
+       
       }
     } catch (err) {
       print(err);
@@ -84,7 +66,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleSearch(value) async {
     try {
       final url = Uri.parse(
-          "http://localhost:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://10.0.2.2:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -105,7 +87,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> _fetchCategory() async {
     try {
       final url = Uri.parse(
-          "http://localhost:8080/api/storage/getItems?category=${_currentCategory}");
+          "http://10.0.2.2:8080/api/storage/getItems?category=${_currentCategory}");
       // Gửi yêu cầu POST tới API
       final response = await http.get(
         url,
@@ -153,6 +135,7 @@ class _ShopPageState extends State<ShopPage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
+                  
                   // Điều hướng đến trang mới
                   Navigator.push(
                     context,
@@ -172,7 +155,8 @@ class _ShopPageState extends State<ShopPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
+              margin: const EdgeInsets.only(
+                  top: 40, left: 20, right: 20, bottom: 20),
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.11),
@@ -204,25 +188,30 @@ class _ShopPageState extends State<ShopPage> {
               ),
             ),
             // My Pets Section
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // const SizedBox(height: 20),
-                  _buildCategoryItem(
-                      0, 'Food', 'assets/icons/food.png', screenWidth),
-                  _buildCategoryItem(1, 'Medicine',
-                      'assets/icons/petmedicine.png', screenWidth),
-                  _buildCategoryItem(2, 'Accessory',
-                      'assets/icons/accessories.png', screenWidth),
-                  _buildCategoryItem(
-                      3, 'Toy', 'assets/icons/pet-toy.png', screenWidth),
-                  _buildCategoryItem(
-                      4, 'Furniture', 'assets/icons/house.png', screenWidth),
-                ],
-              ),
+            // Padding(
+            //   padding: const EdgeInsets.all(30.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       const SizedBox(height: 20),
+            //       _buildCategoryItem(
+            //           0, 'Food', 'assets/icons/food.png', screenWidth),
+            //       _buildCategoryItem(1, 'Medicine',
+            //           'assets/icons/petmedicine.png', screenWidth),
+            //       _buildCategoryItem(2, 'Accessory',
+            //           'assets/icons/accessories.png', screenWidth),
+            //       _buildCategoryItem(
+            //           3, 'Toy', 'assets/icons/pet-toy.png', screenWidth),
+            //       _buildCategoryItem(
+            //           4, 'Furniture', 'assets/icons/house.png', screenWidth),
+
+            //     ],
+            //   ),
+            // ),
+            Center(
+              child: _buildCategoryBox(screenWidth),
             ),
+
             const SizedBox(height: 0),
 
             Padding(
@@ -278,11 +267,159 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
+  Widget _buildCategoryBox(double screenWidth) {
+    double boxWidth = screenWidth > 600
+        ? 600
+        : screenWidth * 0.9; // Max width of 600 for larger screens
+
+    return Container(
+      child: screenWidth > 600
+          ? Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildCategoryItemRow(
+                      0, 'Food', 'assets/icons/food.png', screenWidth),
+                  _buildCategoryItemRow(1, 'Medicine',
+                      'assets/icons/petmedicine.png', screenWidth),
+                  _buildCategoryItemRow(2, 'Accessory',
+                      'assets/icons/accessories.png', screenWidth),
+                  _buildCategoryItemRow(
+                      3, 'Toy', 'assets/icons/pet-toy.png', screenWidth),
+                  _buildCategoryItemRow(
+                      4, 'Furniture', 'assets/icons/house.png', screenWidth),
+                ],
+              ),
+            )
+          : Container(
+              width: boxWidth, // Apply width here
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics:
+                      NeverScrollableScrollPhysics(), // Prevent scrolling for the parent container
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 columns on smaller screens
+                    childAspectRatio: 1, // Maintain aspect ratio for items
+                    crossAxisSpacing: 16, // Space between items
+                    mainAxisSpacing: 16, // Space between rows
+                  ),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return _buildCategoryItem(
+                      index,
+                      [
+                        'FOOD',
+                        'MEDICINE',
+                        'ACCESSORY',
+                        'TOY',
+                        'FURNITURE'
+                      ][index],
+                      [
+                        'assets/icons/food.png',
+                        'assets/icons/petmedicine.png',
+                        'assets/icons/accessories.png',
+                        'assets/icons/pet-toy.png',
+                        'assets/icons/house.png'
+                      ][index],
+                      screenWidth,
+                    );
+                  },
+                ),
+              )),
+    );
+  }
+
   Widget _buildCategoryItem(
+      int index, String title, String imagePath, double screenWidth) {
+    double containerSize =
+        screenWidth > 600 ? 80 : 60; // Adjust size based on screen width
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedCategoryIndex = index;
+          _currentCategory =
+              title.toUpperCase(); // Update the selected category index
+        });
+        _fetchCategory(); // Handle the click event
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0), // Padding for the item
+        decoration: BoxDecoration(
+          color: _selectedCategoryIndex == index
+              ? const Color(0xFF5CB15A)
+              : Colors.grey[200],
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Center items vertically
+          children: [
+            Container(
+              width: containerSize,
+              height: containerSize,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white, // Background for the image container
+              ),
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(12), // Ensure image fits well
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit
+                      .contain, // Ensures the image fits well inside the container
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: screenWidth > 600
+                    ? 16
+                    : 12, // Larger text for bigger screens
+                color: _selectedCategoryIndex == index
+                    ? Colors.black
+                    : Colors.grey,
+              ),
+              textAlign: TextAlign.center, // Center align the text
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryItemRow(
       int index, String title, String imagePath, double screenWidth) {
     // Adjust icon and container size based on screen width
     double containerSize =
-        screenWidth > 600 ? 90 : 60; // Larger container for bigger screens
+        screenWidth > 600 ? 80 : 60; // Larger container for bigger screens
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -460,7 +597,27 @@ class _ShopPageState extends State<ShopPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        
                         handleAddCart(_categoryItems[index]);
+                         DelightToastBar(
+          builder: (context) {
+            return const ToastCard(
+              leading: Icon(Icons.check, size: 20),
+              title: Text(
+                'Add successful',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Fredoka',
+                  color: Color(0xff5CB15A),
+                ),
+              ),
+            );
+          },
+          position: DelightSnackbarPosition.top,
+          autoDismiss: true,
+          snackbarDuration: Durations.extralong4,
+        ).show(context);
                       },
                       child: SizedBox(
                         child: Row(

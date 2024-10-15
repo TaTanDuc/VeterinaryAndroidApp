@@ -46,7 +46,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       _loading = false;
     });
     final url =
-        'http://localhost:8080/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
+        'http://10.0.2.2:8080/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -61,6 +61,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
             5: data['5'] ?? 0,
           };
           _loading = false;
+          print('xin chao jhdjfdhjfhjfdhfjdfhdjfhdjfhdjhfdjhfgfdj: $data');
         });
       } else {
         throw Exception('Failed to load ratings');
@@ -87,7 +88,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
 
   Future<void> fetchserviceCommnets() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
 
     setState(() {
       _loading = true; // Start loading
@@ -129,7 +130,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       _loading = false;
     });
     final url = Uri.parse(
-        'http://localhost:8080/api/service/comments?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/service/comments?serviceCODE=${widget.serviceCODE}');
 
     try {
       final response =
@@ -137,6 +138,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
       if (currentUser != null) {
+        print("User ID in review: ${currentUser.userID}");
         ID = currentUser.userID;
       } else {
         print("No user is logged in in here.");
@@ -231,26 +233,33 @@ class _MyWidgetState extends State<ReviewsScreen> {
               ); // Navigate to the previous screen
             },
           ),
-          Positioned(
-            top: 40, // Distance from the top
-            right: 20, // Distance from the right
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddReviewScreen(
-                            serviceCODE: serviceCommnets['serviceCODE'],
-                            userID: ID,
-                          )),
-                );
-              },
-              child: Image.asset(
-                'assets/icons/add_review.png', // Path to your icon
-                width: 30, // Width of the icon
-                height: 30, // Height of the icon
-              ),
-            ),
+          // Positioned(
+          //   top: 40, // Distance from the top
+          //   right: 20, // Distance from the right
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) => AddReviewScreen(
+          //                   serviceCODE: serviceCommnets['serviceCODE'],
+          //                   userID: ID,
+          //                 )),
+          //       );
+          //       print('This is ID: ${serviceCommnets['serviceCODE']}');
+          //     },
+          //     child: Image.asset(
+          //       'assets/icons/add_review.png', // Path to your icon
+          //       width: 30, // Width of the icon
+          //       height: 30, // Height of the icon
+          //     ),
+          //   ),
+          // ),
+          Stack(
+            children: [
+              // Your other widgets here
+              _addReviewButton(context), // Call the function here
+            ],
           ),
         ],
       ),
@@ -285,6 +294,58 @@ class _MyWidgetState extends State<ReviewsScreen> {
               fontWeight: FontWeight.w500),
         )
       ],
+    );
+  }
+
+  Widget _addReviewButton(BuildContext context) {
+    // Get the screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set responsive values based on screen width
+    double topPadding =
+        screenWidth < 600 ? 20 : 40; // Vertical distance from the top
+    double rightPadding =
+        screenWidth < 600 ? 15 : 20; // Horizontal distance from the right
+    double iconSize = screenWidth < 600 ? 20 : 30; // Size of the icon
+
+    return Positioned(
+      top: topPadding, // Distance from the top
+      right: rightPadding, // Distance from the right
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddReviewScreen(
+                serviceCODE: serviceCommnets['serviceCODE'],
+                userID: ID,
+              ),
+            ),
+          );
+          print('This is ID: ${serviceCommnets['serviceCODE']}');
+        },
+        child: Container(
+          width: iconSize, // Set width for the container
+          height: iconSize, // Set height for the container
+          decoration: BoxDecoration(
+            shape: BoxShape.circle, // Optional: make the button circular
+            color: Colors.white, // Optional: background color
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Image.asset(
+            'assets/icons/add_review.png', // Path to your icon
+            width: iconSize, // Width of the icon
+            height: iconSize, // Height of the icon
+          ),
+        ),
+      ),
     );
   }
 
@@ -404,9 +465,15 @@ class _MyWidgetState extends State<ReviewsScreen> {
 
   Widget _Review(Comment comment) {
     DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Adjust responsive font size for profileNAME based on screen width
+    double responsiveFontSize =
+        screenWidth < 600 ? 12 : 18; // Adjust for smaller screens
 
     // Parse and format the comment date
     String formattedDate = dateFormat.format(comment.commentDATE);
+
     return Card(
       color: Colors.white,
       child: Padding(
@@ -416,43 +483,54 @@ class _MyWidgetState extends State<ReviewsScreen> {
           children: [
             Row(
               children: [
-                // Avatar tròn
+                // Circular Avatar
                 CircleAvatar(
                   radius: 25,
                   backgroundImage: AssetImage(
-                    comment.profileIMG != null && comment.profileIMG.isNotEmpty
+                    (comment.profileIMG != null &&
+                            comment.profileIMG.isNotEmpty)
                         ? comment.profileIMG
                         : 'assets/images/avatar02.jpg',
-                    // Thay đổi URL với hình thật
                   ),
                 ),
                 SizedBox(width: 10),
-                // Tên người dùng và thời gian
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      comment.profileNAME,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                // Use Flexible to ensure the text can wrap or resize
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Ensure profile name has a fallback in case it's null or empty
+                      Text(
+                        comment.profileNAME != null &&
+                                comment.profileNAME.isNotEmpty
+                            ? comment.profileNAME
+                            : 'Unknown User',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: responsiveFontSize, // Responsive font size
+                        ),
+                        maxLines: 1, // Restrict to one line
+                        overflow: TextOverflow
+                            .ellipsis, // Handle overflow with ellipsis
                       ),
-                    ),
-                    Text(
-                      formattedDate,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
+                      Text(
+                        formattedDate,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: screenWidth < 600
+                              ? 12
+                              : 14, // Adjust date font size too
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
             SizedBox(height: 16),
             Divider(),
             SizedBox(height: 8),
-            // Hiển thị điểm số và các ngôi sao
+            // Rating and stars
             Row(
               children: [
                 Text(
@@ -467,18 +545,14 @@ class _MyWidgetState extends State<ReviewsScreen> {
               ],
             ),
             SizedBox(height: 8),
-            // Phần bình luận
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  comment.CONTENT,
-                  style: TextStyle(
-                      color: Color(0xff191919),
-                      fontSize: 16,
-                      fontFamily: 'Fredoka'),
-                ),
-              ],
+            // Comment content
+            Text(
+              comment.CONTENT,
+              style: TextStyle(
+                color: Color(0xff191919),
+                fontSize: 16,
+                fontFamily: 'Fredoka',
+              ),
             ),
           ],
         ),

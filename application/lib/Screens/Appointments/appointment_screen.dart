@@ -1,4 +1,5 @@
 import 'package:application/Screens/Login/register_screen.dart';
+import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Appointment.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
@@ -7,6 +8,10 @@ import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
 import 'package:application/Screens/Homepage/home.dart';
+import 'package:application/Screens/Homepage/service.dart';
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -58,7 +63,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
@@ -91,7 +96,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchServices() async {
     final url =
-        'http://localhost:8080/api/service/all'; // Replace with your API URL
+        'http://10.0.2.2:8080/api/service/all'; // Replace with your API URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -114,12 +119,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> submitAppointment() async {
-    // Parse the appointment date from the date picker
+    if (datePicker.text.isEmpty) {
+      print('Date picker is empty. Please select a date.');
+      return; // Early return if date is not set
+    }
+
     DateTime appointmentDATE;
     try {
+      // Try parsing the date with a fallback error message
       appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
     } catch (e) {
-      throw FormatException('Date format is invalid');
+      print('Error parsing date: $e');
+      return; // Early return on error
     }
 
     // Split the timePicker text to get hours and minutes
@@ -145,8 +156,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       selectedHour = 0; // Convert 12 AM to 0 hours
     }
 
-    // Initialize seconds (set to 0 or desired value)
-    int selectedSecond = 0;
+    int selectedSecond = 0; // Set to 0 or your desired value
 
     // Create a formatted string for appointmentTIME with seconds
     String appointmentTIME = '${selectedHour.toString().padLeft(2, '0')}:'
@@ -164,7 +174,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     // Set the API endpoint
     final url =
-        'http://localhost:8080/api/appointment/add'; // Replace with your API endpoint
+        'http://10.0.2.2:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
 
     try {
@@ -185,6 +195,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ), // Pass serviceCODE
           ),
         );
+        DelightToastBar(
+          builder: (context) {
+            return const ToastCard(
+              leading: Icon(Icons.check, size: 20),
+              title: Text(
+                'Book successful',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Fredoka',
+                  color: Color(0xff5CB15A),
+                ),
+              ),
+            );
+          },
+          position: DelightSnackbarPosition.top,
+          autoDismiss: true,
+          snackbarDuration: Durations.extralong4,
+        ).show(context);
       } else {
         throw Exception('Failed to save appointment');
       }
@@ -294,7 +323,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                           ),
-
                     const SizedBox(height: 20),
                     _loading
                         ? Center(child: CircularProgressIndicator())
@@ -435,13 +463,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-
-                    // Date picker with validation
                     TextField(
                       controller: datePicker,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Pick today\'s Date',
                         labelStyle: const TextStyle(
                           fontSize: 16,
@@ -461,7 +488,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             String dateTimeFormatted =
                                 DateFormat('yyyy-MM-dd').format(dateTime);
                             setState(() {
-                              datePicker.text = dateTimeFormatted;
+                              datePicker.text =
+                                  dateTimeFormatted; // Set the selected date
                             });
                           } else {
                             // Show alert if the day is Saturday or Sunday
@@ -470,7 +498,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               builder: (context) => AlertDialog(
                                 title: Text('Invalid Day'),
                                 content: Text(
-                                    'The spa does not operate on Saturday and Sunday.'),
+                                  'The spa does not operate on Saturday and Sunday.',
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -498,7 +527,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      HomePage(userID: ID)), // Điều hướng đến trang mới
+                      MainPage(userID: ID)), // Điều hướng đến trang mới
             );
           },
           hideImage: true,
@@ -509,6 +538,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Widget _time() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate responsive font size, with a maximum value of 20
+    double responsiveFontSize = screenWidth < 600 ? 10 : 12;
+    responsiveFontSize = responsiveFontSize > 12 ? 12 : responsiveFontSize;
     return Row(
       children: [
         Icon(
@@ -519,7 +553,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         const SizedBox(width: 10),
         Text(
           'Monday-Friday at 8:00 am - 5:00 pm',
-          style: TextStyle(color: Color(0xffA6A6A6), fontSize: 12),
+          style:
+              TextStyle(color: Color(0xffA6A6A6), fontSize: responsiveFontSize),
         )
       ],
     );
@@ -562,6 +597,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Widget _buttonAppointment() {
+    // Get the screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set responsive padding, font size, and icon size based on screen width
+    double paddingVertical = screenWidth < 600 ? 12 : 16;
+    double fontSize = screenWidth < 600 ? 20 : 30;
+    double iconSize = screenWidth < 600 ? 20 : 24;
+    double spacing = screenWidth < 600 ? 15 : 30;
+
     return ElevatedButton(
       onPressed: _loading
           ? null
@@ -573,9 +617,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               try {
                 await submitAppointment(); // Call submitAppointment asynchronously
                 // Optionally show a success message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Appointment booked successfully!')),
-                );
               } catch (error) {
                 // Handle the error, show an error message
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -593,7 +634,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(
+            vertical: paddingVertical), // Responsive padding
       ),
       child: SizedBox(
         width: double.infinity,
@@ -606,12 +648,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ? 'Booking...'
                   : 'Book an appointment', // Change text when loading
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 30,
+              style: TextStyle(
+                fontSize: fontSize, // Responsive font size
                 fontFamily: 'Fredoka',
               ),
             ),
-            const SizedBox(width: 30),
+            SizedBox(
+                width: spacing), // Responsive spacing between text and icon
             // Icon on the right
             _loading // Show loading indicator instead of icon when loading
                 ? CircularProgressIndicator(
@@ -620,50 +663,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   )
                 : Icon(
                     Icons.calendar_today, // Icon to change as desired
-                    size: 24, // Icon size
+                    size: iconSize, // Responsive icon size
                   ),
           ],
         ),
       ),
     );
   }
-  // Widget _buttonAppointment() {
-  //   return ElevatedButton(
-  //     onPressed: () {
-  //       submitAppointment();
-  //     },
-  //     style: ElevatedButton.styleFrom(
-  //       foregroundColor: Color(0xffffffff), // Màu chữ
-  //       backgroundColor: Color(0xff5CB15A), // Màu nền
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       padding: const EdgeInsets.symmetric(vertical: 16),
-  //     ),
-  //     child: SizedBox(
-  //       width: double.infinity,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.center, // Đẩy icon về bên phải
-  //         children: [
-  //           // Text ở giữa
-  //           Text(
-  //             'Book an appointment',
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               fontSize: 30,
-  //               fontFamily: 'Fredoka',
-  //             ),
-  //           ),
-  //           const SizedBox(width: 30),
-  //           // Icon bên phải
-  //           Icon(
-  //             Icons.calendar_today, // Thay đổi icon theo ý muốn
-  //             size: 24, // Kích thước icon
-  //             // Màu icon
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

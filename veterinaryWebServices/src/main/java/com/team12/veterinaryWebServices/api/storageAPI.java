@@ -54,4 +54,15 @@ public class storageAPI {
 
         return ResponseEntity.ok(o);
     }
+
+    @GetMapping("/getRandom")
+    public ResponseEntity<Object> getItemRandom(){
+        Object o = storageServices.get3Random();
+
+        if (o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
 }
