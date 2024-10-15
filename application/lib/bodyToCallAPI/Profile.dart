@@ -44,28 +44,29 @@ class Profile {
   final String? profileIMG;
   final String profileNAME;
   final String profileEMAIL;
-  final bool GENDER;
-  final int? AGE;
-  final String PHONE;
+  final bool gender;
+  final int? age;
+  final String phone;
 
   Profile({
     required this.userID,
-    this.profileIMG,
+    required this.profileIMG,
     required this.profileNAME,
     required this.profileEMAIL,
-    required this.GENDER,
-    required this.AGE,
-    this.PHONE = 'No phone number',
+    required this.gender,
+    required this.age,
+    required this.phone,
   });
+
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       userID: json['userID'] ?? 0, // Ensure this is an int
       profileIMG: json['profileIMG'] as String?,
-      profileNAME: json['profileNAME'] as String ?? 'Unknow',
+      profileNAME: json['profileNAME'] as String ?? 'Unknown',
       profileEMAIL: json['profileEMAIL'] as String,
-      GENDER: json['gender'] == 'MALE', // Converts to boolean
-      AGE: json['age'] != null ? json['AGE'] as int : null, // Handle null
-      PHONE: json['phone'] as String? ?? 'No phone number',
+      gender: json['GENDER'] == 'MALE', // Converts to boolean
+      age: json['AGE'] != null ? json['AGE'] as int : null, // Handle null
+      phone: json['PHONE'] ?? 'No phone number',
     );
   }
 
@@ -75,9 +76,9 @@ class Profile {
       'profileIMG': profileIMG,
       'profileNAME': profileNAME,
       'profileEMAIL': profileEMAIL,
-      'gender': GENDER ? 'MALE' : 'FEMALE',
-      'age': AGE,
-      'phone': PHONE,
+      'gender': gender ? true : false,
+      'age': age,
+      'phone': phone,
     };
   }
 }

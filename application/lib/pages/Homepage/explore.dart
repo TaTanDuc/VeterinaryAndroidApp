@@ -85,6 +85,7 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
             ),
           ],
+          automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
           child: Padding(

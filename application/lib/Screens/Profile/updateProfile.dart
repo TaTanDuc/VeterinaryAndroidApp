@@ -410,9 +410,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     // Populate text fields with the user's current profile data
     nameController.text = widget.profile.profileNAME;
     emailController.text = widget.profile.profileEMAIL;
-    ageController.text = widget.profile.AGE.toString();
-    phoneController.text = widget.profile.PHONE;
-    selectedGender = widget.profile.GENDER;
+    ageController.text = widget.profile.age.toString();
+    phoneController.text = widget.profile.phone;
+    selectedGender = widget.profile.gender;
     imagePath = widget.profile.profileIMG;
   }
 
@@ -439,25 +439,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       if (ageController.text.isNotEmpty) {
         age = int.tryParse(ageController.text);
         if (age == null) {
-          DelightToastBar(
-            builder: (context) {
-              return const ToastCard(
-                leading: Icon(Icons.check, size: 20),
-                title: Text(
-                  'Error AGE must be  sign',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Fredoka',
-                    color: Color.fromARGB(255, 243, 2, 2),
-                  ),
-                ),
-              );
-            },
-            position: DelightSnackbarPosition.top,
-            autoDismiss: true,
-            snackbarDuration: Durations.extralong4,
-          ).show(context);
           print('Invalid age input: ${ageController.text}');
           return; // Exit early if age is invalid
         }
@@ -471,9 +452,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         profileIMG: imagePath!,
         profileNAME: nameController.text,
         profileEMAIL: emailController.text,
-        AGE: age,
-        PHONE: phoneController.text,
-        GENDER: selectedGender!,
+        age: age,
+        phone: phoneController.text,
+        gender: selectedGender!,
       );
 
       final response = await http.patch(
@@ -498,7 +479,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             builder: (context) => ProfileScreen(userID: ID),
           ),
         );
-        print("data update: $profileDTO");
       } else {
         // Handle error response
         print('Update failed with status code: ${response.statusCode}');
@@ -518,7 +498,29 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
+        backgroundColor: const Color(0xFF5CB15A),
+        title: const Center(
+          child: Text(
+            'Update user',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'Fredoka',
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height, // Match the AppBar height
+              child: Image.asset(
+                'assets/icons/logo.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -1,4 +1,5 @@
 import 'package:application/Screens/Login/register_screen.dart';
+import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Appointment.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
@@ -7,6 +8,7 @@ import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
 import 'package:application/pages/Homepage/home.dart';
+import 'package:application/pages/Homepage/service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -499,7 +501,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      HomePage(userID: ID)), // Điều hướng đến trang mới
+                      MainPage(userID: ID)), // Điều hướng đến trang mới
             );
           },
           hideImage: true,
@@ -510,6 +512,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Widget _time() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate responsive font size, with a maximum value of 20
+    double responsiveFontSize = screenWidth < 600 ? 10 : 12;
+    responsiveFontSize = responsiveFontSize > 12 ? 12 : responsiveFontSize;
     return Row(
       children: [
         Icon(
@@ -520,7 +527,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         const SizedBox(width: 10),
         Text(
           'Monday-Friday at 8:00 am - 5:00 pm',
-          style: TextStyle(color: Color(0xffA6A6A6), fontSize: 12),
+          style:
+              TextStyle(color: Color(0xffA6A6A6), fontSize: responsiveFontSize),
         )
       ],
     );
@@ -563,6 +571,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Widget _buttonAppointment() {
+    // Get the screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set responsive padding, font size, and icon size based on screen width
+    double paddingVertical = screenWidth < 600 ? 12 : 16;
+    double fontSize = screenWidth < 600 ? 20 : 30;
+    double iconSize = screenWidth < 600 ? 20 : 24;
+    double spacing = screenWidth < 600 ? 15 : 30;
+
     return ElevatedButton(
       onPressed: _loading
           ? null
@@ -594,7 +611,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(
+            vertical: paddingVertical), // Responsive padding
       ),
       child: SizedBox(
         width: double.infinity,
@@ -607,12 +625,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ? 'Booking...'
                   : 'Book an appointment', // Change text when loading
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 30,
+              style: TextStyle(
+                fontSize: fontSize, // Responsive font size
                 fontFamily: 'Fredoka',
               ),
             ),
-            const SizedBox(width: 30),
+            SizedBox(
+                width: spacing), // Responsive spacing between text and icon
             // Icon on the right
             _loading // Show loading indicator instead of icon when loading
                 ? CircularProgressIndicator(
@@ -621,50 +640,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   )
                 : Icon(
                     Icons.calendar_today, // Icon to change as desired
-                    size: 24, // Icon size
+                    size: iconSize, // Responsive icon size
                   ),
           ],
         ),
       ),
     );
   }
-  // Widget _buttonAppointment() {
-  //   return ElevatedButton(
-  //     onPressed: () {
-  //       submitAppointment();
-  //     },
-  //     style: ElevatedButton.styleFrom(
-  //       foregroundColor: Color(0xffffffff), // Màu chữ
-  //       backgroundColor: Color(0xff5CB15A), // Màu nền
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       padding: const EdgeInsets.symmetric(vertical: 16),
-  //     ),
-  //     child: SizedBox(
-  //       width: double.infinity,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.center, // Đẩy icon về bên phải
-  //         children: [
-  //           // Text ở giữa
-  //           Text(
-  //             'Book an appointment',
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               fontSize: 30,
-  //               fontFamily: 'Fredoka',
-  //             ),
-  //           ),
-  //           const SizedBox(width: 30),
-  //           // Icon bên phải
-  //           Icon(
-  //             Icons.calendar_today, // Thay đổi icon theo ý muốn
-  //             size: 24, // Kích thước icon
-  //             // Màu icon
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

@@ -1,6 +1,7 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/main.dart';
 import 'package:application/pages/Homepage/explore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -62,7 +63,7 @@ class _ServicePageState extends State<ServicePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ExplorePage(
+              builder: (context) => MainPage(
                     userID: widget.userID,
                   )), // Replace ShopPage with the actual widget for your shop page
         );
@@ -259,15 +260,23 @@ class _ServicePageState extends State<ServicePage> {
   }
 
   Widget _buildStarRating(int rating) {
+    // Get the screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set responsive star size based on screen width
+    double starSize = screenWidth < 600 ? 19 : 30;
+
     List<Widget> stars = [];
     for (int i = 0; i < 5; i++) {
       stars.add(
         Icon(
           i < rating ? Icons.star : Icons.star_border,
           color: Colors.yellow,
+          size: starSize, // Responsive star size
         ),
       );
     }
+
     return Row(
       children: stars,
     );
