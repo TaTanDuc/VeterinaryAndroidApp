@@ -21,6 +21,7 @@ public class appointmentServices {
     private final profileRepository profileRepository;
     private final invoiceRepository invoiceRepository;
     private final petRepository petRepository;
+    private final storageRepository storageRepository;
 
     public Object getAllAppointments(){
         List<appointment> list = appointmentRepository.findAll();
@@ -58,7 +59,7 @@ public class appointmentServices {
 
         profile p = profileRepository.getProfileById(request.getUserID());
         pet pet = petRepository.getPetById(request.getPetID());
-
+        storage storage = storageRepository.getNull();
         if (p == null)
             return new appException(ERRORCODE.USER_DOES_NOT_EXIST);
 
@@ -98,6 +99,7 @@ public class appointmentServices {
             aD.setApmDetailID(appointmentDetailRepository.count()+1);
             aD.setAppointment(a);
             aD.setService(s);
+            aD.setStorage(storage);
             appointmentDetailRepository.save(aD);
         }
 
