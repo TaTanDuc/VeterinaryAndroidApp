@@ -61,8 +61,8 @@ class Profile {
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       userID: json['userID'] ?? 0, // Ensure this is an int
-      profileIMG: json['profileIMG'] as String?,
-      profileNAME: json['profileNAME'] as String ?? 'Unknown',
+      profileIMG: json['profileIMG'] ?? 'assets/icons/anonymus.webp',
+      profileNAME: json['profileNAME'] ?? 'Unknown',
       profileEMAIL: json['profileEMAIL'] as String,
       gender: json['GENDER'] == 'MALE', // Converts to boolean
       age: json['AGE'] != null ? json['AGE'] as int : null, // Handle null

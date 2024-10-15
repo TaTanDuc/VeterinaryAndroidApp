@@ -121,7 +121,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> submitAppointment() async {
-    DateTime appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
+    if (datePicker.text.isEmpty) {
+      print('Date picker is empty. Please select a date.');
+      return; // Early return if date is not set
+    }
+
+    DateTime appointmentDATE;
+    try {
+      // Try parsing the date with a fallback error message
+      appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
+    } catch (e) {
+      print('Error parsing date: $e');
+      return; // Early return on error
+    }
 
     // Split the timePicker text to get hours and minutes
     List<String> timeParts = timePicker.text.split(':');
@@ -146,14 +158,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       selectedHour = 0; // Convert 12 AM to 0 hours
     }
 
-    // Create a DateTime object using the selected date and time
-    // DateTime appointmentTIME = DateTime(
-    //   appointmentDATE.year,
-    //   appointmentDATE.month,
-    //   appointmentDATE.day,
-    //   selectedHour,
-    //   selectedMinute,
-    // );
     int selectedSecond = 0; // Set to 0 or your desired value
 
     // Create a formatted string for appointmentTIME with seconds
@@ -440,11 +444,60 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     const SizedBox(height: 20),
 
                     // Date picker with validation
+                    // TextField(
+                    //   controller: datePicker,
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.circular(10)),
+                    //     labelText: 'Pick today\'s Date',
+                    //     labelStyle: const TextStyle(
+                    //       fontSize: 16,
+                    //       color: Color(0xff000000),
+                    //     ),
+                    //   ),
+                    //   onTap: () async {
+                    //     DateTime? dateTime = await showDatePicker(
+                    //       context: context,
+                    //       initialDate: DateTime.now(),
+                    //       firstDate: DateTime(1950),
+                    //       lastDate: DateTime(2050),
+                    //     );
+
+                    //     if (dateTime != null) {
+                    //       if (_isValidDay(dateTime)) {
+                    //         String dateTimeFormatted =
+                    //             DateFormat('yyyy-MM-dd').format(dateTime);
+                    //         setState(() {
+                    //           datePicker.text = dateTimeFormatted;
+                    //         });
+                    //       } else {
+                    //         // Show alert if the day is Saturday or Sunday
+                    //         showDialog(
+                    //           context: context,
+                    //           builder: (context) => AlertDialog(
+                    //             title: Text('Invalid Day'),
+                    //             content: Text(
+                    //                 'The spa does not operate on Saturday and Sunday.'),
+                    //             actions: [
+                    //               TextButton(
+                    //                 onPressed: () {
+                    //                   Navigator.pop(context);
+                    //                 },
+                    //                 child: Text('OK'),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         );
+                    //       }
+                    //     }
+                    //   },
+                    // ),
                     TextField(
                       controller: datePicker,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Pick today\'s Date',
                         labelStyle: const TextStyle(
                           fontSize: 16,
@@ -464,7 +517,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             String dateTimeFormatted =
                                 DateFormat('yyyy-MM-dd').format(dateTime);
                             setState(() {
-                              datePicker.text = dateTimeFormatted;
+                              datePicker.text =
+                                  dateTimeFormatted; // Set the selected date
                             });
                           } else {
                             // Show alert if the day is Saturday or Sunday
@@ -473,7 +527,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               builder: (context) => AlertDialog(
                                 title: Text('Invalid Day'),
                                 content: Text(
-                                    'The spa does not operate on Saturday and Sunday.'),
+                                  'The spa does not operate on Saturday and Sunday.',
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

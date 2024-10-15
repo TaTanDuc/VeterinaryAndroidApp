@@ -1,4 +1,7 @@
 import 'package:application/Screens/Login/login_screen.dart';
+import 'package:application/Screens/Profile/addPet_screen.dart';
+import 'package:application/Screens/Profile/appointment_screen.dart';
+import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/User.dart';
@@ -490,6 +493,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 },
                 child: _optionItem(Icons.person, 'Update Information'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddPetScreen()),
+                  );
+                },
+                child: _optionItem(Icons.pets, 'Add your pet'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListApointment()),
+                  );
+                },
+                child: _optionItem(Icons.book, 'Show all apponitments'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListOrder()),
+                  );
+                },
+                child: _optionItem(Icons.gif_box, 'My orders'),
               ),
             ],
           )),

@@ -82,7 +82,7 @@ class _MainPageState extends State<MainPage> {
           label: 'Explore',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.pets),
+          icon: Icon(Icons.book_online_outlined),
           label: 'Book appointment',
         ),
         BottomNavigationBarItem(

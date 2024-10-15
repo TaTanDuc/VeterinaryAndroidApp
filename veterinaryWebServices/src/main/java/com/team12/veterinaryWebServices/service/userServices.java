@@ -4,6 +4,7 @@ import com.team12.veterinaryWebServices.dto.loginRequest;
 import com.team12.veterinaryWebServices.dto.registerRequest;
 import com.team12.veterinaryWebServices.dto.userDTO;
 import com.team12.veterinaryWebServices.enums.ROLE;
+import com.team12.veterinaryWebServices.enums.gender;
 import com.team12.veterinaryWebServices.exception.ERRORCODE;
 import com.team12.veterinaryWebServices.exception.appException;
 import com.team12.veterinaryWebServices.model.profile;
@@ -39,6 +40,8 @@ public class userServices {
         r.setRoleCODE(ROLE.CUS);
         user.setUSERNAME(request.getUSERNAME());
         user.setProfileEMAIL(request.getEMAIL());
+        user.setProfileIMG("assets/icons/anonymus.webp");
+        user.setGENDER(gender.MALE);
         user.setRole(r);
         user.setPASSWORD(request.getPASSWORD());
         profileRepository.save(user);

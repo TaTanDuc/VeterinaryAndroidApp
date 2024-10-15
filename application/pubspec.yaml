@@ -70,6 +70,7 @@ flutter:
     - assets/icons/location.png
     - assets/icons/accessories.png
     - assets/icons/food.png
+    - assets/icons/anonymus.webp
     - assets/icons/pet-toy.png
     - assets/icons/petmedicine.png
     - assets/icons/house.png

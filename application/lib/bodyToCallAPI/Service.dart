@@ -54,7 +54,3 @@ class Service {
     return 'Service(serviceCODE: $serviceCODE, serviceNAME: $serviceNAME, serviceRATING: $serviceRATING, commentCOUNT: $commentCOUNT, serviceDATE: $serviceDATE, imageService: $imageService, userID: $userID)';
   }
 }
-  // @override
-  // String toString() {
-  //   return 'Pet(userID: $serviceCODE, petID: $serviceNAME, petIMAGE: $serviceRATING, petSPECIE: $commentCOUNT, petNAME: $serviceDATE)';
-  // }
