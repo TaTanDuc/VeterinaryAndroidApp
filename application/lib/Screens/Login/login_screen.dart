@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://localhost:8080/api/user/login");
+      final url = Uri.parse("http://10.0.2.2:8080/api/user/login");
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
           _errorMessage =

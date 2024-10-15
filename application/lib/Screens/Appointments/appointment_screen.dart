@@ -63,7 +63,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://localhost:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final userManager = UserManager(); // Ensure singleton access
       User? currentUser = userManager.user;
@@ -96,7 +96,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchServices() async {
     final url =
-        'http://localhost:8080/api/service/all'; // Replace with your API URL
+        'http://10.0.2.2:8080/api/service/all'; // Replace with your API URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -174,7 +174,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     // Set the API endpoint
     final url =
-        'http://localhost:8080/api/appointment/add'; // Replace with your API endpoint
+        'http://10.0.2.2:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
 
     try {

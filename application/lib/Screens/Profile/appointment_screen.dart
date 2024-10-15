@@ -38,7 +38,7 @@ class _ListApointmentState extends State<ListApointment> {
       print("No user is logged in here.");
     }
     final url = Uri.parse(
-        'http://localhost:8080/api/appointment/getUserAppointment?userID=$ID');
+        'http://10.0.2.2:8080/api/appointment/getUserAppointment?userID=$ID');
     try {
       final response = await http.get(
         url,
@@ -199,7 +199,7 @@ class _ListApointmentState extends State<ListApointment> {
                         .start, // Aligns the items at the start
                     children: [
                       const Text(
-                        'Your apponitment date:', // Label text
+                        'Date:', // Label text
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -223,7 +223,7 @@ class _ListApointmentState extends State<ListApointment> {
                         .start, // Aligns the items at the start
                     children: [
                       const Text(
-                        'Your appointment time:', // Label text
+                        'Time:', // Label text
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

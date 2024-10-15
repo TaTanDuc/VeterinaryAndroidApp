@@ -36,7 +36,7 @@ class _ListOrderState extends State<ListOrder> {
       print("No user is logged in here.");
     }
     final url = Uri.parse(
-        'http://localhost:8080/api/invoice/getUserInvoices?userID=$ID');
+        'http://10.0.2.2:8080/api/invoice/getUserInvoices?userID=$ID');
     try {
       final response = await http.get(
         url,
@@ -145,7 +145,7 @@ class _ListOrderState extends State<ListOrder> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment
                         .start, // Aligns the items at the start
                     children: [
@@ -198,7 +198,7 @@ class _ListOrderState extends State<ListOrder> {
                         .start, // Aligns the items at the start
                     children: [
                       const Text(
-                        'Your invoice date:', // Label text
+                        'Date:', // Label text
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

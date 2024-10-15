@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http; // Make sure to import your User model
 
 Future<Pet> fetchUserData() async {
   final url = Uri.parse(
-      'http://localhost:8080/api/pet/getUserPets'); // Replace with actual API endpoint
+      'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with actual API endpoint
   final response = await http.get(url);
 
   if (response.statusCode == 200) {

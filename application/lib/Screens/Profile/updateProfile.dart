@@ -60,7 +60,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _loading = true;
     });
 
-    final url = Uri.parse('http://localhost:8080/api/profile/user/update');
+    final url = Uri.parse('http://10.0.2.2:8080/api/profile/user/update');
 
     try {
       int? age;
