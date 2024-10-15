@@ -62,6 +62,9 @@ public class profile {
     @OneToOne(mappedBy = "profile")
     private cart cart;
 
+    @OneToMany(mappedBy = "profile")
+    private List<invoice> invoices;
+
     @Override
     public int hashCode() {
         return Objects.hash(profileID); // Use a unique identifier instead

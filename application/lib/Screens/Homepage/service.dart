@@ -1,7 +1,7 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/bodyToCallAPI/User.dart';
-import 'package:application/pages/Homepage/explore.dart';
+import 'package:application/Screens/Homepage/explore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

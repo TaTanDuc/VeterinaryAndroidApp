@@ -1,21 +1,103 @@
+import 'package:application/Screens/Login/login_screen.dart';
+import 'package:application/Screens/Profile/addPet_screen.dart';
+import 'package:application/Screens/Profile/updateProfile.dart';
+import 'package:application/bodyToCallAPI/Profile.dart';
+import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 // import 'package:first_flutter/components/customNavContent.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final int userID;
-  const ProfileScreen(
-    {required this.userID,
-      super.key});
+  const ProfileScreen({required this.userID, super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool _loading = true; // Change the type based on your response
+
+  dynamic profile;
+  dynamic ID;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfile(); // Fetch details when the page initializes
+  }
+
+  Future<void> fetchProfile() async {
+    final userManager = UserManager(); // Ensure singleton access
+    User? currentUser = userManager.user;
+
+    if (currentUser != null) {
+      ID = currentUser.userID;
+    } else {
+      print("No user is logged in in HomePage.");
+      setState(() {
+        _loading = false; // Stop loading if no user is found
+      });
+      return;
+    }
+
+    final url =
+        Uri.parse('http://localhost:8080/api/profile/user/get?userID=$ID');
+
+    try {
+      final response =
+          await http.get(url, headers: {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          profile = Profile.fromJson(data); // Assume you have a fromJson method
+          _loading = false;
+        });
+      } else {
+        throw Exception('Failed to load profile details');
+      }
+    } catch (e) {
+      print('Error fetching profile details: $e');
+      setState(() {
+        _loading = false; // Stop loading on error
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF5CB15A),
+        title: const Center(
+          child: Text(
+            'Profile',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'Fredoka',
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height, // Match the AppBar height
+              child: Image.asset(
+                'assets/icons/logo.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: _page(),
     );
   }
@@ -24,6 +106,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SingleChildScrollView(
       child: Stack(
         children: [
+          ClipPath(
+            clipper: BottomRoundedClipper(),
+            child: Image.asset(
+              'assets/images/avatar02.jpg',
+              width: double.infinity,
+              height: 350,
+              fit: BoxFit.cover,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Center(
@@ -32,25 +123,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 400,
                   ),
-                  _infoUser(),
+                  _loading
+                      ? Center(child: CircularProgressIndicator())
+                      : profile != null
+                          ? Column(
+                              children: [
+                                _infoUser(profile),
+                              ],
+                            )
+                          : Center(child: Text('No details available')),
                   const SizedBox(height: 50),
                   _optionUser(),
                 ],
               ),
             ),
           ),
-          CustomNavContent(
-            navText: 'Profile Name',
-            onBackPressed: () {},
-            hideImage: true,
-            pathImage: 'assets/images/avatar02.jpg',
-          )
         ],
       ),
     );
   }
 
-  Widget _infoUser() {
+  void _signOut() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Sign Out'),
+          content: Text('Are you sure you want to sign out?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final userManager = UserManager();
+                userManager.clearUser(); // Clear user session
+
+                Navigator.of(context).pop(); // Close the dialog
+                // Use pushAndRemoveUntil for proper navigation
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: Text('Sign Out'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _infoUser(Profile user) {
     return Container(
       width: double.infinity,
       height: 200,
@@ -67,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Pixel Posse',
+                  'Information',
                   style: TextStyle(
                       fontSize: 26,
                       color: Color(0xff141415),
@@ -76,29 +203,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Hành động khi nhấn vào nút
-                    print('Sign out button pressed');
+                    _signOut(); // Call the sign-out function
                   },
                   icon: Icon(
-                    Icons.arrow_back, // Biểu tượng mũi tên quay về
-                    color: Colors.red, // Màu của biểu tượng
+                    Icons.arrow_back,
+                    color: Colors.red,
                   ),
                   label: Text(
-                    'Sign out', // Văn bản nút
+                    'Sign out',
                     style: TextStyle(
-                      color: Colors.red, // Màu của văn bản
-                      fontWeight: FontWeight.bold, // Đậm văn bản
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    // primary: Colors.white, // Màu nền của nút
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(8), // Định dạng bo góc
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    side: BorderSide(color: Colors.red), // Viền màu đỏ
+                    side: BorderSide(color: Colors.red),
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -107,7 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(Icons.email),
                 const SizedBox(width: 30),
                 Text(
-                  'nguyenboo2018@gmail.com',
+                  user.profileEMAIL,
                   style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 16,
@@ -123,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(Icons.call),
                 const SizedBox(width: 30),
                 Text(
-                  '0348859428',
+                  user.PHONE ?? 'Unknown need to  update',
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xff000000),
@@ -147,13 +271,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
-              _optionItem(Icons.person, 'About me'),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UpdateProfileScreen(profile: profile)),
+                  );
+                },
+                child: _optionItem(Icons.person, 'Update Information'),
+              ),
               const SizedBox(height: 30),
-              _optionItem(Icons.list_alt, 'My Orders'),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UpdateProfileScreen(profile: profile)),
+                  );
+                },
+                child: _optionItem(Icons.storage, 'My Appointment'),
+              ),
               const SizedBox(height: 30),
-              _optionItem(Icons.location_on, 'My Address'),
-              const SizedBox(height: 30),
-              _optionItem(Icons.pets, 'Add Pet'),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddPetScreen()),
+                  );
+                },
+                child: _optionItem(Icons.pets, 'Add Pet'),
+              ),
             ],
           )),
     );
@@ -184,4 +334,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     );
   }
+}
+
+class BottomRoundedClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(
+        0.0, size.height - 50); // Start point from the bottom left corner
+    var controlPoint = Offset(
+        size.width / 2, size.height - 100); // Control point for the curve
+    var endPoint = Offset(size.width, size.height - 50); // End point
+    path.quadraticBezierTo(
+        controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
+    path.lineTo(size.width, 0.0); // Connect back to the top right corner
+    path.close(); // Close the path
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

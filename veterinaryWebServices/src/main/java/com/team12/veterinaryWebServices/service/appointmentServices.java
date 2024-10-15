@@ -88,6 +88,7 @@ public class appointmentServices {
         i.setInvoiceCODE("A");
         i.setInvoiceID(invoiceRepository.countByCode("A")+ 1);
         i.setInvoiceDATE(request.getAppointmentDATE());
+        i.setProfile(p);
 
         invoiceRepository.save(i);
 

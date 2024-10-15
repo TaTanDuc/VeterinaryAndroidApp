@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.mapping.Join;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -36,4 +37,8 @@ public class invoice {
 
     @OneToMany(mappedBy = "invoice")
     private List<buyDetail> buyDetail;
+
+    @ManyToOne
+    @JoinColumn(name = "profileID")
+    private profile profile;
 }

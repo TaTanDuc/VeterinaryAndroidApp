@@ -1,7 +1,7 @@
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
-import 'package:application/pages/Homepage/service.dart';
-import 'package:application/pages/Homepage/shop.dart';
+import 'package:application/Screens/Homepage/service.dart';
+import 'package:application/Screens/Homepage/shop.dart';
 
 // Define a simple model class for categories
 class Category {

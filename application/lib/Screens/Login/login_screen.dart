@@ -55,12 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
         UserManager().setUser(user); // Set the user in UserManager
 
         User? currentUser = UserManager().user;
-        if (currentUser != null) {
-          print("User ID after setting: ${currentUser.userID}");
-        } else {
-          print("No user is logged in after setting.");
-        }
-
         Navigator.push(
           context,
           MaterialPageRoute(

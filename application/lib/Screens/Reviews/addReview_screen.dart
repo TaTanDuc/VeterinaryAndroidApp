@@ -4,6 +4,9 @@ import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -208,11 +211,29 @@ class _MyWidgetState extends State<AddReviewScreen> {
               try {
                 await fetchAddComment(); // Call submitAppointment asynchronously
                 // Optionally show a success message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Comment Added successfully!')),
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(content: Text('Comment Added successfully!')),
+                // );
+                DelightToastBar(
+                  builder: (context) {
+                    return const ToastCard(
+                      leading: Icon(Icons.check, size: 20),
+                      title: Text(
+                        'Add successful',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Fredoka',
+                          color: Color(0xff5CB15A),
+                        ),
+                      ),
+                    );
+                  },
+                  position: DelightSnackbarPosition.top,
+                  autoDismiss: true,
+                  snackbarDuration: Durations.extralong4,
+                ).show(context);
               } catch (error) {
-                // Handle the error, show an error message
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to add comment: $error')),
                 );
@@ -275,7 +296,6 @@ class _MyWidgetState extends State<AddReviewScreen> {
                     selectedIndex =
                         index + 1; // Set rating based on selected star (1 to 5)
                   });
-// Print the rating for debugging
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),

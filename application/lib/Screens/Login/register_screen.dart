@@ -52,8 +52,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "password": passwordController.text
         }),
       );
-      print(response.statusCode);
-      print(response.body);
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
         // Nếu đăng nhập thành công, chuyển tới MainPage

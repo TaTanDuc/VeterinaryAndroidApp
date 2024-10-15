@@ -6,7 +6,7 @@ import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
-import 'package:application/pages/Homepage/home.dart';
+import 'package:application/Screens/Homepage/home.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -64,10 +64,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       User? currentUser = userManager.user;
 
       if (currentUser != null) {
-        print("User ID in HomePage: ${currentUser.userID}");
         ID = currentUser.userID;
-      } else {
-        print("No user is logged in in HomePage.");
       }
       final response = await http.post(
         url,
@@ -86,7 +83,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         throw Exception('Failed to load pets');
       }
     } catch (e) {
-      print('Error: $e');
       setState(() {
         _loading = false;
       });
@@ -111,7 +107,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         throw Exception('Failed to load services');
       }
     } catch (e) {
-      print('Error: $e'); // Print error message
       setState(() {
         _loading = false; // Stop loading in case of error
       });

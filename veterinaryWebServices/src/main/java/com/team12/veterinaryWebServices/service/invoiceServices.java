@@ -43,4 +43,12 @@ public class invoiceServices {
         return list.stream().map(invoiceVM.appointment::from).toList();
     }
 
+    public Object getAllUserInvoices (Long userID){
+        List<invoice> list = invoiceRepository.getUserInvoices(userID);
+
+        if(list.isEmpty())
+            return new appException(ERRORCODE.NO_INVOICE_FOUND);
+
+        return list.stream().map(invoiceVM::from).toList();
+    }
 }

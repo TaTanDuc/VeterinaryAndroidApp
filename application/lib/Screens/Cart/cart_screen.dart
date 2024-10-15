@@ -6,7 +6,7 @@ import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
-import 'package:application/pages/Homepage/shop.dart';
+import 'package:application/Screens/Homepage/shop.dart';
 import 'package:application/service/fetchAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

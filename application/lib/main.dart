@@ -3,12 +3,12 @@ import 'package:application/Screens/Checkout/checkout_screen.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Services/detailService_screen.dart';
-import 'package:application/pages/Homepage/explore.dart';
-import 'package:application/pages/Homepage/home.dart';
+import 'package:application/Screens/Homepage/explore.dart';
+import 'package:application/Screens/Homepage/home.dart';
 //import 'package:application/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:application/pages/Homepage/service.dart';
-import 'package:application/pages/Homepage/shop.dart';
+import 'package:application/Screens/Homepage/service.dart';
+import 'package:application/Screens/Homepage/shop.dart';
 
 void main() {
   runApp(MyApp());

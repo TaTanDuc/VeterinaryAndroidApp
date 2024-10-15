@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
@@ -40,6 +41,16 @@ public class invoiceAPI {
     @GetMapping("/appointment")
     public ResponseEntity<Object> allAppointmentInvoices(){
         Object o = invoiceServices.getAllAppointmentInvoices();
+
+        if(o instanceof appException e)
+            return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
+
+        return ResponseEntity.ok(o);
+    }
+
+    @GetMapping("/getUserInvoices")
+    public ResponseEntity<Object> getUserInvoices(@RequestParam("userID") Long request){
+        Object o = invoiceServices.getAllUserInvoices(request);
 
         if(o instanceof appException e)
             return new ResponseEntity<>(e.getMessage(),e.getErrorCode());
