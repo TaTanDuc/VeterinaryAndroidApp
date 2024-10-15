@@ -7,8 +7,8 @@ import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
-import 'package:application/pages/Homepage/home.dart';
-import 'package:application/pages/Homepage/service.dart';
+import 'package:application/Screens/Homepage/home.dart';
+import 'package:application/Screens/Homepage/service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -66,10 +66,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       User? currentUser = userManager.user;
 
       if (currentUser != null) {
-        print("User ID in HomePage: ${currentUser.userID}");
         ID = currentUser.userID;
-      } else {
-        print("No user is logged in in HomePage.");
       }
       final response = await http.post(
         url,
@@ -88,7 +85,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         throw Exception('Failed to load pets');
       }
     } catch (e) {
-      print('Error: $e');
       setState(() {
         _loading = false;
       });
@@ -113,7 +109,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         throw Exception('Failed to load services');
       }
     } catch (e) {
-      print('Error: $e'); // Print error message
       setState(() {
         _loading = false; // Stop loading in case of error
       });
@@ -147,7 +142,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     int selectedHour =
         int.tryParse(timeParts[0]) ?? 0; // Default to 0 if parsing fails
     int selectedMinute =
-        int.tryParse(timeParts[1].split(' ')[0]) ?? 0; // Split to handle AM/PM
+        int.tryParse(timeParts[1].split(' ')[0]) ?? 0; // Handle AM/PM
 
     // Get AM/PM part for correct hour conversion
     String amPm =
@@ -161,28 +156,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     int selectedSecond = 0; // Set to 0 or your desired value
 
     // Create a formatted string for appointmentTIME with seconds
-    String appointmentTIME =
-        '${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}:${selectedSecond.toString().padLeft(2, '0')}'; // Format as HH:mm:ss
+    String appointmentTIME = '${selectedHour.toString().padLeft(2, '0')}:'
+        '${selectedMinute.toString().padLeft(2, '0')}:'
+        '${selectedSecond.toString().padLeft(2, '0')}'; // Format as HH:mm:ss
 
+    // Create the appointment object
     Appointment appointment = Appointment(
       userID: ID,
       petID: _selectedPetID,
       appointmentDATE: appointmentDATE,
-      appointmentTIME:
-          appointmentTIME, // Use the DateTime string representation
+      appointmentTIME: appointmentTIME, // Use the formatted time string
       services: _selectedServices,
     );
 
+    // Set the API endpoint
     final url =
         'http://localhost:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
+
     try {
+      // Send the appointment data to the API
       final response = await http.post(
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},
         body: body,
       );
 
+      // Handle the response
       if (response.statusCode == 200) {
         Navigator.push(
           context,
@@ -301,7 +301,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                           ),
-
                     const SizedBox(height: 20),
                     _loading
                         ? Center(child: CircularProgressIndicator())
@@ -442,56 +441,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-
-                    // Date picker with validation
-                    // TextField(
-                    //   controller: datePicker,
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //         borderRadius: BorderRadius.circular(10)),
-                    //     labelText: 'Pick today\'s Date',
-                    //     labelStyle: const TextStyle(
-                    //       fontSize: 16,
-                    //       color: Color(0xff000000),
-                    //     ),
-                    //   ),
-                    //   onTap: () async {
-                    //     DateTime? dateTime = await showDatePicker(
-                    //       context: context,
-                    //       initialDate: DateTime.now(),
-                    //       firstDate: DateTime(1950),
-                    //       lastDate: DateTime(2050),
-                    //     );
-
-                    //     if (dateTime != null) {
-                    //       if (_isValidDay(dateTime)) {
-                    //         String dateTimeFormatted =
-                    //             DateFormat('yyyy-MM-dd').format(dateTime);
-                    //         setState(() {
-                    //           datePicker.text = dateTimeFormatted;
-                    //         });
-                    //       } else {
-                    //         // Show alert if the day is Saturday or Sunday
-                    //         showDialog(
-                    //           context: context,
-                    //           builder: (context) => AlertDialog(
-                    //             title: Text('Invalid Day'),
-                    //             content: Text(
-                    //                 'The spa does not operate on Saturday and Sunday.'),
-                    //             actions: [
-                    //               TextButton(
-                    //                 onPressed: () {
-                    //                   Navigator.pop(context);
-                    //                 },
-                    //                 child: Text('OK'),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         );
-                    //       }
-                    //     }
-                    //   },
-                    // ),
                     TextField(
                       controller: datePicker,
                       decoration: InputDecoration(

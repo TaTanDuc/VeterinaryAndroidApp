@@ -296,7 +296,6 @@ class _MyWidgetState extends State<AddReviewScreen> {
                     selectedIndex =
                         index + 1; // Set rating based on selected star (1 to 5)
                   });
-// Print the rating for debugging
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),

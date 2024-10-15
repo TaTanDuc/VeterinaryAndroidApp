@@ -5,7 +5,7 @@ import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
 import 'package:application/components/customNavContent.dart';
-import 'package:application/pages/Homepage/service.dart';
+import 'package:application/Screens/Homepage/service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
