@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:application/bodyToCallAPI/Profile.dart';
+import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -122,7 +123,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileScreen(userID: ID),
+            builder: (context) => MainPage(userID: ID),
           ),
         );
       } else {

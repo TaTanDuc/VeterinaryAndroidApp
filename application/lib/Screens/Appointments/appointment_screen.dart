@@ -9,6 +9,9 @@ import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
 import 'package:application/Screens/Homepage/home.dart';
 import 'package:application/Screens/Homepage/service.dart';
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -192,6 +195,25 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ), // Pass serviceCODE
           ),
         );
+        DelightToastBar(
+          builder: (context) {
+            return const ToastCard(
+              leading: Icon(Icons.check, size: 20),
+              title: Text(
+                'Book successful',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Fredoka',
+                  color: Color(0xff5CB15A),
+                ),
+              ),
+            );
+          },
+          position: DelightSnackbarPosition.top,
+          autoDismiss: true,
+          snackbarDuration: Durations.extralong4,
+        ).show(context);
       } else {
         throw Exception('Failed to save appointment');
       }
@@ -595,9 +617,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               try {
                 await submitAppointment(); // Call submitAppointment asynchronously
                 // Optionally show a success message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Appointment booked successfully!')),
-                );
               } catch (error) {
                 // Handle the error, show an error message
                 ScaffoldMessenger.of(context).showSnackBar(
