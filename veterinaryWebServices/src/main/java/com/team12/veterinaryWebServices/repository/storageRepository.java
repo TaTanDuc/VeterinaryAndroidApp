@@ -24,4 +24,7 @@ public interface storageRepository extends JpaRepository<storage, storageCK> {
 
     @Query(value = "SELECT * FROM storage WHERE storage.itemcode = 'NULL'",nativeQuery = true)
     storage getNull();
+
+    @Query(value = "SELECT * FROM storage WHERE storage.itemcode not in ('NULL') ORDER BY RAND() LIMIT 3",nativeQuery = true)
+    List<storage> get3Random();
 }
