@@ -12,10 +12,10 @@ import java.util.List;
 @Repository
 public interface appointmentRepository extends JpaRepository<appointment, Long> {
 
-    @Query(value = "SELECT * FROM appointment WHERE YEARWEEK('appointment.appointmentdate', 1) = YEARWEEK(CURDATE(), 1) ",nativeQuery = true)
+    @Query(value = "SELECT * FROM appointment WHERE YEARWEEK(appointment.appointmentdate, 1) = YEARWEEK(CURDATE(), 1) ",nativeQuery = true)
     List<appointment> getThisWeekAppointment ();
 
-    @Query(value = "SELECT * FROM appointment WHERE YEARWEEK('appointment.appointmentdate', 1) = YEARWEEK(CURDATE(), 1) AND appointment.profileid = ?1",nativeQuery = true)
+    @Query(value = "SELECT * FROM appointment WHERE YEARWEEK(appointment.appointmentdate, 1) = YEARWEEK(CURDATE(), 1) AND appointment.profileid = ?1",nativeQuery = true)
     List<appointment> getUserAppointment (Long userID);
 
     @Query(value = "SELECT * FROM appointment a WHERE a.appointmentdate = ?1 AND HOUR(a.appointmenttime) = ?2", nativeQuery = true)
