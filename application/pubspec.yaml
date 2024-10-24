@@ -64,6 +64,37 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/dogcollar.webp
+    - assets/images/rawsalmon.webp
+    - assets/images/RawChicken.webp
+    - assets/images/packageddogfood.webp
+    - assets/images/packagedcatfood.webp
+    - assets/images/canneddogfood.webp
+    - assets/images/cannedcatfood.webp
+    - assets/images/woodenpetcage.webp
+    - assets/images/softbed.webp
+    - assets/images/scratchpost.webp
+    - assets/images/pettent.jpg
+    - assets/images/cattree.webp
+    - assets/images/vitamins.webp
+    - assets/images/nutri.webp
+    - assets/images/nourse19.jpg
+    - assets/images/kidney.jpg
+    - assets/images/goatmilk.webp
+    - assets/images/catmint.webp
+    - assets/images/calcium.webp
+    - assets/images/biovitar.jpg
+    - assets/images/biorantel.jpg
+    - assets/images/allcarequill.png
+    - assets/images/woodenpetcage.webp
+    - assets/images/stick.png
+    - assets/images/scratchpost.webp
+    - assets/images/mouse.jpg
+    - assets/images/loofa.webp
+    - assets/images/disc.webp
+    - assets/images/catwand.webp
+    - assets/images/cattreadmill.webp
+    - assets/images/ball.webp
     - assets/icons/logo.png
     - assets/icons/mypet.png
     - assets/icons/petfood.png
