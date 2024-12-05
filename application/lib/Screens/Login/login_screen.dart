@@ -1,10 +1,12 @@
-import 'dart:convert'; // Thêm import để xử lý JSON
-import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
-import 'package:application/bodyToCallAPI/User.dart';
+import 'dart:convert';
+import 'package:application/Screens/Login/register_screen.dart';
+import 'package:application/bodyToCallAPI/User.dart' as AppUser;
 import 'package:application/bodyToCallAPI/UserManager.dart';
 
 import 'package:application/components/customInputField.dart';
+import 'package:application/controllers/GoogleController.dart';
 import 'package:application/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -18,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  var user;
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String _errorMessage = "";
@@ -26,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://10.0.2.2:8080/api/user/login");
+      final url = Uri.parse("http://localhost:8080/api/user/login");
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
           _errorMessage =
@@ -48,13 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final userId = data['userID'];
-        // Nếu đăng nhập thành công, chuyển tới MainPage
-        User user = User.fromJson(data);
+        final user = AppUser.User.fromJson(data);
         final userManager = UserManager();
 
         UserManager().setUser(user); // Set the user in UserManager
 
-        User? currentUser = UserManager().user;
+        AppUser.User? currentUser = UserManager().user;
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -270,14 +272,22 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Image.asset('assets/icons/facebook_icon.png',
               fit: BoxFit.contain), // Hình ảnh đầu tiên
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          alignment: Alignment.center,
-          height: 55,
-          width: 55,
-
-          child: Image.asset('assets/icons/google1.png',
-              fit: BoxFit.contain), // Hình ảnh thứ hai
+        GestureDetector(
+          onTap: () async {
+            await FirebaseServices().signInWithGoogle();
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => MainPage(userID: 1)));
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            alignment: Alignment.center,
+            height: 55,
+            width: 55,
+            child: Image.asset(
+              'assets/icons/google1.png',
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 8),

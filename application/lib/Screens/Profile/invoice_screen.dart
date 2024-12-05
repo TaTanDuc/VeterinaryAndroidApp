@@ -36,7 +36,7 @@ class _ListOrderState extends State<ListOrder> {
       print("No user is logged in here.");
     }
     final url = Uri.parse(
-        'http://10.0.2.2:8080/api/invoice/getUserInvoices?userID=$ID');
+        'http://localhost:8080/api/invoice/getUserInvoices?userID=$ID');
     try {
       final response = await http.get(
         url,

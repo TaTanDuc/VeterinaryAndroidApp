@@ -43,7 +43,7 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
-      final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
+      final url = Uri.parse("http://localhost:8080/api/cart/addItem");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -55,9 +55,7 @@ class _ShopPageState extends State<ShopPage> {
           "quantity": 1
         }),
       );
-      if (response.statusCode == 200) {
-       
-      }
+      if (response.statusCode == 200) {}
     } catch (err) {
       print(err);
     }
@@ -66,7 +64,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleSearch(value) async {
     try {
       final url = Uri.parse(
-          "http://10.0.2.2:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://localhost:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -87,7 +85,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> _fetchCategory() async {
     try {
       final url = Uri.parse(
-          "http://10.0.2.2:8080/api/storage/getItems?category=${_currentCategory}");
+          "http://localhost:8080/api/storage/getItems?category=${_currentCategory}");
       // Gửi yêu cầu POST tới API
       final response = await http.get(
         url,
@@ -135,7 +133,6 @@ class _ShopPageState extends State<ShopPage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  
                   // Điều hướng đến trang mới
                   Navigator.push(
                     context,
@@ -597,27 +594,26 @@ class _ShopPageState extends State<ShopPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        
                         handleAddCart(_categoryItems[index]);
-                         DelightToastBar(
-          builder: (context) {
-            return const ToastCard(
-              leading: Icon(Icons.check, size: 20),
-              title: Text(
-                'Add successful',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Fredoka',
-                  color: Color(0xff5CB15A),
-                ),
-              ),
-            );
-          },
-          position: DelightSnackbarPosition.top,
-          autoDismiss: true,
-          snackbarDuration: Durations.extralong4,
-        ).show(context);
+                        DelightToastBar(
+                          builder: (context) {
+                            return const ToastCard(
+                              leading: Icon(Icons.check, size: 20),
+                              title: Text(
+                                'Add successful',
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Fredoka',
+                                  color: Color(0xff5CB15A),
+                                ),
+                              ),
+                            );
+                          },
+                          position: DelightSnackbarPosition.top,
+                          autoDismiss: true,
+                          snackbarDuration: Durations.extralong4,
+                        ).show(context);
                       },
                       child: SizedBox(
                         child: Row(

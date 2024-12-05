@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   // Method to fetch pets from API
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://localhost:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final response = await http.post(
         url,
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchShops() async {
-    final url = Uri.parse('http://10.0.2.2:8080/api/storage/getRandom');
+    final url = Uri.parse('http://localhost:8080/api/storage/getRandom');
     try {
       final response = await http.get(
         url,

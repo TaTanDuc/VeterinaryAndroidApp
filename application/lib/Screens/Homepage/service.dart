@@ -28,7 +28,7 @@ class _ServicePageState extends State<ServicePage> {
   // Method to fetch services from API
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8080/api/service/all'); // Replace with your actual API URL
+        'http://localhost:8080/api/service/all'); // Replace with your actual API URL
     try {
       final response = await http.get(
         url,

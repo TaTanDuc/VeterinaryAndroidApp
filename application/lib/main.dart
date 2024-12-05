@@ -1,16 +1,16 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
-import 'package:application/Screens/Checkout/checkout_screen.dart';
 import 'package:application/Screens/Login/login_screen.dart';
+import 'package:application/Screens/Payment/MethodPayment.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
 import 'package:application/Screens/Homepage/home.dart';
-//import 'package:application/profile.dart';
+import 'package:application/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:application/Screens/Homepage/service.dart';
-import 'package:application/Screens/Homepage/shop.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -47,7 +47,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    // Khởi tạo các trang với userID được truyền vào từ widget
     _children = [
       HomePage1(userID: widget.userID),
       ExplorePage1(
@@ -60,7 +59,7 @@ class _MainPageState extends State<MainPage> {
 
   void onTappedBar(int index) {
     setState(() {
-      _currentIndex = index; // Cập nhật chỉ số trang hiện tại
+      _currentIndex = index;
     });
   }
 
@@ -103,19 +102,18 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
+  final int userID;
 
   HomePage1({required this.userID});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: HomePage(userID: userID)); // Truyền userID xuống HomePage
+    return Center(child: HomePage(userID: userID));
   }
 }
 
 class ExplorePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
+  final int userID;
 
   ExplorePage1({required this.userID});
   @override
