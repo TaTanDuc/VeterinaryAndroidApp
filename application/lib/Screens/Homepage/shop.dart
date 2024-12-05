@@ -10,9 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ShopPage extends StatefulWidget {
-  final int userID;
-
-  const ShopPage({super.key, required this.userID});
+  const ShopPage({
+    super.key,
+  });
 
   @override
   _ShopPageState createState() => _ShopPageState();
@@ -24,6 +24,10 @@ class _ShopPageState extends State<ShopPage> {
   dynamic ID;
   dynamic cartID;
   List<dynamic> _categoryItems = [];
+<<<<<<< Updated upstream
+=======
+  bool _loading = true;
+>>>>>>> Stashed changes
 
   TextEditingController inputValueController = TextEditingController();
   @override
@@ -43,6 +47,12 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
+<<<<<<< Updated upstream
+=======
+      setState(() {
+        _loading = false;
+      });
+>>>>>>> Stashed changes
       final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
       final response = await http.post(
         url,
@@ -55,11 +65,15 @@ class _ShopPageState extends State<ShopPage> {
           "quantity": 1
         }),
       );
-      if (response.statusCode == 200) {
-       
-      }
+      if (response.statusCode == 200) {}
     } catch (err) {
       print(err);
+<<<<<<< Updated upstream
+=======
+      setState(() {
+        _loading = false;
+      });
+>>>>>>> Stashed changes
     }
   }
 
@@ -135,7 +149,6 @@ class _ShopPageState extends State<ShopPage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  
                   // Điều hướng đến trang mới
                   Navigator.push(
                     context,
@@ -597,27 +610,26 @@ class _ShopPageState extends State<ShopPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        
                         handleAddCart(_categoryItems[index]);
-                         DelightToastBar(
-          builder: (context) {
-            return const ToastCard(
-              leading: Icon(Icons.check, size: 20),
-              title: Text(
-                'Add successful',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Fredoka',
-                  color: Color(0xff5CB15A),
-                ),
-              ),
-            );
-          },
-          position: DelightSnackbarPosition.top,
-          autoDismiss: true,
-          snackbarDuration: Durations.extralong4,
-        ).show(context);
+                        DelightToastBar(
+                          builder: (context) {
+                            return const ToastCard(
+                              leading: Icon(Icons.check, size: 20),
+                              title: Text(
+                                'Add successful',
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Fredoka',
+                                  color: Color(0xff5CB15A),
+                                ),
+                              ),
+                            );
+                          },
+                          position: DelightSnackbarPosition.top,
+                          autoDismiss: true,
+                          snackbarDuration: Durations.extralong4,
+                        ).show(context);
                       },
                       child: SizedBox(
                         child: Row(

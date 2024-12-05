@@ -9,9 +9,7 @@ import 'package:application/Screens/Homepage/shop.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
-  final int userID;
-
-  const HomePage({super.key, required this.userID});
+  const HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -33,11 +31,19 @@ class _HomePageState extends State<HomePage> {
     final url = Uri.parse(
         'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
+      final userManager = UserManager();
+      User? currentUser = userManager.user;
+      var id;
+      if (currentUser != null) {
+        print("User ID in HomePage: ${currentUser.userID}");
+        id = currentUser.userID;
+      } else {
+        print("No user is logged in in HomePage.");
+      }
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(
-            {"userID": widget.userID}), // Replace with your actual userID
+        body: jsonEncode({"userID": id}),
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
@@ -214,8 +220,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        ShopPage(userID: widget.userID)),
+                                    builder: (context) => ShopPage()),
                               );
                             },
                             child: const Text(

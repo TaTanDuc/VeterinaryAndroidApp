@@ -115,9 +115,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MainPage(
-                userID: ID,
-              ), // Pass serviceCODE
+              builder: (context) => MainPage(), // Pass serviceCODE
             ),
           );
         });
@@ -281,7 +279,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
             onBackPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MainPage(userID: ID)),
+                MaterialPageRoute(builder: (context) => MainPage()),
               );
             })
       ],

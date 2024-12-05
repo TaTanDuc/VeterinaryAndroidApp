@@ -7,7 +7,7 @@ import 'package:application/Screens/Homepage/shop.dart';
 class Category {
   final String title;
   final String description;
-  final Widget Function(int userID) targetPageBuilder; // Page to navigate to
+  final Widget Function() targetPageBuilder; // Page to navigate to
 
   Category({
     required this.title,
@@ -17,9 +17,9 @@ class Category {
 }
 
 class ExplorePage extends StatefulWidget {
-  final int userID;
-
-  const ExplorePage({super.key, required this.userID});
+  const ExplorePage({
+    super.key,
+  });
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
@@ -31,16 +31,13 @@ class _ExplorePageState extends State<ExplorePage> {
     Category(
       title: 'Shop',
       description: 'Explore a variety of products.',
-      targetPageBuilder: (userID) =>
-          ShopPage(userID: userID), // The target page for this category
+      targetPageBuilder: () => ShopPage(),
     ),
     Category(
       title: 'Service',
       description: 'Find the best services for your needs.',
-      targetPageBuilder: (userID) =>
-          ServicePage(userID: userID), // Change this to the actual Service page
+      targetPageBuilder: () => ServicePage(),
     ),
-    // You can add more categories here
   ];
 
   @override
@@ -53,9 +50,8 @@ class _ExplorePageState extends State<ExplorePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => MainPage(
-                    userID: widget.userID,
-                  )), // Replace ShopPage with the actual widget for your shop page
+              builder: (context) =>
+                  MainPage()), // Replace ShopPage with the actual widget for your shop page
         );
         return false; // Prevent the default pop action
       },
@@ -130,8 +126,8 @@ class _ExplorePageState extends State<ExplorePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => category
-                                          .targetPageBuilder(widget.userID),
+                                      builder: (context) =>
+                                          category.targetPageBuilder(),
                                     ),
                                   );
                                 },

@@ -14,8 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final int userID;
-  const ProfileScreen({required this.userID, super.key});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

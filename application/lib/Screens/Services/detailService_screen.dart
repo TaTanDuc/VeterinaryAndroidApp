@@ -176,10 +176,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
         // Navigate to ShopPage when back button is pressed
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => ServicePage(
-                    userID: service?.userID ?? 0,
-                  )), // Replace ShopPage with the actual widget for your shop page
+          MaterialPageRoute(builder: (context) => ServicePage()),
         );
         return false; // Prevent the default pop action
       },

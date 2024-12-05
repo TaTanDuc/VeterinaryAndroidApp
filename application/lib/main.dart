@@ -1,16 +1,22 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
-import 'package:application/Screens/Checkout/checkout_screen.dart';
+import 'package:application/Screens/Providers/googleSignin.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
-import 'package:application/Screens/Homepage/home.dart';
-//import 'package:application/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:application/Screens/Homepage/service.dart';
-import 'package:application/Screens/Homepage/shop.dart';
+import 'package:application/Screens/Homepage/home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // Activate Firebase App Check
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.playIntegrity,
+  );
   runApp(MyApp());
 }
 
@@ -19,22 +25,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
-      // home: AppointmentScreen(),
-      //home: ShopPage(),
-      //home: ExplorePage(),
-      //home: ServicePage(),
-      // home: DetailServiceScreen(),
-    );
+    return ChangeNotifierProvider(
+        create: (context) => GoogleSignInProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: LoginScreen(),
+        ));
   }
 }
 
 class MainPage extends StatefulWidget {
-  final int userID; // Nhận userID từ trang trước
+  // Nhận userID từ trang trước
 
-  const MainPage({required this.userID});
+  const MainPage();
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -49,12 +52,10 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     // Khởi tạo các trang với userID được truyền vào từ widget
     _children = [
-      HomePage1(userID: widget.userID),
-      ExplorePage1(
-        userID: widget.userID,
-      ),
-      ManagePage1(userID: widget.userID),
-      ProfilePage1(userID: widget.userID),
+      HomePage1(),
+      ExplorePage1(),
+      ManagePage1(),
+      ProfilePage1(),
     ];
   }
 
@@ -103,31 +104,24 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  HomePage1({required this.userID});
+  HomePage1();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: HomePage(userID: userID)); // Truyền userID xuống HomePage
+    return Center(child: HomePage()); // Truyền userID xuống HomePage
   }
 }
 
 class ExplorePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  ExplorePage1({required this.userID});
+  ExplorePage1();
   @override
   Widget build(BuildContext context) {
-    return Center(child: ExplorePage(userID: userID));
+    return Center(child: ExplorePage());
   }
 }
 
 class ManagePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  ManagePage1({required this.userID});
+  ManagePage1();
 
   @override
   Widget build(BuildContext context) {
@@ -136,13 +130,10 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  ProfilePage1({required this.userID});
+  ProfilePage1();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: ProfileScreen(userID: userID)); // Truyền userID xuống HomePage
+    return Center(child: ProfileScreen()); // Truyền userID xuống HomePage
   }
 }

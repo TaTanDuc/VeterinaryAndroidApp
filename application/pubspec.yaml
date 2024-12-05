@@ -41,6 +41,15 @@ dependencies:
   http: ^1.2.2
   delightful_toast: ^1.1.0
   image_picker: ^1.1.2
+  firebase_auth: ^5.3.3
+  firebase_core: ^3.8.0
+  # firebase_storage: ^12.3.6
+  # cloud_firestore: ^5.5.0
+  google_sign_in: ^6.2.2  # Make sure it's the latest
+  font_awesome_flutter: ^10.4.1
+  provider: ^6.1.2  
+  firebase_app_check: ^0.3.1+6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

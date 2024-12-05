@@ -1,8 +1,9 @@
 import 'dart:convert'; // Thêm import để xử lý JSON
+import 'package:application/Screens/Providers/googleSignin.dart';
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
 import 'package:application/bodyToCallAPI/User.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
-
+import 'package:provider/provider.dart';
 import 'package:application/components/customInputField.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         User? currentUser = UserManager().user;
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => MainPage(userID: user.userID)),
+          MaterialPageRoute(builder: (context) => MainPage()),
         );
       } else {
         setState(() {
@@ -275,9 +275,17 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.center,
           height: 55,
           width: 55,
-
-          child: Image.asset('assets/icons/google1.png',
-              fit: BoxFit.contain), // Hình ảnh thứ hai
+          child: GestureDetector(
+            onTap: () async {
+              final provider =
+                  Provider.of<GoogleSignInProvider>(context, listen: false);
+              await provider.googleLogin();
+            },
+            child: Image.asset(
+              'assets/icons/google1.png',
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 8),
