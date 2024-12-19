@@ -43,7 +43,7 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
-      final url = Uri.parse("http://localhost:8080/api/cart/addItem");
+      final url = Uri.parse("http://10.0.0.2/api/cart/addItem");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -64,7 +64,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleSearch(value) async {
     try {
       final url = Uri.parse(
-          "http://localhost:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://10.0.0.2/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -85,7 +85,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> _fetchCategory() async {
     try {
       final url = Uri.parse(
-          "http://localhost:8080/api/storage/getItems?category=${_currentCategory}");
+          "http://10.0.0.2/api/storage/getItems?category=${_currentCategory}");
       // Gửi yêu cầu POST tới API
       final response = await http.get(
         url,

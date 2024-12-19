@@ -58,7 +58,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
       content: content,
     );
 
-    final url = Uri.parse('http://localhost:8080/api/service/addComment');
+    final url = Uri.parse('http://10.0.0.2/api/service/addComment');
     final body = jsonEncode(comment.toJson());
     try {
       final response = await http.post(

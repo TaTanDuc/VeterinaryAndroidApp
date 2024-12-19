@@ -65,7 +65,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/cart/updateCart");
+      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -135,7 +135,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/cart/updateCart");
+      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -189,7 +189,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       } else {
         print("No user is logged in in HomePage.");
       }
-      final url = Uri.parse("http://localhost:8080/api/cart/getUserCart");
+      final url = Uri.parse("http://10.0.0.2/api/cart/getUserCart");
       // Gửi yêu cầu POST tới API
       final response = await http.post(
         url,

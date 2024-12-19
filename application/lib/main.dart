@@ -22,18 +22,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
-      // home: AppointmentScreen(),
-      //home: ShopPage(),
-      //home: ExplorePage(),
-      //home: ServicePage(),
-      // home: DetailServiceScreen(),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  final int userID; // Nhận userID từ trang trước
-
+  final int userID;
   const MainPage({required this.userID});
   @override
   _MainPageState createState() => _MainPageState();

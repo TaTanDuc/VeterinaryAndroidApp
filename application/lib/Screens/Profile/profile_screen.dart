@@ -49,8 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    final url =
-        Uri.parse('http://localhost:8080/api/profile/user/get?userID=$ID');
+    final url = Uri.parse('http://10.0.0.2/api/profile/user/get?userID=$ID');
 
     try {
       final response =

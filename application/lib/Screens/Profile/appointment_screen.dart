@@ -38,7 +38,7 @@ class _ListApointmentState extends State<ListApointment> {
       print("No user is logged in here.");
     }
     final url = Uri.parse(
-        'http://localhost:8080/api/appointment/getUserAppointment?userID=$ID');
+        'http://10.0.0.2/api/appointment/getUserAppointment?userID=$ID');
     try {
       final response = await http.get(
         url,

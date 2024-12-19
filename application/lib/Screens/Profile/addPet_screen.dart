@@ -62,7 +62,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
         return;
       }
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/pet/getUserPets");
+      final url = Uri.parse("http://10.0.0.2/api/pet/getUserPets");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -89,7 +89,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
   Future<void> handleAddPet() async {
     try {
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://localhost:8080/api/pet/addPet");
+      final url = Uri.parse("http://10.0.0.2/api/pet/addPet");
       // var nameParts = _imageFile!.path.split('\\');
       // var fileName = "assets/images/${nameParts.last}";
       // if (fileName == null) {
