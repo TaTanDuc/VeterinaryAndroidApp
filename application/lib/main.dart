@@ -1,4 +1,6 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
+import 'package:application/Screens/Chat/chatbox_screen.dart';
+import 'package:application/Screens/Chat/select_chatbox.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Payment/MethodPayment.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: ChatPage(),
     );
   }
 }
