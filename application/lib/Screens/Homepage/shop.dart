@@ -24,6 +24,7 @@ class _ShopPageState extends State<ShopPage> {
   dynamic ID;
   dynamic cartID;
   List<dynamic> _categoryItems = [];
+  bool _loading = true;
 
   TextEditingController inputValueController = TextEditingController();
   @override
@@ -43,7 +44,10 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
-      final url = Uri.parse("http://10.0.0.2/api/cart/addItem");
+      setState(() {
+        _loading = false;
+      });
+      final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -58,6 +62,9 @@ class _ShopPageState extends State<ShopPage> {
       if (response.statusCode == 200) {}
     } catch (err) {
       print(err);
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -247,7 +254,7 @@ class _ShopPageState extends State<ShopPage> {
                       ] // Hiển thị nếu không có dữ liệu
                     : List.generate(_categoryItems.length, (index) {
                         var item = _categoryItems[index];
-                        String imagePath = 'assets/images/${item['itemIMAGE']}';
+                        String imagePath = '${item['itemIMAGE']}';
                         return _buildShopRow(
                             index,
                             item['itemNAME'],

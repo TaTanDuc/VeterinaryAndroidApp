@@ -94,142 +94,146 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF5CB15A),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height, // Match the AppBar height
-              child: Image.asset(
-                'assets/icons/logo.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ],
-        automaticallyImplyLeading: false,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // My Pets Section
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF5CB15A),
+          actions: [
             Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 4, 4, 4),
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset(
-                      'assets/icons/mypet.png',
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 10),
-                    _loading
-                        ? Center(child: CircularProgressIndicator())
-                        : _pets.isEmpty
-                            ? Center(child: Text('No pets found.'))
-                            : SizedBox(
-                                height:
-                                    100, // Set a fixed height for the horizontal ListView
-                                child: ListView.builder(
-                                  scrollDirection:
-                                      Axis.horizontal, // Horizontal scrolling
-                                  itemCount: _pets.length,
-                                  itemBuilder: (context, index) {
-                                    print(
-                                        'Pet image: ${_pets[index].petIMAGE}');
-                                    return _buildPetCard(_pets[index]);
-                                  },
-                                ),
-                              ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // The rest of the UI for the Shop section, etc.
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 4, 4, 4),
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.shopping_bag), // Biểu tượng
-                          const SizedBox(
-                            height: 50,
-                            width: 8,
-                          ), // Khoảng cách giữa biểu tượng và nhãn
-                          const Text(
-                            'Shop', // Nhãn
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontFamily: 'Fredoka',
-                              fontWeight: FontWeight.bold,
-                            ), // Bạn có thể điều chỉnh kiểu chữ ở đây
-                          ),
-                        ],
-                      ),
-                      _loading
-                          ? Center(child: CircularProgressIndicator())
-                          : SizedBox(
-                              height: 300,
-                              child: ListView.builder(
-                                itemCount: _randItem.length,
-                                itemBuilder: (context, index) {
-                                  return _buildPetFoodCard(_randItem[index]);
-                                },
-                              ),
-                            ),
-                      const SizedBox(height: 10),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ShopPage(userID: widget.userID)),
-                            );
-                          },
-                          child: const Text(
-                            'Shop Now', // Nhãn
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontFamily: 'Fredoka',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height:
+                    AppBar().preferredSize.height, // Match the AppBar height
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
           ],
+          automaticallyImplyLeading: false,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // My Pets Section
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 4, 4, 4),
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.asset(
+                        'assets/icons/mypet.png',
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 10),
+                      _loading
+                          ? Center(child: CircularProgressIndicator())
+                          : _pets.isEmpty
+                              ? Center(child: Text('No pets found.'))
+                              : SizedBox(
+                                  height:
+                                      100, // Set a fixed height for the horizontal ListView
+                                  child: ListView.builder(
+                                    scrollDirection:
+                                        Axis.horizontal, // Horizontal scrolling
+                                    itemCount: _pets.length,
+                                    itemBuilder: (context, index) {
+                                      print(
+                                          'Pet image: ${_pets[index].petIMAGE}');
+                                      return _buildPetCard(_pets[index]);
+                                    },
+                                  ),
+                                ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // The rest of the UI for the Shop section, etc.
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 4, 4, 4),
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.shopping_bag), // Biểu tượng
+                            const SizedBox(
+                              height: 50,
+                              width: 8,
+                            ), // Khoảng cách giữa biểu tượng và nhãn
+                            const Text(
+                              'Shop', // Nhãn
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: 'Fredoka',
+                                fontWeight: FontWeight.bold,
+                              ), // Bạn có thể điều chỉnh kiểu chữ ở đây
+                            ),
+                          ],
+                        ),
+                        _loading
+                            ? Center(child: CircularProgressIndicator())
+                            : SizedBox(
+                                height: 300,
+                                child: ListView.builder(
+                                  itemCount: _randItem.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildPetFoodCard(_randItem[index]);
+                                  },
+                                ),
+                              ),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ShopPage(userID: widget.userID)),
+                              );
+                            },
+                            child: const Text(
+                              'Shop Now', // Nhãn
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: 'Fredoka',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
