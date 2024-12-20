@@ -24,10 +24,7 @@ class _ShopPageState extends State<ShopPage> {
   dynamic ID;
   dynamic cartID;
   List<dynamic> _categoryItems = [];
-<<<<<<< Updated upstream
-=======
   bool _loading = true;
->>>>>>> Stashed changes
 
   TextEditingController inputValueController = TextEditingController();
   @override
@@ -47,12 +44,9 @@ class _ShopPageState extends State<ShopPage> {
         print("No user is logged in in HomePage.");
         return;
       }
-<<<<<<< Updated upstream
-=======
       setState(() {
         _loading = false;
       });
->>>>>>> Stashed changes
       final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
       final response = await http.post(
         url,
@@ -68,12 +62,6 @@ class _ShopPageState extends State<ShopPage> {
       if (response.statusCode == 200) {}
     } catch (err) {
       print(err);
-<<<<<<< Updated upstream
-=======
-      setState(() {
-        _loading = false;
-      });
->>>>>>> Stashed changes
     }
   }
 

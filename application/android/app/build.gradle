@@ -90,9 +90,12 @@ flutter {
 
 dependencies {
     // Firebase Bill of Materials (BoM)
-    implementation platform('com.google.firebase:firebase-bom:33.6.0')
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0' 
     implementation 'com.google.firebase:firebase-appcheck-playintegrity:16.0.0'
-    implementation 'com.google.firebase:firebase-auth:21.0.5' 
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
     implementation 'com.google.firebase:firebase-core:21.1.0'
 }
 

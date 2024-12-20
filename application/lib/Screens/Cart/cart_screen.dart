@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:application/Screens/Login/register_screen.dart';
 import 'package:application/bodyToCallAPI/User.dart';
@@ -206,10 +205,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
           totalPrice = data['TOTAL'];
           cartItemUser = data["cartDetails"];
           // totalPrice = int.parse(data['TOTAL']);
-<<<<<<< Updated upstream
-=======
           isClickedList = List.generate(cartItemUser.length, (index) => false);
->>>>>>> Stashed changes
         });
       }
     } catch (error) {
@@ -247,13 +243,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
                           ),
                         )
                       : SizedBox(
-<<<<<<< Updated upstream
-                          height:
-                              400, // Giới hạn chiều cao cho ListView.builder
-                          child: ListView.builder(
-                            itemCount:
-                                cartItemUser.length, // Số lượng items từ API
-=======
                           height: 400, // Giới hạn chiều cao của vùng chứa
                           child: ListView.builder(
                             shrinkWrap:
@@ -262,7 +251,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
                                 AlwaysScrollableScrollPhysics(), // Cho phép cuộn
                             itemCount:
                                 cartItemUser.length, // Số lượng item từ API
->>>>>>> Stashed changes
                             itemBuilder: (context, index) {
                               final item = cartItemUser[index];
                               final imagePath =
@@ -311,14 +299,11 @@ class _CartViewScreenState extends State<CartViewScreen> {
   }
 
   Widget _itemsCart(pathImage, quantityItem, nameItem, priceItem, index) {
-<<<<<<< Updated upstream
-=======
     // Kiểm tra nếu index nằm ngoài phạm vi của cartItemUser
     if (index >= cartItemUser.length) {
       return SizedBox.shrink(); // Trả về widget rỗng nếu index không hợp lệ
     }
 
->>>>>>> Stashed changes
     int itemIndex = index as int;
     return GestureDetector(
       onTap: () {
