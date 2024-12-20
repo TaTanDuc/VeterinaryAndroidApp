@@ -59,8 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         AppUser.User? currentUser = UserManager().user;
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => MainPage(userID: user.userID)),
+          MaterialPageRoute(builder: (context) => MainPage()),
         );
       } else {
         setState(() {
@@ -275,8 +274,8 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
           onTap: () async {
             await FirebaseServices().signInWithGoogle();
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => MainPage(userID: 1)));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => MainPage()));
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),

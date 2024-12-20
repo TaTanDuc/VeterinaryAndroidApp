@@ -189,9 +189,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPage(
-              userID: ID,
-            ), // Pass serviceCODE
+            builder: (context) => MainPage(), // Pass serviceCODE
           ),
         );
         DelightToastBar(
@@ -525,8 +523,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      MainPage(userID: ID)), // Điều hướng đến trang mới
+                  builder: (context) => MainPage()), // Điều hướng đến trang mới
             );
           },
           hideImage: true,

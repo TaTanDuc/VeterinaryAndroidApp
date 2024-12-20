@@ -177,9 +177,8 @@ class _DetailPageState extends State<DetailServiceScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ServicePage(
-                    userID: service?.userID ?? 0,
-                  )), // Replace ShopPage with the actual widget for your shop page
+              builder: (context) =>
+                  ServicePage()), // Replace ShopPage with the actual widget for your shop page
         );
         return false; // Prevent the default pop action
       },

@@ -29,8 +29,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  final int userID;
-  const MainPage({required this.userID});
+  const MainPage();
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -44,12 +43,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _children = [
-      HomePage1(userID: widget.userID),
-      ExplorePage1(
-        userID: widget.userID,
-      ),
-      ManagePage1(userID: widget.userID),
-      ProfilePage1(userID: widget.userID),
+      HomePage1(),
+      ExplorePage1(),
+      ManagePage1(),
+      ProfilePage1(),
     ];
   }
 
@@ -98,30 +95,24 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  final int userID;
-
-  HomePage1({required this.userID});
+  HomePage1();
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: HomePage(userID: userID));
+    return Center(child: HomePage());
   }
 }
 
 class ExplorePage1 extends StatelessWidget {
-  final int userID;
-
-  ExplorePage1({required this.userID});
+  ExplorePage1();
   @override
   Widget build(BuildContext context) {
-    return Center(child: ExplorePage(userID: userID));
+    return Center(child: ExplorePage());
   }
 }
 
 class ManagePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  ManagePage1({required this.userID});
+  ManagePage1();
 
   @override
   Widget build(BuildContext context) {
@@ -130,13 +121,10 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  final int userID; // Nhận userID qua constructor
-
-  ProfilePage1({required this.userID});
+  ProfilePage1();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: ProfileScreen(userID: userID)); // Truyền userID xuống HomePage
+    return Center(child: ProfileScreen()); // Truyền userID xuống HomePage
   }
 }

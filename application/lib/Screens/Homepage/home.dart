@@ -10,9 +10,7 @@ import 'package:application/Screens/Homepage/shop.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
-  final int userID;
-
-  const HomePage({super.key, required this.userID});
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -22,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   bool _loading = true;
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
+  dynamic ID;
   @override
   void initState() {
     super.initState();
@@ -34,11 +33,18 @@ class _HomePageState extends State<HomePage> {
     final url = Uri.parse(
         'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
     try {
+      final userManager = UserManager(); // Ensure singleton access
+      User? currentUser = userManager.user;
+      if (currentUser != null) {
+        ID = currentUser.userID;
+      } else {
+        print("No user is logged in in HomePage.");
+        return;
+      }
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(
-            {"userID": widget.userID}), // Replace with your actual userID
+        body: jsonEncode({"userID": ID}), // Replace with your actual userID
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {

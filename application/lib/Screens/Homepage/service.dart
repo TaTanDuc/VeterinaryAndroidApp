@@ -8,9 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ServicePage extends StatefulWidget {
-  final int userID;
-
-  const ServicePage({super.key, required this.userID});
+  const ServicePage({super.key});
   @override
   _ServicePageState createState() => _ServicePageState();
 }
@@ -63,9 +61,8 @@ class _ServicePageState extends State<ServicePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => MainPage(
-                    userID: widget.userID,
-                  )), // Replace ShopPage with the actual widget for your shop page
+              builder: (context) =>
+                  MainPage()), // Replace ShopPage with the actual widget for your shop page
         );
         return false; // Prevent the default pop action
       },

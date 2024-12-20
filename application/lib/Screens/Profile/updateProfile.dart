@@ -123,7 +123,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPage(userID: ID),
+            builder: (context) => MainPage(),
           ),
         );
       } else {

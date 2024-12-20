@@ -206,7 +206,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
           totalPrice = data['TOTAL'];
           cartItemUser = data["cartDetails"];
           // totalPrice = int.parse(data['TOTAL']);
-           isClickedList = List.generate(cartItemUser.length, (index) => false);
+          isClickedList = List.generate(cartItemUser.length, (index) => false);
         });
       }
     } catch (error) {
@@ -244,27 +244,33 @@ class _CartViewScreenState extends State<CartViewScreen> {
                           ),
                         )
                       : SizedBox(
-  height: 400, // Giới hạn chiều cao của vùng chứa
-  child: ListView.builder(
-    shrinkWrap: true, // Đảm bảo ListView thu nhỏ theo nội dung
-    physics: AlwaysScrollableScrollPhysics(), // Cho phép cuộn
-    itemCount: cartItemUser.length, // Số lượng item từ API
-    itemBuilder: (context, index) {
-      final item = cartItemUser[index];
-      final imagePath = 'assets/images/${item['itemIMAGE']}';
-      return Padding(
-        padding: const EdgeInsets.only(top: 8.0), // Khoảng cách phía trên
-        child: _itemsCart(
-          imagePath, // Dữ liệu hình ảnh từ API
-          item['itemQUANTITY'].toString(), // Số lượng từ API
-          item['itemNAME'], // Tên item từ API
-          item['itemPRICE'], // Giá item từ API
-          index,
-        ),
-      );
-    },
-  ),
-),
+                          height: 400, // Giới hạn chiều cao của vùng chứa
+                          child: ListView.builder(
+                            shrinkWrap:
+                                true, // Đảm bảo ListView thu nhỏ theo nội dung
+                            physics:
+                                AlwaysScrollableScrollPhysics(), // Cho phép cuộn
+                            itemCount:
+                                cartItemUser.length, // Số lượng item từ API
+                            itemBuilder: (context, index) {
+                              final item = cartItemUser[index];
+                              final imagePath =
+                                  'assets/images/${item['itemIMAGE']}';
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0), // Khoảng cách phía trên
+                                child: _itemsCart(
+                                  imagePath, // Dữ liệu hình ảnh từ API
+                                  item['itemQUANTITY']
+                                      .toString(), // Số lượng từ API
+                                  item['itemNAME'], // Tên item từ API
+                                  item['itemPRICE'], // Giá item từ API
+                                  index,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                   const SizedBox(height: 70),
                   _priceItem('Subtotal', "${totalPrice}\$"),
                   const SizedBox(height: 20),
@@ -284,9 +290,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ShopPage(
-                  userID: userID,
-                ), // Điều hướng đến trang mới
+                builder: (context) => ShopPage(), // Điều hướng đến trang mới
               ),
             );
           },
@@ -294,70 +298,71 @@ class _CartViewScreenState extends State<CartViewScreen> {
       ],
     );
   }
-Widget _itemsCart(pathImage, quantityItem, nameItem, priceItem, index) {
-  // Kiểm tra nếu index nằm ngoài phạm vi của cartItemUser
-  if (index >= cartItemUser.length) {
-    return SizedBox.shrink(); // Trả về widget rỗng nếu index không hợp lệ
-  }
 
-  int itemIndex = index as int;
-  return GestureDetector(
-    onTap: () {
-      setState(() {
-        isClickedList[itemIndex] =
-            !isClickedList[itemIndex]; // Đổi trạng thái cho item hiện tại
-      });
-    },
-    child: AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      transform: Matrix4.translationValues(
-          isClickedList[index] ? -50 : 0, 0, 0), // Di chuyển theo trục X
-      decoration: BoxDecoration(
-        color: Color(0xffFFFFFF),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      width: double.infinity,
-      height: 120,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.asset(pathImage, width: 200, height: 150),
-                const SizedBox(width: 30),
-                _contentItem(priceItem, nameItem),
-                const SizedBox(width: 15),
-                _counter(quantityItem, index),
-              ],
+  Widget _itemsCart(pathImage, quantityItem, nameItem, priceItem, index) {
+    // Kiểm tra nếu index nằm ngoài phạm vi của cartItemUser
+    if (index >= cartItemUser.length) {
+      return SizedBox.shrink(); // Trả về widget rỗng nếu index không hợp lệ
+    }
+
+    int itemIndex = index as int;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isClickedList[itemIndex] =
+              !isClickedList[itemIndex]; // Đổi trạng thái cho item hiện tại
+        });
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        transform: Matrix4.translationValues(
+            isClickedList[index] ? -50 : 0, 0, 0), // Di chuyển theo trục X
+        decoration: BoxDecoration(
+          color: Color(0xffFFFFFF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 3),
             ),
-          ),
-          // Icon "Remove" xuất hiện khi item này được click
-          if (isClickedList[itemIndex])
-            Positioned(
-              right: 0,
-              child: Container(
-                color: Colors.red,
-                width: 60,
-                height: 120,
-                child: Icon(Icons.delete, color: Colors.white, size: 30),
+          ],
+        ),
+        width: double.infinity,
+        height: 120,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(pathImage, width: 200, height: 150),
+                  const SizedBox(width: 30),
+                  _contentItem(priceItem, nameItem),
+                  const SizedBox(width: 15),
+                  _counter(quantityItem, index),
+                ],
               ),
             ),
-        ],
+            // Icon "Remove" xuất hiện khi item này được click
+            if (isClickedList[itemIndex])
+              Positioned(
+                right: 0,
+                child: Container(
+                  color: Colors.red,
+                  width: 60,
+                  height: 120,
+                  child: Icon(Icons.delete, color: Colors.white, size: 30),
+                ),
+              ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _contentItem(priceItem, nameItem) {
     return Column(
