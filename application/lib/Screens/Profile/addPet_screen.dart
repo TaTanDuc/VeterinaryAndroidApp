@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
@@ -54,7 +54,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
         false;
       });
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         ID = currentUser.userID;
       } else {

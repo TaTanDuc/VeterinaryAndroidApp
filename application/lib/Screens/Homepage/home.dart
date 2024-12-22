@@ -1,7 +1,7 @@
 import 'package:application/Screens/Chat/chatbox_screen.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         ID = currentUser.userID;
       } else {
@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         final List<dynamic> shopData = jsonDecode(response.body);
 
         final userManager = UserManager();
-        User? currentUser = userManager.user;
+        UserDTO? currentUser = userManager.user;
 
         if (currentUser != null) {
           print("User ID in HomePage: ${currentUser.userID}");
@@ -121,71 +121,77 @@ class _HomePageState extends State<HomePage> {
           ],
           automaticallyImplyLeading: false,
         ),
-        body: Stack(
+        body: Column(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // My Pets Section
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 4, 4, 4),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            'assets/icons/mypet.png',
-                            fit: BoxFit.contain,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // My Pets Section
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 4, 4, 4),
+                            width: 1.0,
                           ),
-                          const SizedBox(height: 10),
-                          _loading
-                              ? const Center(child: CircularProgressIndicator())
-                              : _pets.isEmpty
-                                  ? const Center(child: Text('No pets found.'))
-                                  : SizedBox(
-                                      height:
-                                          100, // Set a fixed height for the horizontal ListView
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: _pets.length,
-                                        itemBuilder: (context, index) {
-                                          return _buildPetCard(_pets[index]);
-                                        },
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              'assets/icons/mypet.png',
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(height: 10),
+                            _loading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : _pets.isEmpty
+                                    ? const Center(
+                                        child: Text('No pets found.'))
+                                    : SizedBox(
+                                        height:
+                                            100, // Set a fixed height for the horizontal ListView
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: _pets.length,
+                                          itemBuilder: (context, index) {
+                                            return _buildPetCard(_pets[index]);
+                                          },
+                                        ),
                                       ),
-                                    ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  // The rest of the UI for the Shop section, etc.
-                ],
+                    const SizedBox(height: 10),
+                    // Add any other sections here...
+                  ],
+                ),
               ),
             ),
-            // Floating Chat Button
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: FloatingActionButton(
-                backgroundColor: const Color(0xFF5CB15A),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChatScreen(userId: "1")),
-                  );
-                },
-                child: const Icon(Icons.chat, color: Colors.white),
+            // Chat Button Section
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20, right: 20),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                  backgroundColor: const Color(0xFF5CB15A),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(userId: "1"),
+                      ),
+                    );
+                  },
+                  child: const Icon(Icons.chat, color: Colors.white),
+                ),
               ),
             ),
           ],

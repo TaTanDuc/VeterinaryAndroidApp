@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart' as AppUser;
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 
 import 'package:application/components/customInputField.dart';
@@ -51,12 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final userId = data['userID'];
-        final user = AppUser.User.fromJson(data);
+        final user = UserDTO.fromJson(data);
         final userManager = UserManager();
 
         UserManager().setUser(user); // Set the user in UserManager
 
-        AppUser.User? currentUser = UserManager().user;
+        UserDTO? currentUser = UserManager().user;
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),

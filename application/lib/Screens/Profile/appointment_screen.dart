@@ -1,7 +1,7 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/ListAppoint.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _ListApointmentState extends State<ListApointment> {
   // Method to fetch services from API
   Future<void> fetchAppointment() async {
     final userManager = UserManager(); // Ensure singleton access
-    User? currentUser = userManager.user;
+    UserDTO? currentUser = userManager.user;
     setState(() {
       _loading = false;
     });

@@ -4,14 +4,14 @@ import 'package:application/Screens/Profile/appointment_screen.dart';
 import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/components/customNavContent.dart';
-// import 'package:first_flutter/components/customNavContent.dart';
+import 'package:application/controllers/GoogleController.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,20 +21,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _loading = true; // Change the type based on your response
-
+  bool _loading = true;
   dynamic profile;
   dynamic ID;
-
   @override
   void initState() {
     super.initState();
-    fetchProfile(); // Fetch details when the page initializes
+    fetchProfile();
   }
 
   Future<void> fetchProfile() async {
-    final userManager = UserManager(); // Ensure singleton access
-    User? currentUser = userManager.user;
+    final userManager = UserManager();
+    UserDTO? currentUser = userManager.user;
 
     if (currentUser != null) {
       print("User ID in here: ${currentUser.userID}");
@@ -56,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Received data: $data'); // Log the received data for debugging
+        print('Received data: $data');
 
         setState(() {
           profile = Profile.fromJson(
@@ -112,49 +110,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       backgroundColor: const Color(0xFF5CB15A),
-  //       title: const Center(
-  //         child: Text(
-  //           'Profile',
-  //           style: TextStyle(
-  //             color: Colors.white,
-  //             fontSize: 16,
-  //             fontFamily: 'Fredoka',
-  //           ),
-  //         ),
-  //       ),
-  //       actions: [
-  //         Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: SizedBox(
-  //             height: AppBar().preferredSize.height, // Match the AppBar height
-  //             child: Image.asset(
-  //               'assets/icons/logo.png',
-  //               fit: BoxFit.contain,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //       automaticallyImplyLeading: false,
-  //     ),
-  //     body: _page(),
-  //   );
-  // }
-
   Widget _page() {
     return SingleChildScrollView(
       child: Stack(
         children: [
           ClipPath(
             clipper: BottomRoundedClipper(),
-            child: Image.asset(
-              'assets/images/avatar02.jpg',
-              width: double.infinity,
-              height: 350,
-              fit: BoxFit.cover,
-            ),
+            child: FirebaseAuth.instance.currentUser != null
+                ? FutureBuilder(
+                    future: FirebaseAuth.instance.currentUser?.reload(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          FirebaseAuth.instance.currentUser?.photoURL != null) {
+                        return Image.network(
+                          FirebaseAuth.instance.currentUser!.photoURL!,
+                          width: double.infinity,
+                          height: 350,
+                          fit: BoxFit.cover,
+                        );
+                      }
+                      return CircularProgressIndicator(); // Hiển thị trạng thái tải
+                    },
+                  )
+                : Image.asset(
+                    'assets/images/avatar02.jpg',
+                    width: double.infinity,
+                    height: 350,
+                    fit: BoxFit.cover,
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(20),
@@ -194,21 +177,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                final userManager = UserManager();
-                userManager.clearUser(); // Clear user session
-
-                Navigator.of(context).pop(); // Close the dialog
-                // Use pushAndRemoveUntil for proper navigation
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
+              onPressed: () async {
+                try {
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    final googleSignIn = GoogleSignIn();
+                    if (await googleSignIn.isSignedIn()) {
+                      await FirebaseServices().googleSignOut();
+                    }
+                    await FirebaseAuth.instance.signOut();
+                  } else {
+                    final userManager = UserManager();
+                    userManager.clearUser();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
+                } catch (e) {}
               },
               child: Text('Sign Out'),
             ),
@@ -220,8 +212,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _infoUser(Profile user) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Set button dimensions and responsive font size
     double buttonWidth = screenWidth < 600 ? screenWidth * 0.8 : 100;
     double buttonHeight = 40;
     double responsiveFontSize = screenWidth < 600 ? 16 : 20;
@@ -236,7 +226,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(35, 15, 15, 30),
         child: Column(
           children: [
-            // Responsive layout for small and large screens
             if (screenWidth < 600) ...[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +271,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    user.profileNAME ?? 'Unkonw',
+                    user.profileNAME ??
+                        FirebaseAuth.instance.currentUser!.displayName! ??
+                        'Unkonw',
                     style: TextStyle(
                         fontSize: responsiveFontSize,
                         color: Color(0xff141415),
@@ -292,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton.icon(
                     onPressed: () {
                       print('Sign out button pressed');
-                      _signOut(); // Call the sign-out function
+                      _signOut();
                     },
                     icon: Icon(
                       Icons.arrow_back,
@@ -317,7 +308,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
             const SizedBox(height: 20),
-            // Email Row
             Row(
               children: [
                 Icon(Icons.email),
@@ -412,23 +402,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _optionItem(IconData icon, String nameItem) {
-    // Get the screen width
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate responsive font size, with a maximum value of 20
     double responsiveFontSize = screenWidth < 600 ? 16 : 20;
     responsiveFontSize = responsiveFontSize > 20 ? 20 : responsiveFontSize;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10), // Vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // Ensure spacing between elements
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Row(
               children: [
-                Icon(icon, size: 24), // Icon size for consistency
+                Icon(icon, size: 24),
                 const SizedBox(width: 30),
                 // The nameItem Text widget
                 Expanded(

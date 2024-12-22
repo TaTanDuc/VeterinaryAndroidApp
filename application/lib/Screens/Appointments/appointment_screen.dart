@@ -1,14 +1,10 @@
-import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Appointment.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
-import 'package:application/Screens/Homepage/home.dart';
-import 'package:application/Screens/Homepage/service.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -66,7 +62,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
 
       if (currentUser != null) {
         ID = currentUser.userID;

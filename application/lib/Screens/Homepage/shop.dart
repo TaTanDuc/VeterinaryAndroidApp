@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
@@ -34,7 +34,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleAddCart(value) async {
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         ID = currentUser.userID;
         cartID = currentUser.cartID;

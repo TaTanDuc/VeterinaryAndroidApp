@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
@@ -41,7 +41,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
     try {
       int currentQuantity;
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         userID = currentUser.userID;
         cartID = currentUser.cartID;
@@ -111,7 +111,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
     try {
       int currentQuantity;
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         userID = currentUser.userID;
         cartID = currentUser.cartID;
@@ -182,7 +182,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Future<void> _fetchCartUser() async {
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         userID = currentUser.userID;
         cartID = currentUser.cartID;

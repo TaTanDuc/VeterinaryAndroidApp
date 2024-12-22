@@ -1,6 +1,6 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/main.dart';
 import 'package:application/Screens/Homepage/explore.dart';
 import 'package:flutter/material.dart';

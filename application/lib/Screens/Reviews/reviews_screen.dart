@@ -2,7 +2,7 @@ import 'package:application/Screens/Login/register_screen.dart';
 import 'package:application/Screens/Reviews/addReview_screen.dart';
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/Screens/Homepage/service.dart';
@@ -136,7 +136,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         print("User ID in review: ${currentUser.userID}");
         ID = currentUser.userID;
