@@ -19,7 +19,7 @@ class Pet {
     return Pet(
       userID: json['userID'] ?? 0, // Provide default values if necessary
       petID: json['petID'] ?? 0,
-      petIMAGE: json['imageLink'] ?? '',
+      petIMAGE: json['imageLink'] ?? 'assets/icons/logo.png',
       petSPECIE: json['petSPECIE'] ?? '',
       petNAME: json['petNAME'] ?? '',
       petAGE: json['petAGE'] ?? 0,

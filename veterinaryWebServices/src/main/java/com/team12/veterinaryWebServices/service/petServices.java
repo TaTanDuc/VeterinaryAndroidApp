@@ -40,7 +40,7 @@ public class petServices {
 
         pet pet = new pet();
         pet.setProfile(p);
-        pet.setPetIMAGE("assets/icons/logo.png");
+        pet.setPetIMAGE(request.getPetIMAGE());
         pet.setPetSPECIE(request.getPetSPECIE());
         pet.setPetNAME(request.getPetNAME());
         pet.setPetAGE(request.getPetAGE());
