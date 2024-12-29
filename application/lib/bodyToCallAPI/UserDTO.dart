@@ -1,19 +1,19 @@
-class User {
+class UserDTO {
   final int userID;
   final String username;
   final String email;
   final int cartID;
   final String role; // List of Pet objects
 
-  User({
+  UserDTO({
     required this.userID,
     required this.username,
     required this.email,
     required this.cartID,
     required this.role,
   });
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserDTO.fromJson(Map<String, dynamic> json) {
+    return UserDTO(
         userID: json['userID'],
         username: json['userNAME'],
         email: json['userEMAIL'],

@@ -1,14 +1,10 @@
-import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/Appointment.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
-import 'package:application/Screens/Homepage/home.dart';
-import 'package:application/Screens/Homepage/service.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -63,10 +59,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
 
       if (currentUser != null) {
         ID = currentUser.userID;
@@ -95,8 +91,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> fetchServices() async {
-    final url =
-        'http://10.0.2.2:8080/api/service/all'; // Replace with your API URL
+    final url = 'http://10.0.0.2/api/service/all'; // Replace with your API URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -174,7 +169,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     // Set the API endpoint
     final url =
-        'http://10.0.2.2:8080/api/appointment/add'; // Replace with your API endpoint
+        'http://10.0.0.2/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
 
     try {

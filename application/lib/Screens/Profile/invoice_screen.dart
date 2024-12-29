@@ -1,5 +1,5 @@
 import 'package:application/bodyToCallAPI/Invoice.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _ListOrderState extends State<ListOrder> {
   // Method to fetch services from API
   Future<void> fetchInvoice() async {
     final userManager = UserManager(); // Ensure singleton access
-    User? currentUser = userManager.user;
+    UserDTO? currentUser = userManager.user;
     setState(() {
       _loading = false;
     });
@@ -35,8 +35,8 @@ class _ListOrderState extends State<ListOrder> {
     } else {
       print("No user is logged in here.");
     }
-    final url = Uri.parse(
-        'http://10.0.2.2:8080/api/invoice/getUserInvoices?userID=$ID');
+    final url =
+        Uri.parse('http://10.0.0.2/api/invoice/getUserInvoices?userID=$ID');
     try {
       final response = await http.get(
         url,

@@ -1,6 +1,6 @@
 import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/bodyToCallAPI/AddComment.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
@@ -43,7 +43,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
 
   Future<void> fetchAddComment() async {
     final userManager = UserManager(); // Ensure singleton access
-    User? currentUser = userManager.user;
+    UserDTO? currentUser = userManager.user;
 
     if (currentUser != null) {
       ID = currentUser.userID;
@@ -58,7 +58,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
       content: content,
     );
 
-    final url = Uri.parse('http://10.0.2.2:8080/api/service/addComment');
+    final url = Uri.parse('http://10.0.0.2/api/service/addComment');
     final body = jsonEncode(comment.toJson());
     try {
       final response = await http.post(

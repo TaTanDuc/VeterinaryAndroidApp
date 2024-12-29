@@ -1,34 +1,49 @@
 {
   "project_info": {
-    "project_number": "8459060585",
-    "project_id": "verterinaryandroidapp",
-    "storage_bucket": "verterinaryandroidapp.firebasestorage.app"
+    "project_number": "195628590555",
+    "project_id": "fluttersignin-dd1d1",
+    "storage_bucket": "fluttersignin-dd1d1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:8459060585:android:03cfb1c5494ec6714869f8",
+        "mobilesdk_app_id": "1:195628590555:android:c51f1473197f430fd8f3fe",
         "android_client_info": {
           "package_name": "com.example.application"
         }
       },
       "oauth_client": [
         {
-          "client_id": "8459060585-5n9a1kdvke0dk1lho0f2upef63bn760m.apps.googleusercontent.com",
+          "client_id": "195628590555-9ug17ru3gpqtscggl9hkikqhn66musdc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.application",
+            "certificate_hash": "0a393b13d2e2782ab9f8f70318d206ac7a5e3a08"
+          }
+        },
+        {
+          "client_id": "195628590555-30boncvjbrdubekh9ic2mtmtm8o28pln.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC9RTNSKkimGzjiy5d7zEE6ObcSICYjEVA"
+          "current_key": "AIzaSyC9QIhDCP59CTUfUChrPoXJ4MF3HfqTGPM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "8459060585-5n9a1kdvke0dk1lho0f2upef63bn760m.apps.googleusercontent.com",
+              "client_id": "195628590555-30boncvjbrdubekh9ic2mtmtm8o28pln.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "195628590555-ed66ta2p285sb7k0adilrkfg5r77nl8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.application"
+              }
             }
           ]
         }

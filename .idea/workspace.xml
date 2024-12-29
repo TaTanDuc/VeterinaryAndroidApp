@@ -7,10 +7,23 @@
     <list default="true" id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/Screens/Checkout/checkout_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Checkout/checkout_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Pet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Pet.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.lock" afterDir="false" />
@@ -52,17 +65,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Tung&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/acer/Documents/AndroidApp/VeterinaryAndroidApp&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "Long",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Admin/AndroidStudioProjects/VeterinaryAndroidApp/application",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater"
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   Future<void> fetchUpdateUser() async {
     final userManager = UserManager(); // Ensure singleton access
-    User? currentUser = userManager.user;
+    UserDTO? currentUser = userManager.user;
 
     if (currentUser != null) {
       print("User ID in here: ${currentUser.userID}");
@@ -60,7 +60,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _loading = true;
     });
 
-    final url = Uri.parse('http://10.0.2.2:8080/api/profile/user/update');
+    final url = Uri.parse('http://10.0.0.2/api/profile/user/update');
 
     try {
       int? age;

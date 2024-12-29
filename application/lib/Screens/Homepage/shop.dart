@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
@@ -36,7 +36,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleAddCart(value) async {
     try {
       final userManager = UserManager(); // Ensure singleton access
-      User? currentUser = userManager.user;
+      UserDTO? currentUser = userManager.user;
       if (currentUser != null) {
         ID = currentUser.userID;
         cartID = currentUser.cartID;
@@ -62,13 +62,16 @@ class _ShopPageState extends State<ShopPage> {
       if (response.statusCode == 200) {}
     } catch (err) {
       print(err);
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
   Future<void> handleSearch(value) async {
     try {
       final url = Uri.parse(
-          "http://10.0.2.2:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://10.0.0.2/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -89,7 +92,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> _fetchCategory() async {
     try {
       final url = Uri.parse(
-          "http://10.0.2.2:8080/api/storage/getItems?category=${_currentCategory}");
+          "http://10.0.0.2/api/storage/getItems?category=${_currentCategory}");
       // Gửi yêu cầu POST tới API
       final response = await http.get(
         url,
@@ -251,7 +254,7 @@ class _ShopPageState extends State<ShopPage> {
                       ] // Hiển thị nếu không có dữ liệu
                     : List.generate(_categoryItems.length, (index) {
                         var item = _categoryItems[index];
-                        String imagePath = 'assets/images/${item['itemIMAGE']}';
+                        String imagePath = '${item['itemIMAGE']}';
                         return _buildShopRow(
                             index,
                             item['itemNAME'],

@@ -7,7 +7,7 @@ import 'package:application/Screens/Providers/googleSignin.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
-import 'package:application/bodyToCallAPI/User.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Screens/Homepage/home.dart';

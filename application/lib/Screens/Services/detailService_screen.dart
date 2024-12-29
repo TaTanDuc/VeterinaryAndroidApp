@@ -35,7 +35,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.0.2/api/service/detail?serviceCODE=${widget.serviceCODE}');
     setState(() {
       _loading = true; // Start loading
     });
@@ -73,7 +73,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
 //   Future<void> fetchServiceDetails() async {
 //     final url = Uri.parse(
-//         'http://10.0.2.2:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+//         'http://10.0.0.2/api/service/detail?serviceCODE=${widget.serviceCODE}');
 
 //     try {
 //       final response =
@@ -176,7 +176,9 @@ class _DetailPageState extends State<DetailServiceScreen> {
         // Navigate to ShopPage when back button is pressed
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ServicePage()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  ServicePage()), // Replace ShopPage with the actual widget for your shop page
         );
         return false; // Prevent the default pop action
       },
