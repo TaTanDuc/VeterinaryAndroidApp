@@ -1,3 +1,5 @@
+import 'package:application/Screens/Chat/Client.dart';
+import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/Screens/Chat/chatbox_screen.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
@@ -17,6 +19,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  WebSocketService _webSocketService =
+      WebSocketService('ws://192.168.137.1:8080/veterinaryCustomerService');
   bool _loading = true;
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
@@ -31,33 +35,17 @@ class _HomePageState extends State<HomePage> {
   // Method to fetch pets from API
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://192.168.137.1:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        ID = currentUser.userID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": ID}), // Replace with your actual userID
+        body: jsonEncode({"userID": 1}),
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> shopData = jsonDecode(response.body);
 
-        final userManager = UserManager();
-        UserDTO? currentUser = userManager.user;
-
-        if (currentUser != null) {
-          print("User ID in HomePage: ${currentUser.userID}");
-        } else {
-          print("No user is logged in in HomePage.");
-        }
         setState(() {
           _pets = shopData.map((json) => Pet.fromJson(json)).toList();
           _loading = false;
@@ -74,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchShops() async {
-    final url = Uri.parse('http://10.0.0.2/api/storage/getRandom');
+    final url = Uri.parse('http://192.168.137.1:8080/api/storage/getRandom');
     try {
       final response = await http.get(
         url,
@@ -171,6 +159,36 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 10),
                     // Add any other sections here...
+                    const SizedBox(height: 10),
+                    _loading
+                        ? Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            height: 300,
+                            child: ListView.builder(
+                              itemCount: _randItem.length,
+                              itemBuilder: (context, index) {
+                                return _buildPetFoodCard(_randItem[index]);
+                              },
+                            ),
+                          ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ShopPage()),
+                          );
+                        },
+                        child: const Text(
+                          'Shop Now', // Nhãn
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Fredoka',
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -186,7 +204,9 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatScreen(userId: "1"),
+                        builder: (context) => UserChatScreen(
+                          webSocketService: _webSocketService,
+                        ),
                       ),
                     );
                   },

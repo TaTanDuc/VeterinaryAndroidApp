@@ -1,18 +1,21 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
+import 'package:application/Screens/Profile/camera_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
+import 'package:camera/camera.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as Path;
 
 class AddPetScreen extends StatefulWidget {
   const AddPetScreen({super.key});
@@ -32,6 +35,9 @@ class _AddPetScreenState extends State<AddPetScreen> {
   TextEditingController petBreedController = TextEditingController();
   TextEditingController petAgeController = TextEditingController();
   TextEditingController petHeightController = TextEditingController();
+
+  String path = "";
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,20 +59,13 @@ class _AddPetScreenState extends State<AddPetScreen> {
         _loading:
         false;
       });
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        ID = currentUser.userID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
+
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/pet/getUserPets");
+      final url = Uri.parse("http://192.168.137.1:8080/api/pet/getUserPets");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": ID}),
+        body: jsonEncode({"userID": 1}),
       );
 
       if (response.statusCode == 200) {
@@ -88,25 +87,20 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
   Future<void> handleAddPet() async {
     try {
-      // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/pet/addPet");
-      // var nameParts = _imageFile!.path.split('\\');
-      // var fileName = "assets/images/${nameParts.last}";
-      // if (fileName == null) {
-      //   fileName = "assets/icons/logo.png";
-      // };
+      final url = Uri.parse("http://10.0.2.2:8080/api/pet/addPet");
+
+      print('data insert $path');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "userID": ID,
-          "petIMAGE": "assets/icons/logo.png",
+          "petIMAGE": path,
           "petNAME": petNameController.text,
           "petSPECIE": petBreedController.text,
           "petAGE": int.parse(petAgeController.text)
         }),
       );
-
       if (response.statusCode == 200) {
         final data = response.body; // No jsonDecode, treat as plain text
 
@@ -168,14 +162,36 @@ class _AddPetScreenState extends State<AddPetScreen> {
     }
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
+      final imageTempolary = await _save(pickedFile.path);
       setState(() {
-        _imageFile = File(pickedFile.path); // Save the picked image
+        this._imageFile = imageTempolary; // Save the picked image
       });
+      path = await _getAssetsImagePath(imageTempolary.path);
+      print('Simulated path: $path');
     }
+  }
+
+  Future<File> _save(String originalPath) async {
+    // Save to a writable directory
+    final directory = await getApplicationDocumentsDirectory();
+
+    final fileName = Path.basename(originalPath);
+    final newPath = '${directory.path}/$fileName';
+
+    return File(originalPath).copy(newPath);
+  }
+
+  Future<String> _getAssetsImagePath(String savedPath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final fileName = Path.basename(savedPath);
+    final customPath = 'assets/images/$fileName';
+
+    // Log or return the simulated "assets/images/image.jpg" path
+    print('Simulated asset path: $customPath');
+    return customPath;
   }
 
   Widget _page() {
@@ -235,21 +251,38 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           fontFamily: 'Fredoka'),
                     ),
                     const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceBetween, // Căn chỉnh khoảng cách giữa các TextField
+                      children: [
+                        SizedBox(width: 10),
+                        _imageFile != null
+                            ? Image.file(
+                                _imageFile!,
+                                width: 250,
+                                height: 250,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset("assets/images/dog.png"),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => _pickImage(ImageSource.camera),
+                            child: const Text(
+                              'Take your pet picture', // Nhãn
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontFamily: 'Fredoka',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
                     _textField('Name Pet', petNameController),
                     const SizedBox(height: 30),
                     _textField('Breed Name', petBreedController),
                     const SizedBox(height: 30),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment
-                    //       .spaceBetween, // Căn chỉnh khoảng cách giữa các TextField
-                    //   children: [
-                    //     SizedBox(width: 10), // Khoảng cách giữa các TextField
-                    //     Expanded(
-                    //       child:
-                    //           _imagePicker(), // Thay thế _textField bằng widget chọn ảnh
-                    //     ),
-                    //   ],
-                    // ),
                     const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment

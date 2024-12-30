@@ -59,18 +59,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://192.168.137.1:8080/api/pet/getUserPets'); // Replace with your actual API URL
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-
-      if (currentUser != null) {
-        ID = currentUser.userID;
-      }
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": ID}), // Replace with your actual userID
+        body: jsonEncode({"userID": 0}), // Replace with your actual userID
       );
       if (response.statusCode == 200) {
         final List<dynamic> petData = jsonDecode(response.body);
@@ -91,7 +85,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> fetchServices() async {
-    final url = 'http://10.0.0.2/api/service/all'; // Replace with your API URL
+    final url =
+        'http://192.168.137.1:8080/api/service/all'; // Replace with your API URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -169,7 +164,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     // Set the API endpoint
     final url =
-        'http://10.0.0.2/api/appointment/add'; // Replace with your API endpoint
+        'http://192.168.137.1:8080/api/appointment/add'; // Replace with your API endpoint
     final body = jsonEncode(appointment.toJson());
 
     try {

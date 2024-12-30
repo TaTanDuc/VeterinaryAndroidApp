@@ -1,14 +1,18 @@
 import 'dart:convert';
-import 'dart:ffi';
 
+import 'package:application/Screens/Checkout/key.dart';
 import 'package:application/Screens/Login/register_screen.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/Screens/Homepage/shop.dart';
-import 'package:application/service/fetchAPI.dart';
+import 'package:application/Screens/Checkout/key.dart';
+import 'package:application/main.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 class CartViewScreen extends StatefulWidget {
@@ -27,6 +31,109 @@ class _CartViewScreenState extends State<CartViewScreen> {
   bool isDecreasing = false;
   int totalPrice = 0;
   int shipPrice = 2;
+  double amount = 0;
+  Map<String, dynamic>? intentPaymentData;
+  final String _secretKey =
+      "sk_test_51QXwiTC5mILZpjuwQ5ktL2zo91QyzUB275GKmR9vaXC8myKL7LCRO6Fs2CKYbtEwQgztaGe7FsOZ8hsEXaiTlGtX00LjtvEEdt";
+
+  makeIntentForPayment(amountChanged, currency) async {
+    try {
+      Map<String, dynamic>? paymentInfo = {
+        "amount": (int.parse(amountChanged)).toString(),
+        "currency": currency,
+        "payment_method_types[]": "card"
+      };
+
+      var responseFromScripeAPI = await http.post(
+          Uri.parse("https://api.stripe.com/v1/payment_intents"),
+          body: paymentInfo,
+          headers: {
+            "Authorization": "Bearer $_secretKey",
+            "Content-Type": "application/x-www-form-urlencoded"
+          });
+      print("This is your key" + _secretKey);
+      print("response  from API: " + responseFromScripeAPI.body);
+      return jsonDecode(responseFromScripeAPI.body);
+    } catch (errorMsg) {
+      if (kDebugMode) {
+        print(errorMsg);
+      }
+      print(errorMsg.toString());
+    }
+  }
+
+  showPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet().then((val) {
+        intentPaymentData = null;
+        const ToastCard(
+          leading: Icon(Icons.check, size: 20),
+          title: const Text(
+            'Payment successful',
+            style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Fredoka',
+                color: Color(0xff5CB15A)),
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage()),
+        );
+      }).onError((errorMsg, sTrace) {
+        if (kDebugMode) {
+          print(errorMsg.toString() + sTrace.toString());
+        }
+      });
+    } on StripeException catch (error) {
+      if (kDebugMode) {
+        print(error);
+      }
+      showDialog(
+          context: context,
+          builder: (c) => const AlertDialog(
+                content: Text("Cancelled"),
+              ));
+    } catch (errorMsg, s) {
+      if (kDebugMode) {
+        print(s);
+      }
+      print(errorMsg.toString());
+    }
+  }
+
+  paymentSheetInitialization(amountChanged, currency) async {
+    try {
+      int? amountToSend = (double.tryParse(amountChanged) ?? 0 * 100).toInt();
+
+      if (amountToSend == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Invalid amount format')),
+        );
+        return; // Important: Stop execution if parsing fails
+      }
+      intentPaymentData =
+          await makeIntentForPayment(amountToSend.toString(), currency);
+      await Stripe.instance
+          .initPaymentSheet(
+              paymentSheetParameters: SetupPaymentSheetParameters(
+                  allowsDelayedPaymentMethods: true,
+                  paymentIntentClientSecret:
+                      intentPaymentData!["client_secret"],
+                  style: ThemeMode.dark,
+                  merchantDisplayName: "Spa Pet"))
+          .then((val) {
+        print(val);
+      });
+      showPaymentSheet();
+    } catch (errorMsg, s) {
+      if (kDebugMode) {
+        print(s);
+      }
+      print(errorMsg.toString());
+    }
+  }
 
   @override
   void initState() {
@@ -40,15 +147,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Future<void> handleDecreaseItem(int index, bool isDecreasing) async {
     try {
       int currentQuantity;
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
 
       // Lấy thông tin của item đang được cập nhật
       var item = cartItemUser[index];
@@ -65,7 +163,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -110,15 +208,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
     try {
       int currentQuantity;
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
 
       // Lấy thông tin của item đang được cập nhật
       var item = cartItemUser[index];
@@ -135,7 +224,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -181,23 +270,12 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
   Future<void> _fetchCartUser() async {
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-      }
-      final url = Uri.parse("http://10.0.0.2/api/cart/getUserCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/getUserCart");
       // Gửi yêu cầu POST tới API
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userID": userID,
-          "cartID": cartID // Lấy text từ usernameController
-        }),
+        body: jsonEncode({}),
       );
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
@@ -278,7 +356,14 @@ class _CartViewScreenState extends State<CartViewScreen> {
                   const SizedBox(height: 50),
                   _priceItem('Total', "${totalPrice + shipPrice}\$"),
                   const SizedBox(height: 50),
-                  CustomButton(text: 'Checkout', onPressed: () {})
+                  CustomButton(
+                      text: 'Checkout',
+                      onPressed: () {
+                        setState(() {
+                          amount = (totalPrice + shipPrice).roundToDouble();
+                        });
+                        paymentSheetInitialization(amount.toString(), "VND");
+                      })
                 ],
               ),
             ),

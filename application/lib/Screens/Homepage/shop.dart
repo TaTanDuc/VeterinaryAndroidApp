@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
+import 'package:application/Screens/Homepage/explore.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
+import 'package:application/components/customNavContent.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -10,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ShopPage extends StatefulWidget {
-  const ShopPage({super.key});
+  const ShopPage({
+    super.key,
+  });
 
   @override
   _ShopPageState createState() => _ShopPageState();
@@ -33,15 +37,6 @@ class _ShopPageState extends State<ShopPage> {
 
   Future<void> handleAddCart(value) async {
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        ID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
       setState(() {
         _loading = false;
       });
@@ -69,7 +64,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> handleSearch(value) async {
     try {
       final url = Uri.parse(
-          "http://10.0.0.2/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://192.168.137.1:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -90,7 +85,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> _fetchCategory() async {
     try {
       final url = Uri.parse(
-          "http://10.0.0.2/api/storage/getItems?category=${_currentCategory}");
+          "http://192.168.137.1:8080/api/storage/getItems?category=${_currentCategory}");
       // Gửi yêu cầu POST tới API
       final response = await http.get(
         url,
@@ -141,9 +136,7 @@ class _ShopPageState extends State<ShopPage> {
                   // Điều hướng đến trang mới
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CartViewScreen()), // Thay NewPage bằng trang bạn muốn mở
+                    MaterialPageRoute(builder: (context) => CartViewScreen()),
                   );
                 },
               ),

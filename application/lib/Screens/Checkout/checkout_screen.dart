@@ -42,7 +42,13 @@ class _CheckoutScreen extends State<CheckoutScreen> {
                   const SizedBox(height: 20),
                   _infoCard(),
                   const SizedBox(height: 20),
-                  CustomButton(text: 'Pay Now', onPressed: () {})
+                  CustomButton(
+                      text: 'Pay Now',
+                      onPressed: () {
+                        // paymentSheetInitialization(
+
+                        // );
+                      })
                 ],
               ),
             ),

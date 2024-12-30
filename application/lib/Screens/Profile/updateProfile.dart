@@ -45,22 +45,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   Future<void> fetchUpdateUser() async {
-    final userManager = UserManager(); // Ensure singleton access
-    UserDTO? currentUser = userManager.user;
-
-    if (currentUser != null) {
-      print("User ID in here: ${currentUser.userID}");
-      ID = currentUser.userID;
-    } else {
-      print("No user is logged in.");
-      return;
-    }
-
     setState(() {
       _loading = true;
     });
 
-    final url = Uri.parse('http://10.0.0.2/api/profile/user/update');
+    final url = Uri.parse('http://192.168.137.1:8080/api/profile/user/update');
 
     try {
       int? age;
@@ -76,7 +65,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       }
 
       Profile profileDTO = Profile(
-        userID: currentUser.userID,
+        userID: 1,
         profileIMG: imagePath!,
         profileNAME: nameController.text,
         profileEMAIL: emailController.text,

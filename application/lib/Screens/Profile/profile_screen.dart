@@ -31,22 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchProfile() async {
-    final userManager = UserManager();
-    UserDTO? currentUser = userManager.user;
-
-    if (currentUser != null) {
-      print("User ID in here: ${currentUser.userID}");
-      ID = currentUser.userID;
-      print("data: $ID");
-    } else {
-      print("No user is logged in in HomePage.");
-      setState(() {
-        _loading = false; // Stop loading if no user is found
-      });
-      return;
-    }
-
-    final url = Uri.parse('http://10.0.0.2/api/profile/user/get?userID=$ID');
+    final url =
+        Uri.parse('http://192.168.137.1:8080/api/profile/user/get?userID=1');
 
     try {
       final response =
@@ -192,8 +178,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
                     await FirebaseAuth.instance.signOut();
                   } else {
-                    final userManager = UserManager();
-                    userManager.clearUser();
                     Navigator.of(context).pop();
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => LoginScreen()),

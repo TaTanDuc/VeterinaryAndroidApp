@@ -42,23 +42,14 @@ class _MyWidgetState extends State<AddReviewScreen> {
   }
 
   Future<void> fetchAddComment() async {
-    final userManager = UserManager(); // Ensure singleton access
-    UserDTO? currentUser = userManager.user;
-
-    if (currentUser != null) {
-      ID = currentUser.userID;
-      name = currentUser.username;
-    } else {
-      print("No user is logged in in this.");
-    }
     AddComment comment = AddComment(
-      userID: ID,
+      userID: 1,
       serviceCODE: widget.serviceCODE,
       rating: selectedIndex, // Use the DateTime string representation
       content: content,
     );
 
-    final url = Uri.parse('http://10.0.0.2/api/service/addComment');
+    final url = Uri.parse('http://192.168.137.1:8080/api/service/addComment');
     final body = jsonEncode(comment.toJson());
     try {
       final response = await http.post(

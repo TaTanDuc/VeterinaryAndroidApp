@@ -8,7 +8,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ServicePage extends StatefulWidget {
-  const ServicePage({super.key});
+  const ServicePage({
+    super.key,
+  });
   @override
   _ServicePageState createState() => _ServicePageState();
 }
@@ -26,7 +28,7 @@ class _ServicePageState extends State<ServicePage> {
   // Method to fetch services from API
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://10.0.0.2/api/service/all'); // Replace with your actual API URL
+        'http://192.168.137.1:8080/api/service/all'); // Replace with your actual API URL
     try {
       final response = await http.get(
         url,
