@@ -147,15 +147,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Future<void> handleDecreaseItem(int index, bool isDecreasing) async {
     try {
       int currentQuantity;
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
 
       // Lấy thông tin của item đang được cập nhật
       var item = cartItemUser[index];
@@ -172,7 +163,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -217,15 +208,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
     try {
       int currentQuantity;
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
 
       // Lấy thông tin của item đang được cập nhật
       var item = cartItemUser[index];
@@ -242,7 +224,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
       }
 
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/cart/updateCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -288,23 +270,12 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
   Future<void> _fetchCartUser() async {
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        userID = currentUser.userID;
-        cartID = currentUser.cartID;
-      } else {
-        print("No user is logged in in HomePage.");
-      }
-      final url = Uri.parse("http://10.0.0.2/api/cart/getUserCart");
+      final url = Uri.parse("http://192.168.137.1:8080/api/cart/getUserCart");
       // Gửi yêu cầu POST tới API
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userID": userID,
-          "cartID": cartID // Lấy text từ usernameController
-        }),
+        body: jsonEncode({}),
       );
       // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {

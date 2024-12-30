@@ -6,8 +6,8 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_auth
   firebase_core
-  gal
   flutter_inappwebview_windows
+  gal
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

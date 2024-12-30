@@ -59,20 +59,13 @@ class _AddPetScreenState extends State<AddPetScreen> {
         _loading:
         false;
       });
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        ID = currentUser.userID;
-      } else {
-        print("No user is logged in in HomePage.");
-        return;
-      }
+
       // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://10.0.0.2/api/pet/getUserPets");
+      final url = Uri.parse("http://192.168.137.1:8080/api/pet/getUserPets");
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": ID}),
+        body: jsonEncode({"userID": 1}),
       );
 
       if (response.statusCode == 200) {

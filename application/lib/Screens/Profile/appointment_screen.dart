@@ -26,19 +26,12 @@ class _ListApointmentState extends State<ListApointment> {
 
   // Method to fetch services from API
   Future<void> fetchAppointment() async {
-    final userManager = UserManager(); // Ensure singleton access
-    UserDTO? currentUser = userManager.user;
     setState(() {
       _loading = false;
     });
-    if (currentUser != null) {
-      print("User ID in appontments: ${currentUser.userID}");
-      ID = currentUser.userID;
-    } else {
-      print("No user is logged in here.");
-    }
+
     final url = Uri.parse(
-        'http://10.0.0.2/api/appointment/getUserAppointment?userID=$ID');
+        'http://192.168.137.1:8080/api/appointment/getUserAppointment?userID=1');
     try {
       final response = await http.get(
         url,

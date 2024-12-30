@@ -9,15 +9,15 @@ class UserManager {
 
   UserManager._internal();
 
-  UserDTO? _user;
+  String? _username;
 
-  UserDTO? get user => _user;
+  String? get username => _username;
 
-  void setUser(UserDTO user) {
-    _user = user;
+  void setUsername(String username) {
+    _username = username;
   }
 
-  void clearUser() {
-    _user = null;
+  void clearUsername() {
+    _username = null;
   }
 }

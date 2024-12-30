@@ -1,66 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="NONE" />
+    <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="">
+    <list default="true" id="ada9f7db-50ae-4249-90de-d83eedfa1e84" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Checkout/checkout_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Checkout/checkout_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Pet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/bodyToCallAPI/Pet.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Chat/Client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Chat/Client.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/bodyToCallAPI/UserDTO.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/bodyToCallAPI/UserDTO.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/petServices.java" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/src/main/java/com/team12/veterinaryWebServices/service/petServices.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/veterinaryWebServices/target/classes/com/team12/veterinaryWebServices/service/petServices.class" beforeDir="false" afterPath="$PROJECT_DIR$/veterinaryWebServices/target/classes/com/team12/veterinaryWebServices/service/petServices.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ClangdSettings">
-    <option name="formatViaClangd" value="false" />
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;TungIT2912&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/TaTanDuc/VeterinaryAndroidApp.git&quot;,
-    &quot;accountId&quot;: &quot;f978356c-fe62-44c8-8a9e-077ed0056777&quot;
-  }
-}</component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="2mNi4xx3cm41SQq7qYEWh5rSkoB" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="2qsOtoqo6JVcUwFVOl4i4NTMj5F" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -68,24 +37,19 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Long",
+    "git-widget-placeholder": "Tung",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Admin/AndroidStudioProjects/VeterinaryAndroidApp/application",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+    "last_opened_file_path": "C:/Users/acer/Documents/AndroidApp/VeterinaryAndroidApp"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="" />
-      <created>1726923251746</created>
+      <changelist id="ada9f7db-50ae-4249-90de-d83eedfa1e84" name="Changes" comment="" />
+      <created>1735448034179</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1726923251746</updated>
+      <updated>1735448034179</updated>
     </task>
     <servers />
   </component>

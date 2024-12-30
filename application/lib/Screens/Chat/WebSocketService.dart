@@ -1,22 +1,55 @@
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class WebSocketService {
-  final WebSocketChannel channel;
+  late StompClient client;
+  final String url;
+  String? session;
 
-  WebSocketService(String url)
-      : channel = WebSocketChannel.connect(Uri.parse(url));
+  WebSocketService(this.url);
 
-  // Send message to WebSocket server
-  void sendMessage(String message) {
-    channel.sink.add(message);
+  // Initialize the STOMP client
+  void initialize(String? session, Function(StompFrame) onConnectCallback) {
+    this.session = session;
+
+    client = StompClient(
+      config: StompConfig(
+        url: url,
+        webSocketConnectHeaders: session != null ? {'Cookie': session} : null,
+        onConnect: onConnectCallback,
+        onWebSocketError: (error) => print('WebSocket error: $error'),
+        onStompError: (frame) => print('STOMP error: $frame'),
+        onDisconnect: (frame) => print('Disconnected from WebSocket'),
+        heartbeatOutgoing: Duration(seconds: 10),
+        heartbeatIncoming: Duration(seconds: 10),
+      ),
+    );
   }
 
-  // Listen for incoming messages
-  Stream<String> get messages =>
-      channel.stream.map((message) => message.toString());
+  void sendMessage(String destination, String message) {
+    if (client.connected) {
+      client.send(
+        destination: destination,
+        body: message,
+      );
+    } else {
+      print('Cannot send message, client is not connected.');
+    }
+  }
 
-  // Close the WebSocket connection
+  void subscribe(String destination, Function(StompFrame) callback) {
+    if (client.connected) {
+      client.subscribe(
+        destination: destination,
+        callback: callback,
+      );
+    } else {
+      print('Cannot subscribe, client is not connected.');
+    }
+  }
+
   void close() {
-    channel.sink.close();
+    if (client.connected) {
+      client.deactivate();
+    }
   }
 }

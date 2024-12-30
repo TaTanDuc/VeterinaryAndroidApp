@@ -1,6 +1,7 @@
 import 'dart:convert'; // Thêm import để xử lý JSON
 import 'package:application/Screens/Providers/googleSignin.dart';
 import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'dart:convert';
 import 'package:application/Screens/Login/register_screen.dart';
@@ -24,7 +25,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var user;
+  var session;
+
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String _errorMessage = "";
@@ -33,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://10.0.0.2/api/user/login");
+      final url = Uri.parse("http://192.168.137.1:8080/api/account/login");
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
           _errorMessage =
@@ -46,21 +48,63 @@ class _LoginScreenState extends State<LoginScreen> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "loginstring":
-              usernameController.text, // Lấy text từ usernameController
+          "username": usernameController.text,
           "password": passwordController.text
         }),
       );
-      // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final userId = data['userID'];
-        final user = UserDTO.fromJson(data);
-        final userManager = UserManager();
+        final token = data['returned']['token'];
+        final validationUrl =
+            'http://192.168.137.1:8080/api/account/login/validate';
+        final validationResponse = await http.get(
+          Uri.parse(validationUrl),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        );
+        if (validationResponse.statusCode == 200) {
+          print('Token is valid!');
+          String? setCookie = validationResponse.headers['set-cookie'];
+          if (setCookie != null) {
+            // Extract the session value
+            final sessionCookie = setCookie.split(';').firstWhere(
+                  (part) => part.trim().startsWith('SESSION='),
+                  orElse: () => '',
+                );
 
-        UserManager().setUser(user); // Set the user in UserManager
-
-        UserDTO? currentUser = UserManager().user;
+            if (sessionCookie.isNotEmpty) {
+              // Rename the cookie to `SESSION`
+              final sessionValue = sessionCookie.split('=').last;
+              final customSessionCookie = 'SESSION=$sessionValue';
+              await SessionManager().saveSession(customSessionCookie);
+              final URLgetUsername =
+                  'http://192.168.137.1:8080/api/account/login/getUsername';
+              final UserNameResponse = await http.get(
+                Uri.parse(URLgetUsername),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Cookie': '$customSessionCookie',
+                },
+              );
+              if (UserNameResponse.statusCode == 200) {
+                final info = jsonDecode(UserNameResponse.body);
+                final username = info['returned'];
+                final userManager = UserManager();
+                userManager.setUsername(username);
+              }
+              print('Custom Session Cookie: $customSessionCookie');
+            } else {
+              print('Session cookie not found in headers.');
+            }
+          } else {
+            print('No Set-Cookie header found in the response.');
+          }
+        } else {
+          print('erroe when validate');
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),

@@ -46,7 +46,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       _loading = false;
     });
     final url =
-        'http://10.0.0.2/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
+        'http://192.168.137.1:8080/api/service/overallRating?serviceCODE=${widget.serviceCODE}'; // Replace with your URL
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -88,7 +88,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
 
   Future<void> fetchserviceCommnets() async {
     final url = Uri.parse(
-        'http://10.0.0.2/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://192.168.137.1:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
 
     setState(() {
       _loading = true; // Start loading
@@ -130,19 +130,12 @@ class _MyWidgetState extends State<ReviewsScreen> {
       _loading = false;
     });
     final url = Uri.parse(
-        'http://10.0.0.2/api/service/comments?serviceCODE=${widget.serviceCODE}');
+        'http://192.168.137.1:8080/api/service/comments?serviceCODE=${widget.serviceCODE}');
 
     try {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-      if (currentUser != null) {
-        print("User ID in review: ${currentUser.userID}");
-        ID = currentUser.userID;
-      } else {
-        print("No user is logged in in here.");
-      }
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {

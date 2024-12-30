@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         create: (context) => GoogleSignInProvider(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: MainPage(),
+          home: LoginScreen(),
         ));
   }
 }
@@ -146,47 +146,6 @@ class ProfilePage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // dynamic ID;
-    // String role = 'guest';
-    // final userManager = UserManager();
-    // User? currentUser = userManager.user;
-
-    // if (currentUser != null) {
-    //   ID = currentUser.userID;
-    //   role = currentUser.role;
-    // } else {
-    //   print("No user is logged in in this.");
-    // }
-    // return Center(
-    //   child: ElevatedButton(
-    //     onPressed: () {
-    //       navigateToChatScreen(
-    //           context, role); // Change to 'employee' for employee view
-    //     },
-    //     child: Text("Start Chat"),
-    //   ),
-    // ); // Truyền userID xuống HomePage
     return Center(child: ProfileScreen());
-  }
-}
-
-void navigateToChatScreen(BuildContext context, String role) {
-  WebSocketService webSocketService =
-      WebSocketService('ws://172.16.204.88:8081');
-
-  if (role == 'CUSTOMER') {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              UserChatScreen(webSocketService: webSocketService)),
-    );
-  } else if (role == 'EMPLOYEE') {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              EmployeeChatScreen(webSocketService: webSocketService)),
-    );
   }
 }
