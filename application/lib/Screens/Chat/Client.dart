@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
@@ -14,18 +15,33 @@ class _UserChatScreenState extends State<UserChatScreen> {
   TextEditingController _controller = TextEditingController();
   List<Map<String, String>> messages = []; // Updated to store sender info
   String? session;
-  ScrollController _scrollController =
-      ScrollController(); // Added ScrollController
+  ScrollController _scrollController = ScrollController();
+  DateTime? lastMessageTime; // To track the last message time
+  Timer? inactivityTimer;
 
   @override
   void initState() {
     super.initState();
     _initializeChat();
+    Future.delayed(const Duration(milliseconds: 500)).then((value) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.fastOutSlowIn,
+      );
+    });
     WebSocketManager().onMessageReceived = (Map<String, String> newMessage) {
       setState(() {
         messages.add(newMessage);
       });
-      // _saveMessage(newMessage['sender'] ?? '', newMessage['message'] ?? '');
+      _restartInactivityTimer();
+      Future.delayed(const Duration(milliseconds: 500)).then((value) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.fastOutSlowIn,
+        );
+      });
     };
   }
 
@@ -71,6 +87,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
           .whereType<Map<String, String>>()
           .toList();
     });
+    _restartInactivityTimer();
   }
 
   void _sendMessage(String message) {
@@ -81,12 +98,50 @@ class _UserChatScreenState extends State<UserChatScreen> {
         messages.add({'message': message, 'sender': 'user'});
       });
       _controller.clear();
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _restartInactivityTimer();
+      Future.delayed(const Duration(milliseconds: 500)).then((value) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.fastOutSlowIn,
+        );
+      });
       _saveMessage('user', message);
+    }
+  }
+
+  void _restartInactivityTimer() {
+    if (inactivityTimer != null) {
+      inactivityTimer!.cancel(); // Cancel existing timer
+    }
+    lastMessageTime = DateTime.now(); // Update last message time
+    inactivityTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+      _checkInactivity(); // Check for inactivity every minute
+    });
+  }
+
+  void _checkInactivity() {
+    if (lastMessageTime != null &&
+        DateTime.now().difference(lastMessageTime!).inMinutes >= 5) {
+      _clearChat(); // Clear chat after 5 minutes of inactivity
+    }
+  }
+
+  void _clearChat() {
+    setState(() {
+      messages.clear();
+    });
+    _saveMessages(); // Save cleared chat
+    print("Chat history cleared due to inactivity.");
+  }
+
+  Future<void> _saveMessages() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('chatMessages', []);
+      print('Chat history cleared and saved.');
+    } catch (e) {
+      print('Error clearing chat history: $e');
     }
   }
 
@@ -117,6 +172,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
   @override
   void dispose() {
     WebSocketManager().reconnect(session!);
+    if (inactivityTimer != null) {
+      inactivityTimer!.cancel(); // Cancel the inactivity timer when disposing
+    }
     super.dispose();
   }
 
@@ -129,6 +187,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: messages.length,
+              controller: _scrollController,
               itemBuilder: (context, index) {
                 var message = messages[index];
                 bool isUserMessage = message['sender'] == 'user';

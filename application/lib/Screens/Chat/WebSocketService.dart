@@ -71,6 +71,7 @@ class WebSocketManager {
       destination: '/user/queue/messages',
       callback: (userFrame) {
         final messageData = jsonDecode(userFrame.body ?? '{}');
+        print('ducshjshjshsjjhjsffjhff: $messageData');
         _saveReceivedMessage('employee', messageData['message']);
         if (onMessageReceived != null) {
           onMessageReceived!(
