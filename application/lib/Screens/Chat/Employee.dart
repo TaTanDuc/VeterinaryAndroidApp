@@ -1,143 +1,144 @@
 import 'package:application/Screens/Chat/WebSocketService.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 
-class EmployeeChatScreen extends StatefulWidget {
-  final WebSocketService webSocketService;
-
-  EmployeeChatScreen({required this.webSocketService});
-
+class EmployeePage extends StatefulWidget {
   @override
-  _EmployeeChatScreenState createState() => _EmployeeChatScreenState();
+  _EmployeePageState createState() => _EmployeePageState();
 }
 
-class _EmployeeChatScreenState extends State<EmployeeChatScreen> {
-  TextEditingController _controller = TextEditingController();
-  List<String> userList = []; // List of active users
-  String? selectedUser; // Currently selected user
-  List<String> messages = []; // Chat history with the selected user
+class _EmployeePageState extends State<EmployeePage> {
+  // Map to store messages by user (username -> list of messages)
+  Map<String, List<String>> userMessages = {};
+  String? selectedUser;
+  List<String> selectedUserMessages = [];
 
   @override
   void initState() {
     super.initState();
-    _initializePublicSubscription();
+    _initializeWebSocket();
   }
 
-  void _initializePublicSubscription() {
-    // Subscribe to the general queue to monitor incoming messages
-    widget.webSocketService.subscribe('/queue/messages', (frame) {
-      final messageData = jsonDecode(frame.body ?? '{}');
-      final userId = messageData['senderName'];
+  Future<void> _initializeWebSocket() async {
+    String? session = await SessionManager().getSession();
 
+    if (session == null) {
+      print('Session expired or not found.');
+      return;
+    }
+
+    WebSocketManager().onMessageReceived = (Map<String, String> newMessage) {
       setState(() {
-        if (!userList.contains(userId)) {
-          userList.add(userId); // Add user to active list
+        String sender = newMessage['sender']!;
+        String message = newMessage['message']!;
+
+        if (userMessages.containsKey(sender)) {
+          userMessages[sender]!.add(message);
+        } else {
+          userMessages[sender] = [message];
+        }
+
+        if (selectedUser == sender) {
+          selectedUserMessages = userMessages[sender]!;
         }
       });
-    });
-  }
+    };
 
-  void _joinPrivateRoom(String userId) {
-    setState(() {
-      selectedUser = userId;
-      messages.clear(); // Clear previous chat messages
-    });
-
-    widget.webSocketService.subscribe('/user/$userId/queue/messages', (frame) {
-      final messageData = jsonDecode(frame.body ?? '{}');
-      setState(() {
-        messages.add(messageData['message']); // Append received message
-      });
-    });
-  }
-
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty && selectedUser != null) {
-      final messageJson = jsonEncode({
-        "recipientId": selectedUser,
-        "content": _controller.text,
-      });
-
-      widget.webSocketService.sendMessage('/app/messages', messageJson);
-      setState(() {
-        messages.add("You: ${_controller.text}"); // Show the sent message
-      });
-      _controller.clear();
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.webSocketService.close();
-    super.dispose();
+    WebSocketManager().initialize(session);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Employee Chat")),
+      appBar: AppBar(
+        title: Text('Employee - Respond to Users'),
+      ),
       body: Column(
         children: <Widget>[
-          // Display active users
-          if (userList.isNotEmpty)
-            SizedBox(
-              height: 100,
+          Expanded(
+            child: ListView.builder(
+              itemCount: userMessages.keys.length,
+              itemBuilder: (context, index) {
+                String user = userMessages.keys.elementAt(index);
+                String latestMessage = userMessages[user]!.last;
+
+                return ListTile(
+                  title: Text('User: $user'),
+                  subtitle: Text('Latest Message: $latestMessage'),
+                  onTap: () {
+                    setState(() {
+                      selectedUser = user;
+                      selectedUserMessages = userMessages[user]!;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+          if (selectedUser != null) ...[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Messages from $selectedUser:'),
+            ),
+            Expanded(
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: userList.length,
+                itemCount: selectedUserMessages.length,
                 itemBuilder: (context, index) {
-                  final userId = userList[index];
-                  return GestureDetector(
-                    onTap: () => _joinPrivateRoom(userId),
-                    child: Card(
-                      margin: EdgeInsets.all(8),
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          "User: $userId",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
+                  return ListTile(
+                    title: Text(selectedUserMessages[index]),
                   );
                 },
               ),
             ),
-
-          // Display messages for the selected user
-          Expanded(
-            child: selectedUser != null
-                ? ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(messages[index]),
-                      );
-                    },
-                  )
-                : Center(child: Text("Select a user to start chatting")),
-          ),
-
-          // Message input and send button
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(labelText: "Enter message"),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          ),
+            _buildResponseInput(),
+          ]
         ],
       ),
     );
+  }
+
+  Widget _buildResponseInput() {
+    TextEditingController responseController = TextEditingController();
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: responseController,
+              decoration: InputDecoration(
+                hintText: 'Type your response...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            onPressed: () {
+              if (responseController.text.isNotEmpty) {
+                _sendResponse(responseController.text);
+                responseController.clear();
+              }
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  void _sendResponse(String responseMessage) {
+    if (selectedUser != null && responseMessage.isNotEmpty) {
+      WebSocketManager().sendMessage('employee', responseMessage);
+      setState(() {
+        userMessages[selectedUser]!.add(responseMessage);
+        selectedUserMessages = userMessages[selectedUser]!;
+      });
+    } else {
+      print("No user selected or response is empty.");
+    }
   }
 }

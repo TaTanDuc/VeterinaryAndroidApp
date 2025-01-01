@@ -19,8 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  WebSocketService _webSocketService =
-      WebSocketService('ws://192.168.137.1:8080/veterinaryCustomerService');
   bool _loading = true;
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
@@ -204,9 +202,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => UserChatScreen(
-                          webSocketService: _webSocketService,
-                        ),
+                        builder: (context) => UserChatScreen(),
                       ),
                     );
                   },
