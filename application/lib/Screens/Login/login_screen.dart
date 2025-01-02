@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 final info = jsonDecode(UserNameResponse.body);
                 final username = info['returned'];
                 final userManager = UserManager();
-                userManager.setUsername(username);
+                userManager.setUsername(username, true);
               }
               print('Custom Session Cookie: $customSessionCookie');
             } else {

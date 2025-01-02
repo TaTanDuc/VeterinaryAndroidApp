@@ -1,99 +1,180 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:flutter/material.dart';
 import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:stomp_dart_client/stomp_dart_client.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserChatScreen extends StatefulWidget {
-  final WebSocketService webSocketService;
-
-  UserChatScreen({required this.webSocketService});
-
   @override
   _UserChatScreenState createState() => _UserChatScreenState();
 }
 
 class _UserChatScreenState extends State<UserChatScreen> {
   TextEditingController _controller = TextEditingController();
+  List<Map<String, String>> messages = []; // Updated to store sender info
   String? session;
-  List<Map<String, String>> messages = [];
-  late StompClient client;
+  ScrollController _scrollController = ScrollController();
+  DateTime? lastMessageTime; // To track the last message time
+  Timer? inactivityTimer;
 
   @override
   void initState() {
     super.initState();
     _initializeChat();
+    Future.delayed(const Duration(milliseconds: 500)).then((value) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.fastOutSlowIn,
+      );
+    });
+    WebSocketManager().onMessageReceived = (Map<String, String> newMessage) {
+      setState(() {
+        messages.add(newMessage);
+      });
+      _restartInactivityTimer();
+      Future.delayed(const Duration(milliseconds: 500)).then((value) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.fastOutSlowIn,
+        );
+      });
+    };
   }
 
   Future<void> _initializeChat() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     session = await SessionManager().getSession();
 
-    client = StompClient(
-      config: StompConfig(
-        url: 'ws://192.168.137.1:8080/veterinaryCustomerService',
-        webSocketConnectHeaders: session != null ? {'Cookie': session} : null,
-        onConnect: onConnectCallback,
-        onWebSocketError: (error) => print('WebSocket error: $error'),
-        onStompError: (frame) => print('STOMP error: ${frame.body}'),
-        onDisconnect: (frame) => print('Disconnected from WebSocket'),
-        heartbeatOutgoing: Duration(seconds: 10),
-        heartbeatIncoming: Duration(seconds: 10),
-      ),
-    );
-    print('Initializing WebSocket connection...');
-    try {
-      client.activate();
-      print("Client activated, awaiting connection...");
-    } catch (e) {
-      print('Error activating client: $e');
+    if (session == null) {
+      print('Session expired or not found.');
+      return;
+    }
+
+    WebSocketManager().onConnectCallback = (frame) {
+      setState(() {});
+    };
+
+    WebSocketManager().initialize(session!);
+
+    List<String> savedMessages;
+    dynamic storedData = prefs.get('chatMessages');
+    if (storedData is List) {
+      savedMessages = List<String>.from(storedData);
+    } else {
+      savedMessages = [];
+    }
+    setState(() {
+      messages = savedMessages
+          .map((msg) {
+            try {
+              final parsedMessage = jsonDecode(msg) as Map<String, dynamic>;
+              return {
+                'message': (parsedMessage['message'] ?? '') as String,
+                'sender': (parsedMessage['sender'] ?? 'unknown') as String,
+              };
+            } catch (e) {
+              print("Error decoding message: $msg, error: $e");
+              return {
+                'message': msg,
+                'sender': 'unknown',
+              };
+            }
+          })
+          .whereType<Map<String, String>>()
+          .toList();
+    });
+    _restartInactivityTimer();
+  }
+
+  void _sendMessage(String message) {
+    if (message.isNotEmpty) {
+      final userName = UserManager().username;
+      WebSocketManager().sendMessage(userName!, message);
+      setState(() {
+        messages.add({'message': message, 'sender': 'user'});
+      });
+      _controller.clear();
+      _restartInactivityTimer();
+      Future.delayed(const Duration(milliseconds: 500)).then((value) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.fastOutSlowIn,
+        );
+      });
+      _saveMessage('user', message);
     }
   }
 
-  void onConnectCallback(StompFrame frame) {
-    print("WebSocket Connected: ${frame.body}");
-
-    client.subscribe(
-        destination: '/queue/messages',
-        callback: (userFrame) {
-          print('joint message received: ${userFrame.body}');
-          setState(() {
-            messages.add({
-              'sender': 'user',
-              'message': jsonDecode(userFrame.body ?? '{}')['message'],
-            });
-          });
-        });
-    client.subscribe(
-        destination: '/user/queue/messages',
-        callback: (userFrame) {
-          print('Private message received: ${userFrame.body}');
-          setState(() {
-            messages.add({
-              'sender': 'employee',
-              'message': jsonDecode(userFrame.body ?? '{}')['message'],
-            });
-          });
-        });
+  void _restartInactivityTimer() {
+    if (inactivityTimer != null) {
+      inactivityTimer!.cancel(); // Cancel existing timer
+    }
+    lastMessageTime = DateTime.now(); // Update last message time
+    inactivityTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+      _checkInactivity(); // Check for inactivity every minute
+    });
   }
 
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      final username = UserManager().username;
-      final messageJson = jsonEncode({
-        "receiver": "",
-        "senderName": "$username",
-        "message": _controller.text,
-      });
+  void _checkInactivity() {
+    if (lastMessageTime != null &&
+        DateTime.now().difference(lastMessageTime!).inMinutes >= 5) {
+      _clearChat(); // Clear chat after 5 minutes of inactivity
+    }
+  }
 
-      client.send(destination: '/app/message', body: messageJson);
-      _controller.clear();
+  void _clearChat() {
+    setState(() {
+      messages.clear();
+    });
+    _saveMessages(); // Save cleared chat
+    print("Chat history cleared due to inactivity.");
+  }
+
+  Future<void> _saveMessages() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('chatMessages', []);
+      print('Chat history cleared and saved.');
+    } catch (e) {
+      print('Error clearing chat history: $e');
+    }
+  }
+
+  Future<void> _saveMessage(String sender, String message) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      List<String>? existingMessages;
+      dynamic storedData = prefs.get('chatMessages');
+      if (storedData is List) {
+        existingMessages = List<String>.from(storedData);
+      } else {
+        existingMessages = [];
+      }
+      final combinedMessage = jsonEncode({
+        'sender': sender,
+        'message': message,
+      });
+      existingMessages.add(combinedMessage);
+      await prefs.setStringList('chatMessages', existingMessages);
+      print('Message saved successfully!');
+    } catch (e, stackTrace) {
+      print('Error saving sent message: $e');
+      print('Stack trace: $stackTrace');
     }
   }
 
   @override
   void dispose() {
-    client.deactivate();
+    WebSocketManager().reconnect(session!);
+    if (inactivityTimer != null) {
+      inactivityTimer!.cancel(); // Cancel the inactivity timer when disposing
+    }
     super.dispose();
   }
 
@@ -106,9 +187,10 @@ class _UserChatScreenState extends State<UserChatScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: messages.length,
+              controller: _scrollController,
               itemBuilder: (context, index) {
-                var messageData = messages[index];
-                bool isUserMessage = messageData['sender'] == 'user';
+                var message = messages[index];
+                bool isUserMessage = message['sender'] == 'user';
 
                 return Align(
                   alignment: isUserMessage
@@ -117,16 +199,12 @@ class _UserChatScreenState extends State<UserChatScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
-                      color:
-                          isUserMessage ? Colors.blueAccent : Colors.grey[300],
+                      color: isUserMessage
+                          ? Colors.greenAccent
+                          : Colors.blueAccent,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          messageData['message'] ?? '',
-                          style: TextStyle(
-                              color:
-                                  isUserMessage ? Colors.white : Colors.black),
-                        ),
+                        child: Text(message['message'] ?? ''),
                       ),
                     ),
                   ),
@@ -146,7 +224,10 @@ class _UserChatScreenState extends State<UserChatScreen> {
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
+                  onPressed: () {
+                    String message = _controller.text;
+                    _sendMessage(message);
+                  },
                 ),
               ],
             ),
