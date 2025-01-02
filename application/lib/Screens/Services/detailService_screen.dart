@@ -389,20 +389,28 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
-  Widget _button(Service service) {
+  Widget _button(Service? service) {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ReviewsScreen(
-                serviceCODE: service.serviceCODE,
-                userID:
-                    service.userID, // Ensure you have userID in serviceDetails
+          if (service != null) {
+            // Check if service is not null
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReviewsScreen(
+                  serviceCODE: service.serviceCODE,
+                  userID: service
+                      .userID, // Ensure you have userID in serviceDetails
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            // Optionally, show an error message or a snackbar
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Service not available.')),
+            );
+          }
         },
         child: const Text(
           'See and add more comments', // Button label
