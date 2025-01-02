@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:application/Screens/Chat/InactivityTimerService%20.dart';
 import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
@@ -13,12 +14,11 @@ class UserChatScreen extends StatefulWidget {
 
 class _UserChatScreenState extends State<UserChatScreen> {
   TextEditingController _controller = TextEditingController();
-  List<Map<String, String>> messages = []; // Updated to store sender info
+  List<Map<String, String>> messages = [];
   String? session;
   ScrollController _scrollController = ScrollController();
-  DateTime? lastMessageTime; // To track the last message time
-  Timer? inactivityTimer;
-
+  DateTime? lastMessageTime;
+  bool isConnected = true;
   @override
   void initState() {
     super.initState();
@@ -34,7 +34,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
       setState(() {
         messages.add(newMessage);
       });
-      _restartInactivityTimer();
+      InactivityTimerService().resetTimer();
       Future.delayed(const Duration(milliseconds: 500)).then((value) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -43,6 +43,28 @@ class _UserChatScreenState extends State<UserChatScreen> {
         );
       });
     };
+    InactivityTimerService().onInactivityTimeout = _deleteChat;
+
+    InactivityTimerService().startTimer();
+  }
+
+  void _deleteChat() async {
+    if (!mounted) return; // Ensure the widget is still mounted
+
+    setState(() {
+      messages.clear();
+      isConnected = false;
+      WebSocketManager().reconnect(session!, isConnected);
+    });
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('chatMessages');
+      print(
+          'Chat messages deleted from storage and client deactivated due to inactivity.');
+    } catch (e) {
+      print('Error clearing chat messages from storage: $e');
+    }
+    print('Chat messages deleted and client deactivated due to inactivity.');
   }
 
   Future<void> _initializeChat() async {
@@ -74,6 +96,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
               final parsedMessage = jsonDecode(msg) as Map<String, dynamic>;
               return {
                 'message': (parsedMessage['message'] ?? '') as String,
+                'senderName': (parsedMessage['senderName'] ?? '') as String,
                 'sender': (parsedMessage['sender'] ?? 'unknown') as String,
               };
             } catch (e) {
@@ -87,7 +110,6 @@ class _UserChatScreenState extends State<UserChatScreen> {
           .whereType<Map<String, String>>()
           .toList();
     });
-    _restartInactivityTimer();
   }
 
   void _sendMessage(String message) {
@@ -95,10 +117,12 @@ class _UserChatScreenState extends State<UserChatScreen> {
       final userName = UserManager().username;
       WebSocketManager().sendMessage(userName!, message);
       setState(() {
-        messages.add({'message': message, 'sender': 'user'});
+        messages.add(
+            {'message': message, 'senderName': userName, 'sender': 'user'});
       });
       _controller.clear();
-      _restartInactivityTimer();
+
+      InactivityTimerService().resetTimer();
       Future.delayed(const Duration(milliseconds: 500)).then((value) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -106,46 +130,12 @@ class _UserChatScreenState extends State<UserChatScreen> {
           curve: Curves.fastOutSlowIn,
         );
       });
-      _saveMessage('user', message);
+      _saveMessage('user', userName, message);
     }
   }
 
-  void _restartInactivityTimer() {
-    if (inactivityTimer != null) {
-      inactivityTimer!.cancel(); // Cancel existing timer
-    }
-    lastMessageTime = DateTime.now(); // Update last message time
-    inactivityTimer = Timer.periodic(Duration(minutes: 1), (timer) {
-      _checkInactivity(); // Check for inactivity every minute
-    });
-  }
-
-  void _checkInactivity() {
-    if (lastMessageTime != null &&
-        DateTime.now().difference(lastMessageTime!).inMinutes >= 5) {
-      _clearChat(); // Clear chat after 5 minutes of inactivity
-    }
-  }
-
-  void _clearChat() {
-    setState(() {
-      messages.clear();
-    });
-    _saveMessages(); // Save cleared chat
-    print("Chat history cleared due to inactivity.");
-  }
-
-  Future<void> _saveMessages() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('chatMessages', []);
-      print('Chat history cleared and saved.');
-    } catch (e) {
-      print('Error clearing chat history: $e');
-    }
-  }
-
-  Future<void> _saveMessage(String sender, String message) async {
+  Future<void> _saveMessage(
+      String sender, String userName, String message) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -158,6 +148,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
       }
       final combinedMessage = jsonEncode({
         'sender': sender,
+        'senderName': userName,
         'message': message,
       });
       existingMessages.add(combinedMessage);
@@ -171,10 +162,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
   @override
   void dispose() {
-    WebSocketManager().reconnect(session!);
-    if (inactivityTimer != null) {
-      inactivityTimer!.cancel(); // Cancel the inactivity timer when disposing
-    }
+    WebSocketManager().reconnect(session!, isConnected);
+
     super.dispose();
   }
 
@@ -192,22 +181,40 @@ class _UserChatScreenState extends State<UserChatScreen> {
                 var message = messages[index];
                 bool isUserMessage = message['sender'] == 'user';
 
-                return Align(
-                  alignment: isUserMessage
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      color: isUserMessage
-                          ? Colors.greenAccent
-                          : Colors.blueAccent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(message['message'] ?? ''),
+                return Column(
+                  crossAxisAlignment: isUserMessage
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        message['senderName'] ?? 'Unknown',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
+                    Align(
+                      alignment: isUserMessage
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          color: isUserMessage
+                              ? Colors.greenAccent
+                              : Colors.blueAccent,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(message['message'] ?? ''),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),

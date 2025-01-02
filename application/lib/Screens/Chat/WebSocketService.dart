@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:application/Screens/Chat/InactivityTimerService%20.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
@@ -63,8 +64,6 @@ class WebSocketManager {
       destination: '/queue/messages',
       callback: (userFrame) {
         final messageData = jsonDecode(userFrame.body ?? '{}');
-
-        _saveReceivedMessage('user', messageData['message']);
       },
     );
     _client?.subscribe(
@@ -72,16 +71,23 @@ class WebSocketManager {
       callback: (userFrame) {
         final messageData = jsonDecode(userFrame.body ?? '{}');
         print('ducshjshjshsjjhjsffjhff: $messageData');
-        _saveReceivedMessage('employee', messageData['message']);
+        final senderName = messageData['senderName'] ?? 'Anonymous';
+        _saveReceivedMessage('employee', senderName, messageData['message']);
+        InactivityTimerService().resetTimer();
+        print('data sendibng: $messageData');
         if (onMessageReceived != null) {
-          onMessageReceived!(
-              {'sender': 'employee', 'message': messageData['message']});
+          onMessageReceived!({
+            'sender': 'employee',
+            'senderName': senderName,
+            'message': messageData['message']
+          });
         }
       },
     );
   }
 
-  Future<void> _saveReceivedMessage(String sender, String message) async {
+  Future<void> _saveReceivedMessage(
+      String sender, String senderName, String message) async {
     if (message.isEmpty) {
       print('Received message is empty, not saving.');
       return;
@@ -91,8 +97,8 @@ class WebSocketManager {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> existingMessages = prefs.getStringList('chatMessages') ?? [];
 
-      final combinedMessage =
-          jsonEncode({'sender': sender, 'message': message});
+      final combinedMessage = jsonEncode(
+          {'sender': sender, 'senderName': senderName, 'message': message});
       existingMessages.add(combinedMessage);
 
       await prefs.setStringList('chatMessages', existingMessages);
@@ -118,8 +124,8 @@ class WebSocketManager {
     _client?.deactivate();
   }
 
-  Future<void> reconnect(String session) async {
-    if (!isConnected) {
+  Future<void> reconnect(String session, bool connect) async {
+    if (connect == false) {
       disconnect();
       await initialize(session);
     }
