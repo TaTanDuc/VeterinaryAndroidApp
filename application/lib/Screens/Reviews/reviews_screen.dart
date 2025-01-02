@@ -86,9 +86,52 @@ class _MyWidgetState extends State<ReviewsScreen> {
     });
   }
 
+//   Future<void> fetchserviceCommnets() async {
+//     final url = Uri.parse(
+//         'http://localhost:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+//     setState(() {
+//       _loading = false;
+//     });
+//     try {
+//       final response =
+//           await http.get(url, headers: {'Content-Type': 'application/json'});
+
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//         setState(() {
+//           serviceCommnets =
+//               jsonDecode(response.body); // Update with your response structure
+
+//           if (data['rating'] != null) {
+//             _comments = (data['comments'] as List)
+//                 .map((commentData) => Comment.fromJson(commentData))
+//                 .toList();
+//           }
+
+//           print("Parsed comments: $serviceCommnets.");
+//           print('User ID nerjdfhjhjhj: ${data['serviceCODE']}');
+
+// // Stop loading when data is fetched
+//         });
+//         print("data: ${serviceCommnets}");
+//         _loading = false;
+//       } else {
+//         throw Exception('Failed to load service details');
+//       }
+//     } catch (e) {
+//       print('Error fetching service details: $e');
+//       setState(() {
+//         _loading = false; // Stop loading on error
+//       });
+//     }
+//   }
   Future<void> fetchserviceCommnets() async {
     final url = Uri.parse(
         'http://192.168.137.1:8080/api/service/detail?serviceCODE=${widget.serviceCODE}');
+
+    setState(() {
+      _loading = true; // Start loading
+    });
 
     setState(() {
       _loading = true; // Start loading
@@ -135,7 +178,6 @@ class _MyWidgetState extends State<ReviewsScreen> {
     try {
       final response =
           await http.get(url, headers: {'Content-Type': 'application/json'});
-
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
