@@ -2,6 +2,7 @@ import 'package:application/Screens/Chat/Client.dart';
 import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/Screens/Chat/chatbox_screen.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
   dynamic ID;
+
   @override
   void initState() {
     super.initState();
@@ -33,16 +35,20 @@ class _HomePageState extends State<HomePage> {
   // Method to fetch pets from API
   Future<void> fetchPets() async {
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/pet/getUserPets'); // Replace with your actual API URL
+        'http://192.168.137.1:8080/api/customer/pet'); // Replace with your actual API URL
     try {
-      final response = await http.post(
+      final session = await SessionManager().getSession();
+      print('Session: $session');
+      final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": 1}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': '$session',
+        },
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
-        final List<dynamic> shopData = jsonDecode(response.body);
+        final List<dynamic> shopData = jsonDecode(response.body)['returned'];
 
         setState(() {
           _pets = shopData.map((json) => Pet.fromJson(json)).toList();
@@ -228,14 +234,22 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ClipOval(
                   child: SizedBox(
-                    width: 60, // Same as CircleAvatar diameter (2 * radius)
+                    width: 60,
                     height: 60,
-                    child: Image.asset(
-                      pet.petIMAGE.isNotEmpty
-                          ? pet.petIMAGE
-                          : 'assets/icons/house.png',
-                      fit: BoxFit.cover,
-                    ),
+                    child: pet.petIMAGE.isNotEmpty
+                        ? Image.memory(
+                            base64Decode(pet.petIMAGE),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                  child: Icon(Icons
+                                      .error)); // Display an error icon if image fails to load
+                            },
+                          )
+                        : Image.asset(
+                            'assets/icons/house.png',
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 const SizedBox(height: 5),

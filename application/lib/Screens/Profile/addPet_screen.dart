@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:application/Screens/Profile/camera_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
@@ -59,13 +60,14 @@ class _AddPetScreenState extends State<AddPetScreen> {
         _loading:
         false;
       });
-
-      // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://192.168.137.1:8080/api/pet/getUserPets");
-      final response = await http.post(
+      final session = await SessionManager().getSession();
+      final url = Uri.parse("http://192.168.137.1:8080/api/customer/pet");
+      final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": 1}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': '$session',
+        },
       );
 
       if (response.statusCode == 200) {
@@ -87,29 +89,34 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
   Future<void> handleAddPet() async {
     try {
-      final url = Uri.parse("http://10.0.2.2:8080/api/pet/addPet");
-
+      final url =
+          Uri.parse("http://192.168.137.1:8080/api/customer/pet/create");
+      final session = await SessionManager().getSession();
       print('data insert $path');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': '$session',
+        },
         body: jsonEncode({
-          "userID": ID,
           "petIMAGE": path,
           "petNAME": petNameController.text,
+          // "petGENDER" : ,
+          "petAGE": int.parse(petAgeController.text),
+          // "animal" : ,
           "petSPECIE": petBreedController.text,
-          "petAGE": int.parse(petAgeController.text)
         }),
       );
       if (response.statusCode == 200) {
-        final data = response.body; // No jsonDecode, treat as plain text
+        final data = response.body;
 
         setState(() {
           _dataMessage = data;
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MainPage(), // Pass serviceCODE
+              builder: (context) => MainPage(),
             ),
           );
         });
@@ -134,9 +141,6 @@ class _AddPetScreenState extends State<AddPetScreen> {
           snackbarDuration: Durations.extralong4,
         ).show(context);
       } else {
-        // setState(() {
-        //   _dataMessage = data;
-        // });
         DelightToastBar(
           builder: (context) {
             return ToastCard(
