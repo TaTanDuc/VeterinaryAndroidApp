@@ -91,9 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
               );
               if (UserNameResponse.statusCode == 200) {
                 final info = jsonDecode(UserNameResponse.body);
-                final username = info['returned'];
+                print(info);
+
+                final username = info['returned']['userName'];
+                final id =
+                    int.tryParse(info['returned']['userID'].toString()) ?? 0;
+                print('sdsdsdsds: $id');
                 final userManager = UserManager();
-                userManager.setUsername(username, true);
+                userManager.setUsername(username, true, id);
+                final test = UserManager().id;
+                print('sdsdsdsdsdsdsdsdsdsdsdsd: $test');
               }
               print('Custom Session Cookie: $customSessionCookie');
             } else {

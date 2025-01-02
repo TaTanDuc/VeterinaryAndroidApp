@@ -110,12 +110,17 @@ class WebSocketManager {
     }
   }
 
-  void sendMessage(String sender, String message) {
+  void sendMessage(int id, String sender, String message) {
+    print("Id: $id");
     if (isConnected) {
       _client?.send(
-          destination: '/app/reply',
-          body: jsonEncode(
-              {'receiver  ': 10, 'senderName': sender, 'message': message}));
+          destination: '/app/message',
+          body: jsonEncode({'senderName': sender, 'message': message}));
+      _client?.send(
+        destination: '/app/reply',
+        body: jsonEncode(
+            {'receiver': id, 'senderName': sender, 'message': message}),
+      );
     } else {
       print('Not connected to WebSocket');
     }

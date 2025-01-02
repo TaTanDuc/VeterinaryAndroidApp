@@ -132,7 +132,7 @@ class _EmployeePageState extends State<EmployeePage> {
 
   void _sendResponse(String responseMessage) {
     if (selectedUser != null && responseMessage.isNotEmpty) {
-      WebSocketManager().sendMessage('employee', responseMessage);
+      // WebSocketManager().sendMessage('employee', responseMessage);
       setState(() {
         userMessages[selectedUser]!.add(responseMessage);
         selectedUserMessages = userMessages[selectedUser]!;

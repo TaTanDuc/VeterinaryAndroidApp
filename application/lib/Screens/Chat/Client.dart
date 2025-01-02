@@ -115,7 +115,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
   void _sendMessage(String message) {
     if (message.isNotEmpty) {
       final userName = UserManager().username;
-      WebSocketManager().sendMessage(userName!, message);
+      final id = UserManager().id;
+      print("Id: $id");
+      WebSocketManager().sendMessage(id!, userName!, message);
       setState(() {
         messages.add(
             {'message': message, 'senderName': userName, 'sender': 'user'});
