@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:application/Screens/Chat/Client.dart';
+import 'package:application/Screens/Chat/EmployeeChat.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -83,7 +85,7 @@ class _ChatPageState extends State<ChatPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatScreen(userName: user.name),
+                        builder: (context) => EmployeeChatScreen(userID: user.id,),
                       ),
                     );
                   },
