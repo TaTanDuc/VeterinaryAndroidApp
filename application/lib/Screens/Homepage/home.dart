@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:application/Screens/Chat/Client.dart';
 import 'package:application/Screens/Chat/WebSocketService.dart';
 import 'package:application/Screens/Chat/chatbox_screen.dart';
+import 'package:application/Screens/Chat/select_chatbox.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
@@ -199,12 +203,7 @@ class _HomePageState extends State<HomePage> {
                 child: FloatingActionButton(
                   backgroundColor: const Color(0xFF5CB15A),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserChatScreen(),
-                      ),
-                    );
+                    check(context);
                   },
                   child: const Icon(Icons.chat, color: Colors.white),
                 ),
@@ -278,3 +277,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+  Future <void> check(context) async{
+    final sm = await SessionManager().getSession();
+    final response = await http.get(Uri.parse('http://192.168.137.1:8080/getCurrent'), headers: {'cookie':'$sm'});
+    try{
+        if(response.statusCode != 200){
+          Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserChatScreen(),
+                        ),
+          );
+        }
+        else{
+          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(),
+                          ),
+            );
+        }
+    }catch(ex)
+    {
+      rethrow;
+    }
+  }
