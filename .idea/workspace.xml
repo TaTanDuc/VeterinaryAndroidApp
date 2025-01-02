@@ -5,17 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ada9f7db-50ae-4249-90de-d83eedfa1e84" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/application/android/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/lib/Screens/Chat/Client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Chat/Client.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/bodyToCallAPI/UserDTO.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/bodyToCallAPI/UserDTO.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Chat/WebSocketService.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Chat/WebSocketService.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,10 +16,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2qsOtoqo6JVcUwFVOl4i4NTMj5F" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -39,7 +30,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "Tung",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/acer/Documents/AndroidApp/VeterinaryAndroidApp"
+    "last_opened_file_path": "D:/TestAPI/VeterinaryV2/VeterinaryWebServices"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
