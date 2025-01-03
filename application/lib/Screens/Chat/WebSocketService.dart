@@ -117,7 +117,7 @@ class WebSocketManager {
           destination: '/app/message',
           body: jsonEncode({'senderName': sender, 'message': message}));
       _client?.send(
-        destination: '/app/reply',
+        destination: '/user/{$id}/queue/messages',
         body: jsonEncode(
             {'receiver': id, 'senderName': sender, 'message': message}),
       );
