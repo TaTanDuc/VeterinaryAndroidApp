@@ -62,18 +62,12 @@ class WebSocketEmployee {
   }
 
   void _subscribeToMessages(int userID) {
-    _client?.subscribe(
-      destination: '/queue/messages',
+
+try {
+ _client?.subscribe(
+      destination: '/queue/messages-user$userID',
       callback: (userFrame) {
         final messageData = jsonDecode(userFrame.body ?? '{}');
-        print('fdffdffdf: $messageData');
-      },
-    );
-    _client?.subscribe(
-      destination: '/user/$userID/queue/messages',
-      callback: (userFrame) {
-        final messageData = jsonDecode(userFrame.body ?? '{}');
-        print('ducshjshjshsjjhjsffjhff: $messageData');
         final senderName = messageData['senderName'] ?? 'Anonymous';
         _saveReceivedMessage('employee', senderName, messageData['message']);
         InactivityTimerService().resetTimer();
@@ -87,6 +81,9 @@ class WebSocketEmployee {
         }
       },
     );
+} catch (e) {
+  print('Error subscribing to /user/$userID/queue/messages: $e');
+}
   }
 
   Future<void> _saveReceivedMessage(
@@ -113,11 +110,11 @@ class WebSocketEmployee {
     }
   }
 
-  void sendMessage(int reciever,String sender, String message) {
+  void sendMessage(int reciever,int sender,String senderName, String message) {
     if (isConnected) {
       _client?.send(
           destination: '/app/reply',
-          body: jsonEncode({'receiver':reciever,'senderName': sender, 'message': message}));
+          body: jsonEncode({'receiver':reciever,'sender':sender,'senderName': senderName, 'message': message}));
     } else {
       print('Not connected to WebSocket');
     }
