@@ -19,6 +19,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
   ScrollController _scrollController = ScrollController();
   DateTime? lastMessageTime;
   bool isConnected = true;
+  int? userId;
   @override
   void initState() {
     super.initState();
@@ -54,7 +55,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
     setState(() {
       messages.clear();
       isConnected = false;
-      WebSocketManager().reconnect(session!, isConnected);
+      WebSocketManager().reconnect(userId!,session!, isConnected);
     });
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -80,7 +81,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
       setState(() {});
     };
 
-    WebSocketManager().initialize(session!);
+    userId = await UserManager().id;
+    WebSocketManager().initialize(session!,userId!);
 
     List<String> savedMessages;
     dynamic storedData = prefs.get('chatMessages');
@@ -116,11 +118,10 @@ class _UserChatScreenState extends State<UserChatScreen> {
     if (message.isNotEmpty) {
       final userName = UserManager().username;
       final id = UserManager().id;
-      print("Id: $id");
-      WebSocketManager().sendMessage(id!, userName!, message);
+      print("CAI CCNDJAJSDKOSNCDKJLFJAIO $id");
+      WebSocketManager().sendMessage(userId!, userName!, message);
       setState(() {
-        messages.add(
-            {'message': message, 'senderName': userName, 'sender': 'user'});
+        messages.add({'message': message, 'senderName': userName, 'sender': 'user'});
       });
       _controller.clear();
 
@@ -164,7 +165,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
 
   @override
   void dispose() {
-    WebSocketManager().reconnect(session!, isConnected);
+    WebSocketManager().reconnect(userId!,session!, isConnected);
 
     super.dispose();
   }

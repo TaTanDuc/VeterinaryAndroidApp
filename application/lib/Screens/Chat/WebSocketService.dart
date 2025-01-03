@@ -11,13 +11,12 @@ class WebSocketManager {
   }
 
   WebSocketManager._internal();
-
   StompClient? _client;
   bool isConnected = false;
 
   Function? onConnectCallback;
 
-  Future<void> initialize(String session, {Function? onConnectCallback}) async {
+  Future<void> initialize(String session, int userId, {Function? onConnectCallback}) async {
     if (_client != null) return;
 
     _client = StompClient(
@@ -25,7 +24,7 @@ class WebSocketManager {
         url: 'ws://192.168.137.1:8080/veterinaryCustomerService',
         webSocketConnectHeaders:
             session.isNotEmpty ? {'Cookie': session} : null,
-        onConnect: (frame) => _onConnect(frame, onConnectCallback),
+        onConnect: (frame) => _onConnect(userId,frame, onConnectCallback),
         onWebSocketError: (error) => print('WebSocket error: $error'),
         onStompError: (frame) => print('STOMP error: ${frame.body}'),
         onDisconnect: (frame) {
@@ -40,7 +39,7 @@ class WebSocketManager {
     _client?.activate();
   }
 
-  void _onConnect(StompFrame frame, Function? onConnectCallback) {
+  void _onConnect(int userId,StompFrame frame, Function? onConnectCallback) {
     isConnected = true;
     print("WebSocket Connected: ${frame.body}");
 
@@ -48,7 +47,7 @@ class WebSocketManager {
       onConnectCallback(frame);
     }
 
-    _subscribeToMessages();
+    _subscribeToMessages(userId);
   }
 
   Function(Map<String, String>)? onMessageReceived;
@@ -59,22 +58,15 @@ class WebSocketManager {
     }
   }
 
-  void _subscribeToMessages() {
+  void _subscribeToMessages(int userId) {
     _client?.subscribe(
-      destination: '/queue/messages',
+      destination: '/queue/messages-user$userId',
       callback: (userFrame) {
         final messageData = jsonDecode(userFrame.body ?? '{}');
-      },
-    );
-    _client?.subscribe(
-      destination: '/user/queue/messages',
-      callback: (userFrame) {
-        final messageData = jsonDecode(userFrame.body ?? '{}');
-        print('ducshjshjshsjjhjsffjhff: $messageData');
         final senderName = messageData['senderName'] ?? 'Anonymous';
-        _saveReceivedMessage('employee', senderName, messageData['message']);
+        _saveReceivedMessage(senderName, messageData['message']);
         InactivityTimerService().resetTimer();
-        print('data sendibng: $messageData');
+        print('data sending: $messageData');
         if (onMessageReceived != null) {
           onMessageReceived!({
             'sender': 'employee',
@@ -86,8 +78,7 @@ class WebSocketManager {
     );
   }
 
-  Future<void> _saveReceivedMessage(
-      String sender, String senderName, String message) async {
+  Future<void> _saveReceivedMessage(String senderName, String message) async {
     if (message.isEmpty) {
       print('Received message is empty, not saving.');
       return;
@@ -96,9 +87,7 @@ class WebSocketManager {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> existingMessages = prefs.getStringList('chatMessages') ?? [];
-
-      final combinedMessage = jsonEncode(
-          {'sender': sender, 'senderName': senderName, 'message': message});
+      final combinedMessage = jsonEncode({'senderName': senderName, 'message': message});
       existingMessages.add(combinedMessage);
 
       await prefs.setStringList('chatMessages', existingMessages);
@@ -130,10 +119,10 @@ class WebSocketManager {
     _client?.deactivate();
   }
 
-  Future<void> reconnect(String session, bool connect) async {
+  Future<void> reconnect(int userId,String session, bool connect) async {
     if (connect == false) {
       disconnect();
-      await initialize(session);
+      await initialize(session,userId);
     }
   }
 }
