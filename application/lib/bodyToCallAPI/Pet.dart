@@ -20,7 +20,7 @@ class Pet {
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
       petID: json['petID'] ?? 0,
-      petIMAGE: json['imageLink'] ?? 'assets/icons/logo.png',
+      petIMAGE: json['petIMAGE'] ?? 'assets/icons/logo.png',
       petNAME: json['petNAME'] ?? '',
       petGENDER: json['petGENDER'] ?? 'unknown',
       petAGE: json['petAGE'] ?? 0,

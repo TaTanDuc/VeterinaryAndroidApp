@@ -1,12 +1,15 @@
 import 'package:application/Screens/Services/detailService_screen.dart';
 import 'package:application/bodyToCallAPI/ListAppoint.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:intl/intl.dart';
 
 class ListApointment extends StatefulWidget {
   const ListApointment({super.key});
@@ -29,18 +32,17 @@ class _ListApointmentState extends State<ListApointment> {
     setState(() {
       _loading = false;
     });
-
-    final url = Uri.parse(
-        'http://192.168.137.1:8080/api/appointment/getUserAppointment?userID=1');
+    final session = await SessionManager().getSession();
+    final url = Uri.parse('http://192.168.137.1:8080/api/customer/appointment');
     try {
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'}, // Optional for GET
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
       );
-// Log the response body for debugging
 
       if (response.statusCode == 200) {
-        final List<dynamic> appointmentData = jsonDecode(response.body);
+        final List<dynamic> appointmentData =
+            jsonDecode(response.body)['returned'];
         setState(() {
           _appointments = appointmentData
               .map((json) => ListAppoint.fromJson(json))
@@ -117,6 +119,18 @@ class _ListApointmentState extends State<ListApointment> {
   }
 
   Widget _buildAppointmetnCard(ListAppoint appoint) {
+    DateTime parsedDateTime;
+    try {
+      parsedDateTime = DateFormat("yyyy-MM-dd'T'HH:mm:ss")
+          .parse(appoint.appointmentDateTime);
+    } catch (e) {
+      parsedDateTime =
+          DateTime.now(); // Fallback to current time if parsing fails
+    }
+
+    // Format date and time
+    String formattedDate = DateFormat('MMMM dd, yyyy').format(parsedDateTime);
+    String formattedTime = DateFormat('hh:mm a').format(parsedDateTime);
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
@@ -128,8 +142,8 @@ class _ListApointmentState extends State<ListApointment> {
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(2, 2, 20, 0),
-              child: Image.asset(
-                "assets/icons/anonymus.webp",
+              child: Image.network(
+                appoint.petIMG,
                 fit: BoxFit.contain,
                 width: 100,
                 height: 100,
@@ -139,30 +153,6 @@ class _ListApointmentState extends State<ListApointment> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
-                    children: [
-                      const Text(
-                        'Name:', // Label text
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8), // Space between label and name
-                      Text(
-                        (appoint.profileNAME?.isNotEmpty == true)
-                            ? appoint.profileNAME
-                            : 'Unknown your name',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment
                         .start, // Aligns the items at the start
@@ -188,8 +178,8 @@ class _ListApointmentState extends State<ListApointment> {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
+                    mainAxisAlignment:
+                        MainAxisAlignment.start, // Align items to the start
                     children: [
                       const Text(
                         'Date:', // Label text
@@ -198,11 +188,9 @@ class _ListApointmentState extends State<ListApointment> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8), // Space between label and name
+                      const SizedBox(width: 8), // Space between label and value
                       Text(
-                        (appoint.apmDATE?.isNotEmpty == true)
-                            ? appoint.apmDATE
-                            : 'Unknown',
+                        formattedDate,
                         style: const TextStyle(
                           fontSize: 18,
                           fontFamily: 'Fredoka',
@@ -212,8 +200,8 @@ class _ListApointmentState extends State<ListApointment> {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
+                    mainAxisAlignment:
+                        MainAxisAlignment.start, // Align items to the start
                     children: [
                       const Text(
                         'Time:', // Label text
@@ -222,11 +210,9 @@ class _ListApointmentState extends State<ListApointment> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8), // Space between label and name
+                      const SizedBox(width: 8), // Space between label and value
                       Text(
-                        (appoint.appointmentTIME?.isNotEmpty == true)
-                            ? appoint.appointmentTIME
-                            : 'Unknown',
+                        formattedTime,
                         style: const TextStyle(
                           fontSize: 18,
                           fontFamily: 'Fredoka',
