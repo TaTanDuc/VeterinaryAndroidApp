@@ -118,10 +118,7 @@ class _UserChatScreenState extends State<EmployeeChatScreen> {
     if (message.isNotEmpty) {
       final userName = UserManager().username;
       WebSocketEmployee().sendMessage(widget.userID,UserManager().id!,userName!, message);
-      setState(() {
-        messages.add(
-            {'message': message, 'senderName': userName, 'sender': 'user'});
-      });
+      
       _controller.clear();
 
       InactivityTimerService().resetTimer();
@@ -132,7 +129,7 @@ class _UserChatScreenState extends State<EmployeeChatScreen> {
           curve: Curves.fastOutSlowIn,
         );
       });
-      _saveMessage('user', userName, message);
+      //_saveMessage('user', userName, message);
     }
   }
 
@@ -181,7 +178,7 @@ class _UserChatScreenState extends State<EmployeeChatScreen> {
               controller: _scrollController,
               itemBuilder: (context, index) {
                 var message = messages[index];
-                bool isUserMessage = message['sender'] == 'user';
+                bool isUserMessage = message['senderName'] == UserManager().username;
 
                 return Column(
                   crossAxisAlignment: isUserMessage
