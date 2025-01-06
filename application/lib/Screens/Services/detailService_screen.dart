@@ -13,11 +13,11 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class DetailServiceScreen extends StatefulWidget {
-  final String serviceCODE; // Added userID field
+  final String serviceCODE;
 
   const DetailServiceScreen({
     Key? key,
-    required this.serviceCODE, // Make userID required as well
+    required this.serviceCODE,
   }) : super(key: key);
 
   @override
@@ -26,12 +26,12 @@ class DetailServiceScreen extends StatefulWidget {
 
 class _DetailPageState extends State<DetailServiceScreen> {
   bool _loading = true;
-  Service? serviceDetails; // Change the type based on your response
+  Service? serviceDetails;
   List<Comment> _comments = [];
   @override
   void initState() {
     super.initState();
-    fetchServiceDetails(); // Fetch details when the page initializes
+    fetchServiceDetails();
   }
 
   Future<void> fetchServiceDetails() async {

@@ -383,45 +383,67 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
   Widget _contentItem(priceItem, nameItem) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(nameItem,
+        // Make the name item flexible to prevent overflow
+        Flexible(
+          child: Text(
+            nameItem,
             style: TextStyle(
-                color: Color(0xff000000),
-                fontSize: 30,
-                fontFamily: 'Fredoka',
-                fontWeight: FontWeight.w600)),
-        const SizedBox(height: 15),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis, // Truncates text if it overflows
+            ),
+            maxLines: 1, // Make sure the name doesn't take more than one line
+          ),
+        ),
+        const SizedBox(height: 10), // Adjusted space between name and price
         Text(
           "${priceItem}\$",
           style: TextStyle(
-              color: Color(0xff5CB15A), fontSize: 20, fontFamily: 'Fredoka'),
+            color: Color(0xff5CB15A),
+            fontSize: 20,
+            fontFamily: 'Fredoka',
+          ),
         ),
       ],
     );
   }
 
   Widget _counter(quantityItem, index) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              increaseQuantity(_cartItems[index]['itemID']);
-              // _fetchCartUser();
-            },
-          ),
-          Text("${quantityItem}",
-              style: TextStyle(fontSize: 16, color: Color(0xff868889))),
-          IconButton(
-            icon: Icon(Icons.remove),
-            onPressed: () {
-              decreaseQuantity(_cartItems[index]['itemID']);
-            },
-          )
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.remove,
+                size: 20,
+              ),
+              onPressed: () {
+                decreaseQuantity(_cartItems[index]['itemID']);
+              },
+            ),
+            Text(
+              "$quantityItem",
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xff868889),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                size: 20,
+              ),
+              onPressed: () {
+                increaseQuantity(_cartItems[index]['itemID']);
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 
