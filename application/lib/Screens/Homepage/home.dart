@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                               _loading
                                   ? Center(child: Text('No items found.'))
                                   : SizedBox(
-                                      height: 100,
+                                      height: 330,
                                       child: ListView.builder(
                                         itemCount: _randItem.length,
                                         itemBuilder: (context, index) {
@@ -317,8 +317,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPetFoodCard(Shop shop) {
     return Card(
       child: ListTile(
-        // leading: Image.asset(shop.itemName, width: 50),
-        leading: Text(shop.itemName),
+        leading: Image.network(shop.itemIMG, width: 50),
         title: Text(shop.itemName),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

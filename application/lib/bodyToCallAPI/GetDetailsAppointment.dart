@@ -1,31 +1,37 @@
-import 'package:application/bodyToCallAPI/Service.dart';
+import 'package:application/bodyToCallAPI/ServiceInvoice.dart';
 
-class ListAppoint {
+class Details {
   final int appointmentID;
   final String petNAME;
-  final String petIMG;
+  final String departmentAddress;
   final String appointmentDateTime;
   final String appointmentStatus;
+  final List<ServiceInvoice> services;
 
-  ListAppoint({
+  Details({
     required this.appointmentID,
     required this.petNAME,
-    required this.petIMG,
+    required this.departmentAddress,
     required this.appointmentDateTime,
     required this.appointmentStatus,
+    required this.services,
   });
 
-  factory ListAppoint.fromJson(Map<String, dynamic>? json) {
+  factory Details.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       throw ArgumentError("JSON data cannot be null");
     }
 
-    return ListAppoint(
+    return Details(
       appointmentID: json['appointmentID'] ?? 0,
       petNAME: (json['petNAME']).toString() ?? 'Unknown',
-      petIMG: json['petIMG'] ?? 'assets/icons/anonymus.webp',
+      departmentAddress: (json['departmentAddress']).toString() ?? 'Unknown',
       appointmentDateTime: json['appointmentDateTime'],
       appointmentStatus: (json['appointmentStatus']) ?? 'Unknown',
+      services: (json['services'] as List)
+              .map((serviceJson) => ServiceInvoice.fromJson(serviceJson))
+              .toList() ??
+          [],
     );
   }
 
@@ -35,11 +41,12 @@ class ListAppoint {
       'petNAME': petNAME,
       'appointmentDateTime': appointmentDateTime,
       'appointmentStatus': appointmentStatus,
+      'services': services.map((service) => service.toJson()).toList(),
     };
   }
 
   @override
   String toString() {
-    return 'Appointment(profileNAME: $appointmentID, petNAME: $petNAME, apmDATE: $appointmentDateTime, appointmentTIME: $appointmentStatus)';
+    return 'Appointment(profileNAME: $appointmentID, petNAME: $petNAME, apmDATE: $appointmentDateTime, appointmentTIME: $appointmentStatus, sdfjfhdfhff:$services)';
   }
 }

@@ -256,6 +256,7 @@ class _ShopPageState extends State<ShopPage> {
                         //String imagePath = '${item['itemIMAGE']}';
                         return _buildShopRow(
                           index,
+                          item['itemIMG'],
                           item['itemName'],
                           item['categoryName'],
                           item['price'].toString(),
@@ -461,8 +462,8 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildShopRow(int index, String brand, String description,
-      String price, double quantity) {
+  Widget _buildShopRow(int index, String imagePath, String brand,
+      String description, String price, double quantity) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -475,15 +476,16 @@ class _ShopPageState extends State<ShopPage> {
           children: [
             // _buildShopCard(
             //     brand, description, price, imagePath, quantity, index),
-            _buildShopCard(brand, description, price, quantity, index),
+            _buildShopCard(
+                imagePath, brand, description, price, quantity, index),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildShopCard(
-      String brand, String description, String price, double quantity, index) {
+  Widget _buildShopCard(String imagePath, String brand, String description,
+      String price, double quantity, index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Container(
@@ -494,13 +496,13 @@ class _ShopPageState extends State<ShopPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image.asset(
-            //   imagePath,
-            //   fit: BoxFit.contain,
-            //   height: 150,
-            //   width: 240,
-            // ),
-            // const SizedBox(height: 8),
+            Image.network(
+              imagePath,
+              fit: BoxFit.contain,
+              height: 150,
+              width: 240,
+            ),
+            const SizedBox(height: 8),
             Container(
               margin: const EdgeInsets.only(bottom: 4.0),
               child: Text(
