@@ -3,10 +3,8 @@ import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:application/Screens/Homepage/shop.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -128,7 +126,6 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // My Pets Section
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(

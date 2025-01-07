@@ -1,5 +1,4 @@
 import 'package:application/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Screens/Homepage/service.dart';
 import 'package:application/Screens/Homepage/shop.dart';
@@ -57,12 +56,13 @@ class _ExplorePageState extends State<ExplorePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF5CB15A),
+          centerTitle: true,
           title: const Center(
             child: Text(
-              'Detail',
+              'Explore',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 23,
                 fontFamily: 'Fredoka',
               ),
             ),
@@ -138,7 +138,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     ),
                   ),
                 );
-              }).toList(), // Create cards dynamically from the list
+              }).toList(),
             ),
           ),
         ),

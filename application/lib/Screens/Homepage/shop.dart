@@ -8,6 +8,8 @@ import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
@@ -23,12 +25,45 @@ class _ShopPageState extends State<ShopPage> {
   dynamic cartID;
   List<dynamic> _categoryItems = [];
   bool _loading = true;
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+  String _lastWords = '';
 
   TextEditingController inputValueController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    _fetchCategory(); // Call fetchPets when the widget is initialized
+    _fetchCategory();
+    _initSpeech();
+  }
+
+  void _initSpeech() async {
+    bool available = await _speechToText.initialize();
+    setState(() {
+      _isListening = available;
+    });
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      inputValueController.text = _lastWords;
+    });
+    handleSearch(_lastWords);
   }
 
   Future<void> handleAddCart(value) async {
@@ -123,7 +158,7 @@ class _ShopPageState extends State<ShopPage> {
             'Shop', // Văn bản bạn muốn thêm
             style: TextStyle(
               color: Colors.white, // Màu chữ
-              fontSize: 16,
+              fontSize: 23,
               fontFamily: 'Fredoka', // Kích thước chữ
             ),
           ),
@@ -136,9 +171,9 @@ class _ShopPageState extends State<ShopPage> {
                 icon: const Icon(
                   Icons.shopping_cart_outlined,
                   color: Colors.white,
+                  size: 23,
                 ),
                 onPressed: () {
-                  // Điều hướng đến trang mới
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -154,34 +189,48 @@ class _ShopPageState extends State<ShopPage> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: const EdgeInsets.only(
-                  top: 40, left: 20, right: 20, bottom: 20),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.11),
-                  blurRadius: 40,
-                  spreadRadius: 0.0,
-                )
-              ]),
+              margin: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.11),
+                    blurRadius: 40,
+                    spreadRadius: 0.0,
+                  )
+                ],
+              ),
               child: TextField(
                 controller: inputValueController,
-                onChanged: (value) {
-                  handleSearch(value);
-                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(12.0),
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isListening ? Icons.mic : Icons.mic_off,
+                      color: _isListening ? Colors.green : Colors.grey,
+                    ),
+                    onPressed: () {
+                      if (_isListening) {
+                        _stopListening();
+                      } else {
+                        _startListening();
+                      }
+                    },
+                  ),
                   hintText: 'Search Items By Category',
                   hintStyle: TextStyle(
-                      fontFamily: 'Fredoka',
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20),
+                    fontFamily: 'Fredoka',
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -189,33 +238,10 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
             ),
-            // My Pets Section
-            // Padding(
-            //   padding: const EdgeInsets.all(30.0),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       const SizedBox(height: 20),
-            //       _buildCategoryItem(
-            //           0, 'Food', 'assets/icons/food.png', screenWidth),
-            //       _buildCategoryItem(1, 'Medicine',
-            //           'assets/icons/petmedicine.png', screenWidth),
-            //       _buildCategoryItem(2, 'Accessory',
-            //           'assets/icons/accessories.png', screenWidth),
-            //       _buildCategoryItem(
-            //           3, 'Toy', 'assets/icons/pet-toy.png', screenWidth),
-            //       _buildCategoryItem(
-            //           4, 'Furniture', 'assets/icons/house.png', screenWidth),
-
-            //     ],
-            //   ),
-            // ),
             Center(
               child: _buildCategoryBox(screenWidth),
             ),
-
             const SizedBox(height: 0),
-
             Padding(
                 padding: const EdgeInsets.all(
                     16.0), // Set the desired padding (which acts like a margin)
@@ -226,7 +252,6 @@ class _ShopPageState extends State<ShopPage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
                 )),
-
             Center(
               child: Wrap(
                 runSpacing: 20, // Vertical space between rows
@@ -456,13 +481,13 @@ class _ShopPageState extends State<ShopPage> {
             Text(
               title,
               style: TextStyle(
-                fontSize: screenWidth > 600
-                    ? 16
-                    : 12, // Larger text for bigger screens
-                color: _selectedCategoryIndex == index
-                    ? Colors.black
-                    : Colors.grey,
-              ),
+                  fontSize: screenWidth > 600
+                      ? 20
+                      : 12, // Larger text for bigger screens
+                  color: _selectedCategoryIndex == index
+                      ? Colors.black
+                      : Colors.grey,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),

@@ -4,7 +4,6 @@ import 'package:application/Screens/Profile/appointment_screen.dart';
 import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/controllers/GoogleController.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +22,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _loading = true;
   dynamic profile;
+  // ignore: non_constant_identifier_names
   dynamic ID;
   @override
   void initState() {
@@ -31,21 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchProfile() async {
-    final userManager = UserManager();
-    UserDTO? currentUser = userManager.user;
-
-    if (currentUser != null) {
-      print("User ID in here: ${currentUser.userID}");
-      ID = currentUser.userID;
-      print("data: $ID");
-    } else {
-      print("No user is logged in in HomePage.");
-      setState(() {
-        _loading = false; // Stop loading if no user is found
-      });
-      return;
-    }
-
     final url = Uri.parse('http://10.0.0.2/api/profile/user/get?userID=$ID');
 
     try {
@@ -54,27 +39,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Received data: $data');
 
         setState(() {
-          profile = Profile.fromJson(
-              data); // Ensure you are calling fromJson correctly
+          profile = Profile.fromJson(data);
           _loading = false;
-          print("Parsed profile: $profile");
         });
       } else {
         throw Exception('Failed to load profile details');
       }
     } catch (e) {
-      print('Error fetching profile details: $e');
       setState(() {
-        _loading = false; // Stop loading on error
+        _loading = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async => false, // Prevent back navigation
       child: Scaffold(
@@ -129,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fit: BoxFit.cover,
                         );
                       }
-                      return CircularProgressIndicator(); // Hiển thị trạng thái tải
+                      return CircularProgressIndicator();
                     },
                   )
                 : Image.asset(

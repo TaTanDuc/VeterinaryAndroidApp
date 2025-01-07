@@ -1,12 +1,7 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
-import 'package:application/Screens/Chat/chatbox_screen.dart';
-import 'package:application/Screens/Chat/select_chatbox.dart';
-import 'package:application/Screens/Login/login_screen.dart';
-import 'package:application/Screens/Payment/MethodPayment.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
 import 'package:application/Screens/Homepage/home.dart';
-import 'package:application/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -17,20 +12,21 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: MainPage(),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage();
+  const MainPage({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _MainPageState createState() => _MainPageState();
 }
 
@@ -95,7 +91,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  HomePage1();
+  const HomePage1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +100,7 @@ class HomePage1 extends StatelessWidget {
 }
 
 class ExplorePage1 extends StatelessWidget {
-  ExplorePage1();
+  const ExplorePage1({super.key});
   @override
   Widget build(BuildContext context) {
     return Center(child: ExplorePage());
@@ -112,7 +108,7 @@ class ExplorePage1 extends StatelessWidget {
 }
 
 class ManagePage1 extends StatelessWidget {
-  ManagePage1();
+  const ManagePage1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -121,10 +117,10 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  ProfilePage1();
+  const ProfilePage1({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: ProfileScreen()); // Truyền userID xuống HomePage
+    return Center(child: ProfileScreen());
   }
 }
