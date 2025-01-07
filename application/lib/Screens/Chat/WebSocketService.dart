@@ -105,9 +105,6 @@ class WebSocketManager {
     print("Id: $id");
     if (isConnected) {
       _client?.send(
-          destination: '/app/message',
-          body: jsonEncode({'senderName': sender, 'message': message}));
-      _client?.send(
         destination: '/app/reply',
         body: jsonEncode(
             {'receiver': id, 'senderName': sender, 'message': message}),
