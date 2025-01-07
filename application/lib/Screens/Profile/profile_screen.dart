@@ -402,33 +402,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     MaterialPageRoute(builder: (context) => ListApointment()),
                   );
                 },
-                child: _optionItem(Icons.book, 'Show all appointments'),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListOrder()),
-                  );
-                },
-                child: _optionItem(Icons.gif_box, 'My orders'),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddPetScreen()),
-                  );
-                },
-                child: _optionItem(Icons.pets, 'Add your pet'),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListApointment()),
-                  );
-                },
                 child: _optionItem(Icons.book, 'Show all apponitments'),
               ),
               GestureDetector(
