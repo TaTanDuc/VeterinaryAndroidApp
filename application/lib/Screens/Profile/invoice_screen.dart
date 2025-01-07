@@ -1,10 +1,13 @@
 import 'package:application/bodyToCallAPI/Invoice.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:intl/intl.dart';
 
 class ListOrder extends StatefulWidget {
   const ListOrder({super.key});
@@ -29,20 +32,19 @@ class _ListOrderState extends State<ListOrder> {
     });
 
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/invoice/getUserInvoices?userID=1');
+        'http://192.168.137.1:8080/api/customer/appointment/getApmInvoices');
     try {
+      final session = await SessionManager().getSession();
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'}, // Optional for GET
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
       );
-// Log the response body for debugging
 
       if (response.statusCode == 200) {
-        final List<dynamic> invoiceData = jsonDecode(response.body);
+        final List<dynamic> invoiceData = jsonDecode(response.body)['returned'];
         setState(() {
-          _invoices = invoiceData
-              .map((json) => Invoice.fromJson(json))
-              .toList(); // Populate the services list
+          _invoices =
+              invoiceData.map((json) => Invoice.fromJson(json)).toList();
           _loading = false;
         });
         print('invoiceData: $_invoices');
@@ -50,9 +52,9 @@ class _ListOrderState extends State<ListOrder> {
         throw Exception('Failed to load invoicements');
       }
     } catch (e) {
-      print('Error: $e'); // Print error message
+      print('Error: $e');
       setState(() {
-        _loading = false; // Stop loading in case of error
+        _loading = false;
       });
     }
   }
@@ -64,7 +66,7 @@ class _ListOrderState extends State<ListOrder> {
         backgroundColor: const Color(0xFF5CB15A),
         title: const Center(
           child: Text(
-            'Your invoicess',
+            'Your invoices appointment',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -76,7 +78,7 @@ class _ListOrderState extends State<ListOrder> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: AppBar().preferredSize.height, // Match the AppBar height
+              height: AppBar().preferredSize.height,
               child: Image.asset(
                 'assets/icons/logo.png',
                 fit: BoxFit.contain,
@@ -104,9 +106,8 @@ class _ListOrderState extends State<ListOrder> {
 
   Widget _buildInvoiceList() {
     return ListView.builder(
-      physics:
-          NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
-      shrinkWrap: true, // Use available space
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       itemCount: _invoices.length,
       itemBuilder: (context, index) {
         final invoice = _invoices[index];
@@ -116,6 +117,16 @@ class _ListOrderState extends State<ListOrder> {
   }
 
   Widget _buildInvoiceCard(Invoice invoice) {
+    DateTime parsedDateTime;
+    try {
+      parsedDateTime =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(invoice.paidDate);
+    } catch (e) {
+      parsedDateTime = DateTime.now();
+    }
+
+    String formattedDate = DateFormat('MMMM dd, yyyy').format(parsedDateTime);
+    String formattedTime = DateFormat('hh:mm a').format(parsedDateTime);
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
@@ -125,34 +136,48 @@ class _ListOrderState extends State<ListOrder> {
         padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(2, 2, 20, 0),
-              child: Image.asset(
-                "assets/icons/anonymus.webp",
-                fit: BoxFit.contain,
-                width: 100,
-                height: 100,
-              ),
-            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Text(
-                        'Invoice code (A is apponitment and B is buy):', // Label text
+                        'Method:',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8), // Space between label and name
+                      const SizedBox(width: 8),
                       Text(
-                        (invoice.invoiceCODE?.isNotEmpty == true)
-                            ? invoice.invoiceCODE
+                        (invoice.method.isNotEmpty)
+                            ? invoice.method
+                            : 'unknown',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Fredoka',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Date:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        (invoice.paidDate?.isNotEmpty == true)
+                            ? formattedDate
                             : 'Unknown',
                         style: const TextStyle(
                           fontSize: 18,
@@ -163,44 +188,19 @@ class _ListOrderState extends State<ListOrder> {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Text(
-                        'ID invoice:', // Label text
+                        'Time:',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8), // Space between label and name
+                      const SizedBox(width: 8),
                       Text(
-                        (invoice.invoiceID.isNotEmpty)
-                            ? invoice.invoiceID.toString()
-                            : '0',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
-                    children: [
-                      const Text(
-                        'Date:', // Label text
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8), // Space between label and name
-                      Text(
-                        (invoice.invoiceDATE?.isNotEmpty == true)
-                            ? invoice.invoiceDATE
+                        (invoice.paidDate?.isNotEmpty == true)
+                            ? formattedTime
                             : 'Unknown',
                         style: const TextStyle(
                           fontSize: 18,
@@ -211,21 +211,20 @@ class _ListOrderState extends State<ListOrder> {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .start, // Aligns the items at the start
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Text(
-                        'Your total:', // Label text
+                        'Your total:',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8), // Space between label and name
+                      const SizedBox(width: 8),
                       Text(
-                        (invoice.total.isNotEmpty)
-                            ? invoice.total.toString()
-                            : 'error',
+                        (invoice.total != 0)
+                            ? invoice.total.toString() + ' USD'
+                            : '0 USD',
                         style: const TextStyle(
                           fontSize: 18,
                           fontFamily: 'Fredoka',

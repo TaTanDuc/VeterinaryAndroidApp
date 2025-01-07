@@ -42,6 +42,7 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
   dynamic ID;
   bool _loading = false;
   bool success = false;
+  bool isInvoice = false;
   int totalPrice = 0;
   double amount = 0;
   Map<String, dynamic>? intentPaymentData;
@@ -218,7 +219,9 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
         final Map<String, dynamic> shopData =
             jsonDecode(response.body)['returned'];
         Details details = Details.fromJson(shopData);
-
+        if (details.apmInvoiceID != 0) {
+          isInvoice = true;
+        }
         // Calculate total price and print service details
         for (var service in details.services) {
           totalPrice += service.servicePRICE;
@@ -377,32 +380,52 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
                       // Checkout Button
                       Align(
                         alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              amount = totalPrice * 100.roundToDouble();
-                            });
-                            paymentSheetInitialization(
-                                amount.toString(), "USD");
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue, // Button color
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(30), // Rounded corners
-                            ),
-                          ),
-                          child: Text(
-                            'Checkout',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        child: isInvoice
+                            ? ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Already checked out',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    amount = totalPrice * 100.roundToDouble();
+                                  });
+                                  paymentSheetInitialization(
+                                      amount.toString(), "USD");
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue, // Button color
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        30), // Rounded corners
+                                  ),
+                                ),
+                                child: Text(
+                                  'Checkout',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                       ),
                     ],
                   ),

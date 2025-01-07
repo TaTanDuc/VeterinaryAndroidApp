@@ -78,12 +78,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
                 color: Color(0xff5CB15A)),
           ),
         );
-        Future<void> clearCart() async {
-          setState(() {
-            _cartItems.clear();
-          });
-          await saveCartToLocalStorage();
-        }
 
         Navigator.push(
           context,
@@ -94,6 +88,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
           print(errorMsg.toString() + sTrace.toString());
         }
       });
+      clearCart();
     } on StripeException catch (error) {
       if (kDebugMode) {
         print(error);
@@ -157,38 +152,57 @@ class _CartViewScreenState extends State<CartViewScreen> {
     await saveCartToLocalStorage();
   }
 
-  void increaseQuantity(int itemId) async {
+  Future<void> increaseQuantity(int itemId) async {
+    int? updatedTotalPrice;
+    final itemIndex = _cartItems.indexWhere((item) => item['itemID'] == itemId);
+    if (itemIndex != -1) {
+      _cartItems[itemIndex]['quantity'] += 1;
+      updatedTotalPrice =
+          _cartItems[itemIndex]['price'] * _cartItems[itemIndex]['quantity'];
+    }
     setState(() {
-      final itemIndex =
-          _cartItems.indexWhere((item) => item['itemID'] == itemId);
-      if (itemIndex != -1) {
-        _cartItems[itemIndex]['quantity'] += 1;
+      totalPrice = updatedTotalPrice ?? totalPrice;
+    });
+    await saveCartToLocalStorage();
+  }
+
+  Future<void> decreaseQuantity(int itemId) async {
+    int? updatedTotalPrice;
+    final itemIndex = _cartItems.indexWhere((item) => item['itemID'] == itemId);
+    if (itemIndex != -1) {
+      if (_cartItems[itemIndex]['quantity'] > 1) {
+        _cartItems[itemIndex]['quantity'] -= 1;
         _cartItems[itemIndex]['total'] =
             _cartItems[itemIndex]['price'] * _cartItems[itemIndex]['quantity'];
-        totalPrice = _cartItems[itemIndex]['total'];
+        updatedTotalPrice = _cartItems[itemIndex]['total'];
+      } else {
+        setState(() {
+          _cartItems.removeAt(itemIndex);
+          totalPrice = calculateCartTotal(_cartItems);
+        });
       }
+    }
+    print('cart after add:  $_cartItems');
+    setState(() {
+      totalPrice = updatedTotalPrice ?? totalPrice;
     });
 
     await saveCartToLocalStorage();
   }
 
-  void decreaseQuantity(int itemId) async {
-    setState(() {
-      final itemIndex =
-          _cartItems.indexWhere((item) => item['itemID'] == itemId);
-      if (itemIndex != -1) {
-        if (_cartItems[itemIndex]['quantity'] > 1) {
-          _cartItems[itemIndex]['quantity'] -= 1;
-          _cartItems[itemIndex]['total'] = _cartItems[itemIndex]['price'] *
-              _cartItems[itemIndex]['quantity'];
-          totalPrice = _cartItems[itemIndex]['total'];
-        } else {
-          _cartItems.removeAt(itemIndex);
-        }
+  int calculateCartTotal(List<Map<String, dynamic>> cartItems) {
+    int total = 0;
+    for (var item in cartItems) {
+      // Ensure 'total' is an int or cast it to int if it's a String
+      var totalValue = item['total'];
+      if (totalValue is String) {
+        totalValue = int.tryParse(totalValue) ??
+            0; // Parse string to int, or default to 0
       }
-    });
 
-    await saveCartToLocalStorage();
+      total += totalValue as int; // Now it's safe to cast as int
+    }
+    return total;
   }
 
   Future<void> saveCartToLocalStorage() async {
@@ -202,6 +216,8 @@ class _CartViewScreenState extends State<CartViewScreen> {
     if (cartData != null) {
       setState(() {
         _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
+        totalPrice = calculateCartTotal(_cartItems);
+        print('$totalPrice');
         print('Cart: $_cartItems');
       });
     }
@@ -212,6 +228,15 @@ class _CartViewScreenState extends State<CartViewScreen> {
     return Container(
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
           backgroundColor: const Color(0xFF5CB15A),
           title: const Center(
             child: Text(
@@ -298,7 +323,8 @@ class _CartViewScreenState extends State<CartViewScreen> {
                       text: 'Checkout',
                       onPressed: () {
                         setState(() {
-                          amount = (totalPrice + shipPrice).roundToDouble();
+                          amount =
+                              (totalPrice + shipPrice) * 100.roundToDouble();
                         });
                         paymentSheetInitialization(amount.toString(), "USD");
                       })
@@ -364,8 +390,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
                   onTap: () async {
                     setState(() {
                       _cartItems.removeAt(index);
+                      totalPrice = calculateCartTotal(_cartItems);
+                      saveCartToLocalStorage();
                     });
-                    await saveCartToLocalStorage();
                   },
                   child: Container(
                     color: Colors.red,

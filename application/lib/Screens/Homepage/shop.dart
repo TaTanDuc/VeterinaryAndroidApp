@@ -36,13 +36,32 @@ class _ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCategory();
+
     loadCartFromLocalStorage();
+    _fetchCategory();
+  }
+
+  void navigateToCart() async {
+    bool? shouldRefresh = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CartViewScreen()),
+    );
+
+    if (shouldRefresh ?? false) {
+      loadCartFromLocalStorage();
+    }
   }
 
   Future<void> saveCartToLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('cart', jsonEncode(_cartItems));
+
+    bool isSaved = await prefs.setString('cart', jsonEncode(_cartItems));
+
+    if (isSaved) {
+      print('Cart saved successfully');
+    } else {
+      print('Failed to save cart');
+    }
   }
 
   Future<void> loadCartFromLocalStorage() async {
@@ -51,22 +70,25 @@ class _ShopPageState extends State<ShopPage> {
     if (cartData != null) {
       setState(() {
         _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
+        print('Cart loaded: $_cartItems');
       });
     }
   }
 
   Future<void> handleAddCart(Map<String, dynamic> value) async {
     setState(() {
+      print('Inside setState');
       final existingItemIndex =
           _cartItems.indexWhere((item) => item['itemID'] == value['itemID']);
 
       if (existingItemIndex != -1) {
+        print('Item found, updating quantity');
         _cartItems[existingItemIndex]['quantity'] += 1;
         _cartItems[existingItemIndex]['total'] = _cartItems[existingItemIndex]
-                ['total'] *
+                ['price'] *
             _cartItems[existingItemIndex]['quantity'];
       } else {
-        final session = SessionManager().getSession();
+        print('Item not found, adding new item');
         _cartItems.add({
           "userID": value['session'],
           "itemName": value['itemName'],
@@ -77,10 +99,9 @@ class _ShopPageState extends State<ShopPage> {
           "total": value['price'],
         });
       }
-      print('dsdsdsssssdwewedsds: $_cartItems');
     });
 
-    await saveCartToLocalStorage(); // Save the updated cart to local storage
+    await saveCartToLocalStorage();
   }
 
   Future<void> handleSearch(value) async {
@@ -97,13 +118,16 @@ class _ShopPageState extends State<ShopPage> {
         setState(() {
           _categoryItems = data;
         });
+      } else {
+        setState(() {
+          _categoryItems = [];
+        });
       }
     } catch (err) {
       print(err);
     }
   }
 
-  // Track the selected category index
   Future<void> _fetchCategory() async {
     try {
       final session = await SessionManager().getSession();
@@ -167,10 +191,8 @@ class _ShopPageState extends State<ShopPage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CartViewScreen()),
-                  );
+                  print('Cart current: $_cartItems');
+                  navigateToCart();
                 },
               ),
             ),

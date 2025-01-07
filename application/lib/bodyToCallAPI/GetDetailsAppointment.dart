@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:application/bodyToCallAPI/ServiceInvoice.dart';
 
 class Details {
@@ -6,6 +8,7 @@ class Details {
   final String departmentAddress;
   final String appointmentDateTime;
   final String appointmentStatus;
+  final int apmInvoiceID;
   final List<ServiceInvoice> services;
 
   Details({
@@ -14,6 +17,7 @@ class Details {
     required this.departmentAddress,
     required this.appointmentDateTime,
     required this.appointmentStatus,
+    required this.apmInvoiceID,
     required this.services,
   });
 
@@ -28,6 +32,7 @@ class Details {
       departmentAddress: (json['departmentAddress']).toString() ?? 'Unknown',
       appointmentDateTime: json['appointmentDateTime'],
       appointmentStatus: (json['appointmentStatus']) ?? 'Unknown',
+      apmInvoiceID: json['apmInvoiceID'] ?? 0,
       services: (json['services'] as List)
               .map((serviceJson) => ServiceInvoice.fromJson(serviceJson))
               .toList() ??
@@ -47,6 +52,6 @@ class Details {
 
   @override
   String toString() {
-    return 'Appointment(profileNAME: $appointmentID, petNAME: $petNAME, apmDATE: $appointmentDateTime, appointmentTIME: $appointmentStatus, sdfjfhdfhff:$services)';
+    return 'Appointment(profileNAME: $appointmentID, petNAME: $petNAME, apmDATE: $appointmentDateTime, appointmentTIME: $appointmentStatus, AppointmentInvoice: $apmInvoiceID,sdfjfhdfhff:$services)';
   }
 }
