@@ -38,7 +38,7 @@ class _ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-
+    _initSpeech();
     loadCartFromLocalStorage();
     _fetchCategory();
   }
@@ -153,6 +153,35 @@ class _ShopPageState extends State<ShopPage> {
     } catch (error) {
       print(error);
     }
+  }
+
+  void _initSpeech() async {
+    bool available = await _speechToText.initialize();
+    setState(() {
+      _isListening = available;
+    });
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      inputValueController.text = _lastWords;
+    });
+    handleSearch(_lastWords);
   }
 
   @override

@@ -377,79 +377,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                check(context);
-              },
-              child: _optionItem(Icons.person, 'Update Information'),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddPetScreen()),
-                );
-              },
-              child: _optionItem(Icons.pets, 'Add your pet'),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListApointment()),
-                );
-              },
-              child: _optionItem(Icons.book, 'Show all appointments'),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListOrder()),
-                );
-              },
-              child: _optionItem(Icons.gif_box, 'My orders'),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.dark_mode,
-                          size: 24,
-                          color: _darkMode ? Colors.white : Colors.black),
-                      const SizedBox(width: 30),
-                      Text(
-                        _darkMode ? 'Light Mode' : 'Dark Mode',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: _darkMode ? Colors.white : Colors.black,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
-                  ),
-                  Switch(
-                    value: _darkMode,
-                    onChanged: (value) {
-                      setState(() {
-                        _darkMode = value; // Toggle mode
-                      });
-                    },
-                    activeColor: Colors.blue,
-                  ),
-                ],
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  check(context);
+                },
+                child: _optionItem(Icons.person, 'Update Information'),
               ),
-            ),
-          ],
-        ),
-      ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -478,6 +414,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child:
                     _optionItem(Icons.gif_box, 'My appointment for invoices'),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.dark_mode,
+                            size: 24,
+                            color: _darkMode ? Colors.white : Colors.black),
+                        const SizedBox(width: 30),
+                        Text(
+                          _darkMode ? 'Light Mode' : 'Dark Mode',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: _darkMode ? Colors.white : Colors.black,
+                            fontFamily: 'Fredoka',
+                          ),
+                        ),
+                      ],
+                    ),
+                    Switch(
+                      value: _darkMode,
+                      onChanged: (value) {
+                        setState(() {
+                          _darkMode = value; // Toggle mode
+                        });
+                      },
+                      activeColor: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
             ],
           )),
     );
@@ -485,7 +455,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _optionItem(IconData icon, String nameItem) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     double responsiveFontSize = screenWidth < 600 ? 16 : 20;
     responsiveFontSize = responsiveFontSize > 20 ? 20 : responsiveFontSize;
 
