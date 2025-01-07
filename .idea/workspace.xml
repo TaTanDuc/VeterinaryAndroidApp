@@ -4,28 +4,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Appointments/appointment_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Cart/cart_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/home.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Homepage/shop.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/login_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Login/register_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/addPet_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/appointment_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/invoice_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/profile_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Profile/updateProfile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/addReview_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Reviews/reviews_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Services/detailService_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/application/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/application/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/application/windows/flutter/generated_plugins.cmake" afterDir="false" />
+    <list default="true" id="ada9f7db-50ae-4249-90de-d83eedfa1e84" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/lib/Screens/Chat/WebSocketService.dart" beforeDir="false" afterPath="$PROJECT_DIR$/application/lib/Screens/Chat/WebSocketService.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,32 +38,31 @@
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
 }</component>
-  <component name="ProjectId" id="2mNi4xx3cm41SQq7qYEWh5rSkoB" />
+  <component name="ProjectId" id="2qsOtoqo6JVcUwFVOl4i4NTMj5F" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Long",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Admin/AndroidStudioProjects/VeterinaryAndroidApp/application",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Tung&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/TestAPI/VeterinaryV2/VeterinaryWebServices&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bfd60ea3-79a9-4d66-9f7e-8775138d6d88" name="Changes" comment="" />
-      <created>1726923251746</created>
+      <changelist id="ada9f7db-50ae-4249-90de-d83eedfa1e84" name="Changes" comment="" />
+      <created>1735448034179</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1726923251746</updated>
+      <updated>1735448034179</updated>
     </task>
     <servers />
   </component>

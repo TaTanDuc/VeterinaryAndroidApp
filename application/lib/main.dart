@@ -1,43 +1,65 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
+import 'package:application/Screens/Chat/Client.dart';
+import 'package:application/Screens/Chat/EmployeeChat.dart';
+import 'package:application/Screens/Chat/WebSocketService.dart';
+import 'package:application/Screens/Checkout/key.dart';
+import 'package:application/Screens/Providers/googleSignin.dart';
+import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+import 'package:flutter/material.dart';
 import 'package:application/Screens/Homepage/home.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart';
+import 'package:provider/provider.dart';
+// import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  Stripe.publishableKey =
+      "pk_test_51QXwiTC5mILZpjuwuFliYwCHPgV04qQErHY6cNGhvVQU8gGo2LsqD0WlavJ2zghYTKJdf6Hdhc8VZ2DsDvYj30PA00Kzc3pIYE";
+  await Stripe.instance.applySettings();
+  // await Firebase.initializeApp();
+
+  // // Activate Firebase App Check
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.playIntegrity,
+  // );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  dynamic ID;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainPage(),
-    );
+    return ChangeNotifierProvider(
+        create: (context) => GoogleSignInProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: LoginScreen(),
+        ));
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  // Nhận userID từ trang trước
+
+  const MainPage();
   @override
   // ignore: library_private_types_in_public_api
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
-  int _currentIndex = 0;
-
   late final List<Widget> _children;
 
-  @override
   void initState() {
     super.initState();
+
+    // Khởi tạo các trang với userID được truyền vào từ widget
     _children = [
       HomePage1(),
       ExplorePage1(),
@@ -48,7 +70,7 @@ class _MainPageState extends State<MainPage> {
 
   void onTappedBar(int index) {
     setState(() {
-      _currentIndex = index;
+      _currentIndex = index; // Cập nhật chỉ số trang hiện tại
     });
   }
 
@@ -95,7 +117,7 @@ class HomePage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: HomePage());
+    return Center(child: HomePage()); // Truyền userID xuống HomePage
   }
 }
 

@@ -1,6 +1,8 @@
 import 'package:application/bodyToCallAPI/Appointment.dart';
+import 'package:application/bodyToCallAPI/Department.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
@@ -29,13 +31,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   List<Service> _selectedServices = [];
   dynamic _selectedPets;
   dynamic _selectedPetID;
+  dynamic _selectedDeparts;
+  dynamic _selectedDepartmentID;
   List<Pet> _pets = [];
+  List<Department> _departs = [];
   dynamic ID;
   bool _isValidTime(TimeOfDay selectedTime) {
     final int selectedHour = selectedTime.hour;
     final int selectedMinute = selectedTime.minute;
 
-    // Service times: 7:00 AM to 11:00 AM and 1:00 PM to 5:00 PM
     if ((selectedHour >= 8 && selectedHour < 11) ||
         (selectedHour >= 13 && selectedHour < 17)) {
       return true;
@@ -43,7 +47,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return false;
   }
 
-  // Function to check if the day is Saturday or Sunday
   bool _isValidDay(DateTime selectedDate) {
     // 6 is Saturday, 7 is Sunday
     return !(selectedDate.weekday == 6 || selectedDate.weekday == 7);
@@ -54,31 +57,51 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.initState();
     fetchPets();
     fetchServices();
-    submitAppointment(); // Call fetchPets when the widget is initialized
+    fetchDepartments();
+    submitAppointment();
   }
 
   Future<void> fetchPets() async {
-    final url = Uri.parse(
-        'http://10.0.0.2/api/pet/getUserPets'); // Replace with your actual API URL
+    final url = Uri.parse('http://192.168.137.1:8080/api/customer/pet');
     try {
-      final userManager = UserManager(); // Ensure singleton access
-      UserDTO? currentUser = userManager.user;
-
-      if (currentUser != null) {
-        ID = currentUser.userID;
-      }
-      final response = await http.post(
+      final session = await SessionManager().getSession();
+      final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"userID": ID}), // Replace with your actual userID
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
       );
       if (response.statusCode == 200) {
-        final List<dynamic> petData = jsonDecode(response.body);
-        ; // This should show the fetched data
+        final List<dynamic> petData = jsonDecode(response.body)['returned'];
+        ;
 
         setState(() {
           _pets = petData.map((json) => Pet.fromJson(json)).toList();
-          _loading = false; // Check the mapped pets
+          _loading = false;
+        });
+      } else {
+        throw Exception('Failed to load pets');
+      }
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> fetchDepartments() async {
+    final url = Uri.parse('http://192.168.137.1:8080/api/customer/department');
+    try {
+      final session = await SessionManager().getSession();
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> petData = jsonDecode(response.body)['returned'];
+        ;
+
+        setState(() {
+          _departs = petData.map((json) => Department.fromJson(json)).toList();
+          _loading = false;
         });
       } else {
         throw Exception('Failed to load pets');
@@ -91,12 +114,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> fetchServices() async {
-    final url = 'http://10.0.0.2/api/service/all'; // Replace with your API URL
+    final url = Uri.parse(
+        'http://192.168.137.1:8080/api/customer/service?serviceCode=&searchString='); // Replace with your actual API URL
     try {
-      final response = await http.get(Uri.parse(url));
-
+      final session = await SessionManager().getSession();
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
+      );
       if (response.statusCode == 200) {
-        final List<dynamic> serviceData = jsonDecode(response.body);
+        final List<dynamic> serviceData = jsonDecode(response.body)['returned'];
         setState(() {
           _services = serviceData
               .map((json) => Service.fromJson(json))
@@ -108,7 +135,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       }
     } catch (e) {
       setState(() {
-        _loading = false; // Stop loading in case of error
+        _loading = false;
       });
     }
   }
@@ -116,76 +143,70 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Future<void> submitAppointment() async {
     if (datePicker.text.isEmpty) {
       print('Date picker is empty. Please select a date.');
-      return; // Early return if date is not set
+      return;
     }
 
     DateTime appointmentDATE;
     try {
-      // Try parsing the date with a fallback error message
       appointmentDATE = DateFormat('yyyy-MM-dd').parse(datePicker.text);
     } catch (e) {
       print('Error parsing date: $e');
-      return; // Early return on error
+      return;
     }
 
-    // Split the timePicker text to get hours and minutes
     List<String> timeParts = timePicker.text.split(':');
-
-    // Ensure we have at least 2 parts (hour and minute)
     if (timeParts.length < 2) {
-      throw FormatException('Time format is invalid');
+      print('Time format is invalid');
+      return;
     }
 
-    // Parse hour and minute safely
-    int selectedHour =
-        int.tryParse(timeParts[0]) ?? 0; // Default to 0 if parsing fails
-    int selectedMinute =
-        int.tryParse(timeParts[1].split(' ')[0]) ?? 0; // Handle AM/PM
+    int selectedHour = int.tryParse(timeParts[0]) ?? 0;
+    int selectedMinute = int.tryParse(timeParts[1].split(' ')[0]) ?? 0;
 
-    // Get AM/PM part for correct hour conversion
-    String amPm =
-        timeParts[1].split(' ').last.toUpperCase(); // Ensure it's uppercase
+    String amPm = timeParts[1].split(' ').last.toUpperCase();
     if (amPm == 'PM' && selectedHour != 12) {
-      selectedHour += 12; // Convert PM hours to 24-hour format
+      selectedHour += 12;
     } else if (amPm == 'AM' && selectedHour == 12) {
-      selectedHour = 0; // Convert 12 AM to 0 hours
+      selectedHour = 0;
     }
 
-    int selectedSecond = 0; // Set to 0 or your desired value
+    int selectedSecond = 0;
 
-    // Create a formatted string for appointmentTIME with seconds
-    String appointmentTIME = '${selectedHour.toString().padLeft(2, '0')}:'
-        '${selectedMinute.toString().padLeft(2, '0')}:'
-        '${selectedSecond.toString().padLeft(2, '0')}'; // Format as HH:mm:ss
+    DateTime fullAppointmentDateTime = DateTime(
+      appointmentDATE.year,
+      appointmentDATE.month,
+      appointmentDATE.day,
+      selectedHour,
+      selectedMinute,
+      selectedSecond,
+    );
+    String formattedDateTime =
+        DateFormat('yyyy-MM-dd-HH-mm-ss').format(fullAppointmentDateTime);
 
-    // Create the appointment object
+    print('Formatted Date-Time: $formattedDateTime');
     Appointment appointment = Appointment(
-      userID: ID,
       petID: _selectedPetID,
-      appointmentDATE: appointmentDATE,
-      appointmentTIME: appointmentTIME, // Use the formatted time string
+      departmentID: _selectedDepartmentID,
+      dateTime: formattedDateTime,
       services: _selectedServices,
     );
 
-    // Set the API endpoint
-    final url =
-        'http://10.0.0.2/api/appointment/add'; // Replace with your API endpoint
+    final url = 'http://192.168.137.1:8080/api/customer/appointment/book';
     final body = jsonEncode(appointment.toJson());
 
     try {
-      // Send the appointment data to the API
+      final session = await SessionManager().getSession();
       final response = await http.post(
         Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json", 'Cookie': '$session'},
         body: body,
       );
 
-      // Handle the response
       if (response.statusCode == 200) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPage(), // Pass serviceCODE
+            builder: (context) => MainPage(),
           ),
         );
         DelightToastBar(
@@ -245,6 +266,102 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               children: [
                                 GestureDetector(
                                   onTap: () async {
+                                    final result = await showDialog<Department>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Select a Department"),
+                                          content: SingleChildScrollView(
+                                            child: ListBody(
+                                              children: _departs.map((pet) {
+                                                return RadioListTile<
+                                                    Department>(
+                                                  title:
+                                                      Text(pet.departmentNAME),
+                                                  value: pet,
+                                                  groupValue:
+                                                      _selectedDeparts, // Keep this for UI purpose
+                                                  onChanged:
+                                                      (Department? value) {
+                                                    setState(() {
+                                                      _selectedDeparts =
+                                                          value; // Update selected pet for display
+                                                      _selectedDepartmentID = value
+                                                          ?.departmentID; // Store petID separately
+                                                    });
+                                                    Navigator.of(context).pop(
+                                                        value); // Close the dialog with the selected pet
+                                                  },
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close dialog without selecting
+                                              },
+                                              child: Text("Cancel"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    // Update the selected pet if the dialog returned a result
+                                    if (result != null) {
+                                      setState(() {
+                                        _selectedDeparts =
+                                            result; // Update the state with selected pet
+                                        _selectedDepartmentID = result
+                                            .departmentID; // Ensure the ID is updated
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _selectedDeparts != null
+                                              ? _selectedDeparts.departmentNAME
+                                              : 'Select a Department',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: _selectedPets != null
+                                                ? Colors.black
+                                                : Color(0xff868889),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.blue,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                    const SizedBox(height: 30),
+                    _loading
+                        ? Center(child: CircularProgressIndicator())
+                        : Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
                                     final results =
                                         await showDialog<List<Service>>(
                                       context: context,
@@ -254,7 +371,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                               .map((service) =>
                                                   MultiSelectItem<Service>(
                                                       service,
-                                                      service.serviceNAME))
+                                                      service.serviceName))
                                               .toList(),
                                           title: Text("Select Services"),
                                           selectedColor: Colors.green,
@@ -294,7 +411,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           _selectedServices.isNotEmpty
                                               ? _selectedServices
                                                   .map((service) => service
-                                                      .serviceCODE) // Use serviceCode instead of serviceNAME
+                                                      .serviceCode) // Use serviceCode instead of serviceNAME
                                                   .join(', ')
                                               : 'Select Services',
                                           style: TextStyle(

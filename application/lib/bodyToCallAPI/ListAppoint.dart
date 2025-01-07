@@ -1,14 +1,18 @@
+import 'package:application/bodyToCallAPI/Service.dart';
+
 class ListAppoint {
-  final String profileNAME;
+  final int appointmentID;
   final String petNAME;
-  final String apmDATE;
-  final String appointmentTIME;
+  final String petIMG;
+  final String appointmentDateTime;
+  final String appointmentStatus;
 
   ListAppoint({
-    required this.profileNAME,
+    required this.appointmentID,
     required this.petNAME,
-    required this.apmDATE,
-    required this.appointmentTIME,
+    required this.petIMG,
+    required this.appointmentDateTime,
+    required this.appointmentStatus,
   });
 
   factory ListAppoint.fromJson(Map<String, dynamic>? json) {
@@ -17,25 +21,25 @@ class ListAppoint {
     }
 
     return ListAppoint(
-      profileNAME: (json['profileNAME']).toString() ??
-          'Unknown', // Provide default values if necessary
+      appointmentID: json['appointmentID'] ?? 0,
       petNAME: (json['petNAME']).toString() ?? 'Unknown',
-      apmDATE: (json['apmDATE']).toString() ?? '0000-00-00',
-      appointmentTIME: (json['appointmentTIME']) ?? '00:00:00',
+      petIMG: json['petIMG'] ?? 'assets/icons/anonymus.webp',
+      appointmentDateTime: json['appointmentDateTime'],
+      appointmentStatus: (json['appointmentStatus']) ?? 'Unknown',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'profileNAME': profileNAME ?? 'Unknown',
+      'appointmentID': appointmentID,
       'petNAME': petNAME,
-      'apmDATE': apmDATE,
-      'appointmentTIME': appointmentTIME,
+      'appointmentDateTime': appointmentDateTime,
+      'appointmentStatus': appointmentStatus,
     };
   }
 
   @override
   String toString() {
-    return 'Appointment(profileNAME: $profileNAME, petNAME: $petNAME, apmDATE: $apmDATE, appointmentTIME: $appointmentTIME)';
+    return 'Appointment(profileNAME: $appointmentID, petNAME: $petNAME, apmDATE: $appointmentDateTime, appointmentTIME: $appointmentStatus)';
   }
 }

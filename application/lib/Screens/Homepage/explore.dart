@@ -17,7 +17,9 @@ class Category {
 }
 
 class ExplorePage extends StatefulWidget {
-  const ExplorePage({super.key});
+  const ExplorePage({
+    super.key,
+  });
 
   @override
   _ExplorePageState createState() => _ExplorePageState();

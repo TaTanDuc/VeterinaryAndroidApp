@@ -1,9 +1,12 @@
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/addPet_screen.dart';
 import 'package:application/Screens/Profile/appointment_screen.dart';
+import 'package:application/Screens/Profile/createProfile.dart';
 import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/controllers/GoogleController.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,9 +24,10 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _loading = true;
+
   dynamic profile;
-  // ignore: non_constant_identifier_names
-  dynamic ID;
+  String link = '';
+
   @override
   void initState() {
     super.initState();
@@ -31,18 +35,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchProfile() async {
-    final url = Uri.parse('http://10.0.0.2/api/profile/user/get?userID=$ID');
+    final url = Uri.parse('http://192.168.137.1:8080/api/customer/profile/get');
 
     try {
-      final response =
-          await http.get(url, headers: {'Content-Type': 'application/json'});
+      final session = await SessionManager().getSession();
+      final response = await http.get(url,
+          headers: {'Content-Type': 'application/json', 'Cookie': '$session'});
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(response.body)['returned'];
+        print('Received data: $data');
 
         setState(() {
           profile = Profile.fromJson(data);
           _loading = false;
+          link = profile.profileIMG;
         });
       } else {
         throw Exception('Failed to load profile details');
@@ -58,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
     return WillPopScope(
-      onWillPop: () async => false, // Prevent back navigation
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF5CB15A),
@@ -98,28 +105,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           ClipPath(
             clipper: BottomRoundedClipper(),
-            child: FirebaseAuth.instance.currentUser != null
-                ? FutureBuilder(
-                    future: FirebaseAuth.instance.currentUser?.reload(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          FirebaseAuth.instance.currentUser?.photoURL != null) {
-                        return Image.network(
-                          FirebaseAuth.instance.currentUser!.photoURL!,
-                          width: double.infinity,
-                          height: 350,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                      return CircularProgressIndicator();
-                    },
-                  )
-                : Image.asset(
-                    'assets/images/avatar02.jpg',
-                    width: double.infinity,
-                    height: 350,
-                    fit: BoxFit.cover,
-                  ),
+            child: Image.network(
+              link,
+              width: double.infinity,
+              height: 350,
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(20),
@@ -159,30 +150,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close the dialog
               },
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () async {
-                try {
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    final googleSignIn = GoogleSignIn();
-                    if (await googleSignIn.isSignedIn()) {
-                      await FirebaseServices().googleSignOut();
-                    }
-                    await FirebaseAuth.instance.signOut();
-                  } else {
-                    final userManager = UserManager();
-                    userManager.clearUser();
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                      (Route<dynamic> route) => false,
-                    );
-                  }
-                } catch (e) {}
+              onPressed: () {
+                final userManager = UserManager();
+                userManager.clearUsername(); // Clear user session
+
+                Navigator.of(context).pop(); // Close the dialog
+                // Use pushAndRemoveUntil for proper navigation
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
               child: Text('Sign Out'),
             ),
@@ -192,8 +174,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> check(context) async {
+    final sm = await SessionManager().getSession();
+    final response = await http.get(
+        Uri.parse('http://192.168.137.1:8080/api/customer/profile/get'),
+        headers: {'cookie': '$sm'});
+    try {
+      if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UpdateProfileScreen(
+              profile: profile,
+            ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProfileScreen(),
+          ),
+        );
+      }
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
   Widget _infoUser(Profile user) {
     final screenWidth = MediaQuery.of(context).size.width;
+
+    // Set button dimensions and responsive font size
     double buttonWidth = screenWidth < 600 ? screenWidth * 0.8 : 100;
     double buttonHeight = 40;
     double responsiveFontSize = screenWidth < 600 ? 16 : 20;
@@ -208,6 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.fromLTRB(35, 15, 15, 30),
         child: Column(
           children: [
+            // Responsive layout for small and large screens
             if (screenWidth < 600) ...[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,9 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    user.profileNAME ??
-                        FirebaseAuth.instance.currentUser!.displayName! ??
-                        'Unkonw',
+                    user.profileNAME ?? 'Unkonw',
                     style: TextStyle(
                         fontSize: responsiveFontSize,
                         color: Color(0xff141415),
@@ -265,7 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton.icon(
                     onPressed: () {
                       print('Sign out button pressed');
-                      _signOut();
+                      _signOut(); // Call the sign-out function
                     },
                     icon: Icon(
                       Icons.arrow_back,
@@ -290,13 +301,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
             const SizedBox(height: 20),
+            // Email Row
             Row(
               children: [
                 Icon(Icons.email),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    user.profileEMAIL,
+                    user.Email!,
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: responsiveFontSize,
@@ -342,12 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UpdateProfileScreen(profile: profile)),
-                  );
+                  check(context);
                 },
                 child: _optionItem(Icons.person, 'Update Information'),
               ),
@@ -384,19 +391,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _optionItem(IconData icon, String nameItem) {
+    // Get the screen width
     final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate responsive font size, with a maximum value of 20
     double responsiveFontSize = screenWidth < 600 ? 16 : 20;
     responsiveFontSize = responsiveFontSize > 20 ? 20 : responsiveFontSize;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10), // Vertical padding
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Ensure spacing between elements
         children: [
           Expanded(
             child: Row(
               children: [
-                Icon(icon, size: 24),
+                Icon(icon, size: 24), // Icon size for consistency
                 const SizedBox(width: 30),
                 // The nameItem Text widget
                 Expanded(

@@ -9,15 +9,22 @@ class UserManager {
 
   UserManager._internal();
 
-  UserDTO? _user;
+  String? _username;
+  bool? connected;
+  int? _id;
 
-  UserDTO? get user => _user;
+  String? get username => _username;
+  bool? get connection => connected;
+  int? get id => _id;
 
-  void setUser(UserDTO user) {
-    _user = user;
+  void setUsername(String username, bool connection, int id) {
+    _username = username;
+    connected = connection;
+    _id = id;
   }
 
-  void clearUser() {
-    _user = null;
+  void clearUsername() {
+    _username = null;
+    connected = false;
   }
 }

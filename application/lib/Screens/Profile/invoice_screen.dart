@@ -24,19 +24,12 @@ class _ListOrderState extends State<ListOrder> {
 
   // Method to fetch services from API
   Future<void> fetchInvoice() async {
-    final userManager = UserManager(); // Ensure singleton access
-    UserDTO? currentUser = userManager.user;
     setState(() {
       _loading = false;
     });
-    if (currentUser != null) {
-      print("User ID in appontments: ${currentUser.userID}");
-      ID = currentUser.userID;
-    } else {
-      print("No user is logged in here.");
-    }
-    final url =
-        Uri.parse('http://10.0.0.2/api/invoice/getUserInvoices?userID=$ID');
+
+    final url = Uri.parse(
+        'http://192.168.137.1:8080/api/invoice/getUserInvoices?userID=1');
     try {
       final response = await http.get(
         url,

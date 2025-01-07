@@ -1,5 +1,6 @@
 import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/bodyToCallAPI/AddComment.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customButton.dart';
@@ -13,13 +14,10 @@ import 'dart:convert';
 
 class AddReviewScreen extends StatefulWidget {
   final String serviceCODE;
-  final int userID;
-  const AddReviewScreen(
-      {Key? key,
-      required this.serviceCODE,
-      required this.userID // Make userID required as well
-      })
-      : super(key: key);
+  const AddReviewScreen({
+    Key? key,
+    required this.serviceCODE,
+  }) : super(key: key);
 
   @override
   State<AddReviewScreen> createState() => _MyWidgetState();
@@ -32,39 +30,31 @@ class _MyWidgetState extends State<AddReviewScreen> {
   dynamic serviceCommnets;
   dynamic ID;
   String content = '';
-  bool _isContentValid = true;
+  bool _isContentValid = false;
   String name = '';
   final TextEditingController _commentController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    fetchAddComment();
+    //fetchAddComment();
   }
 
   Future<void> fetchAddComment() async {
-    final userManager = UserManager(); // Ensure singleton access
-    UserDTO? currentUser = userManager.user;
-
-    if (currentUser != null) {
-      ID = currentUser.userID;
-      name = currentUser.username;
-    } else {
-      print("No user is logged in in this.");
-    }
     AddComment comment = AddComment(
-      userID: ID,
       serviceCODE: widget.serviceCODE,
-      rating: selectedIndex, // Use the DateTime string representation
+      serviceRating: selectedIndex,
       content: content,
     );
 
-    final url = Uri.parse('http://10.0.0.2/api/service/addComment');
+    final url =
+        Uri.parse('http://192.168.137.1:8080/api/customer/service/postComment');
     final body = jsonEncode(comment.toJson());
     try {
+      final session = await SessionManager().getSession();
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: body, // Replace with your actual userID
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
+        body: body,
       );
 
       if (response.statusCode == 200) {
@@ -72,7 +62,6 @@ class _MyWidgetState extends State<AddReviewScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => ReviewsScreen(
-              userID: ID,
               serviceCODE: widget.serviceCODE,
             ), // Pass serviceCODE
           ),
@@ -136,11 +125,9 @@ class _MyWidgetState extends State<AddReviewScreen> {
                       style: TextStyle(fontSize: 20),
                       onChanged: (value) {
                         setState(() {
-                          content =
-                              value; // Update content variable on text change
-                          _isContentValid = content.length >= 20 &&
-                              content.length <=
-                                  200; // Validate length between 20 and 200
+                          content = value;
+                          _isContentValid =
+                              content.length >= 20 && content.length <= 200;
                         });
                       },
                       decoration: InputDecoration(
@@ -191,8 +178,8 @@ class _MyWidgetState extends State<AddReviewScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ReviewsScreen(
-                        serviceCODE: widget.serviceCODE,
-                        userID: ID)), // Điều hướng đến trang mới
+                          serviceCODE: widget.serviceCODE,
+                        )), // Điều hướng đến trang mới
               ); //
             })
       ],
@@ -201,19 +188,14 @@ class _MyWidgetState extends State<AddReviewScreen> {
 
   Widget _buttonPostReview() {
     return ElevatedButton(
-      onPressed: _loading
-          ? null
-          : () async {
+      onPressed: _isContentValid
+          ? () async {
               setState(() {
-                _loading = true; // Start loading
+                _loading = true;
               });
 
               try {
-                await fetchAddComment(); // Call submitAppointment asynchronously
-                // Optionally show a success message
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(content: Text('Comment Added successfully!')),
-                // );
+                await fetchAddComment();
                 DelightToastBar(
                   builder: (context) {
                     return const ToastCard(
@@ -239,13 +221,14 @@ class _MyWidgetState extends State<AddReviewScreen> {
                 );
               } finally {
                 setState(() {
-                  _loading = false; // Stop loading
+                  _loading = false;
                 });
               }
-            },
+            }
+          : null,
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, // Text color
-        backgroundColor: Color(0xff5CB15A), // Background color
+        foregroundColor: Colors.white,
+        backgroundColor: Color(0xff5CB15A),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -254,12 +237,12 @@ class _MyWidgetState extends State<AddReviewScreen> {
       child: SizedBox(
         width: double.infinity,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Center text and icon
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _loading
-                  ? 'Posting...'
-                  : 'Post Review', // Change text when loading
+              _isContentValid
+                  ? 'Post Review'
+                  : 'Content too short', // Change button text based on validity
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -267,14 +250,14 @@ class _MyWidgetState extends State<AddReviewScreen> {
               ),
             ),
             const SizedBox(width: 10),
-            _loading
+            _isContentValid
                 ? CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 2, // Adjust size
+                    strokeWidth: 2,
                   )
                 : Icon(
-                    Icons.rate_review, // Icon for posting review
-                    size: 24, // Icon size
+                    Icons.rate_review,
+                    size: 24,
                   ),
           ],
         ),

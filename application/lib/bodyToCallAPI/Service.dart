@@ -1,21 +1,19 @@
 class Service {
-  final String serviceCODE;
-  final String serviceNAME;
-  final double serviceRATING;
-  final int commentCOUNT;
-  final String serviceDATE;
-
+  final String serviceCode;
+  final String serviceName;
+  final double serviceRating;
+  final int servicePrice;
+  final String workingDate;
   final String imageService;
-  final int userID;
-
+  final String description;
   Service({
-    required this.serviceCODE,
-    required this.serviceNAME,
-    required this.serviceRATING,
-    required this.commentCOUNT,
-    required this.serviceDATE,
+    required this.serviceCode,
+    required this.serviceName,
+    required this.serviceRating,
+    required this.servicePrice,
+    required this.workingDate,
     required this.imageService,
-    required this.userID,
+    required this.description,
   });
 
   factory Service.fromJson(Map<String, dynamic>? json) {
@@ -24,33 +22,29 @@ class Service {
     }
 
     return Service(
-      serviceCODE: json['serviceCODE'] ??
-          'Unknown', // Provide default values if necessary
-      serviceNAME: json['serviceNAME'] ?? 'Unknown',
-      serviceRATING: json['serviceRATING'] ?? 0.0,
-      commentCOUNT: json['commentCOUNT'] ?? 0,
-      serviceDATE: json['serviceDATE'] ?? '',
+      serviceCode: json['serviceCode'] ?? 'Unknown',
+      serviceName: json['serviceName'] ?? 'Unknown',
+      serviceRating: json['serviceRating'] ?? 0.0,
+      servicePrice: json['servicePrice'] ?? 0,
+      workingDate: json['workingDate'] ?? '',
       imageService: json['imageService'] ?? 'assets/icons/logo.png',
-      userID: json['userID'] ?? 0,
+      description: json['description'] ?? 'hello',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'serviceCODE':
-          serviceCODE ?? 'Unknown', // Provide a default value if null
-      'serviceNAME': serviceNAME ?? 'Unknown',
-      'serviceRATING': serviceRATING ?? 0.0, // Example: use 0 if rating is null
-      'commentCOUNT': commentCOUNT ?? 0,
-      'serviceDATE':
-          serviceDATE?.toString() ?? '', // Convert to String if necessary
+      'serviceCode': serviceCode ?? 'Unknown',
+      'serviceName': serviceName ?? 'Unknown',
+      'serviceRating': serviceRating ?? 0.0,
+      'workingDate': workingDate?.toString() ?? '',
       'imageService': imageService ?? 'Not Found',
-      'userID': userID ?? '0',
+      'description': description ?? '0',
     };
   }
 
   @override
   String toString() {
-    return 'Service(serviceCODE: $serviceCODE, serviceNAME: $serviceNAME, serviceRATING: $serviceRATING, commentCOUNT: $commentCOUNT, serviceDATE: $serviceDATE, imageService: $imageService, userID: $userID)';
+    return 'Service(serviceCODE: $serviceCode, serviceNAME: $serviceName, serviceRATING: $serviceRating, serviceDATE: $workingDate, imageService: $imageService, userID: $description)';
   }
 }

@@ -12,9 +12,12 @@
                 </intent>        
         </queries>
     <application
-        android:label="application"
-        android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+         android:name="${applicationName}"
+        android:icon="@mipmap/launcher_icon"
+        android:roundIcon="@mipmap/launcher_icon"
+        android:label="Veterinary"
+        android:requestLegacyExternalStorage="true">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"

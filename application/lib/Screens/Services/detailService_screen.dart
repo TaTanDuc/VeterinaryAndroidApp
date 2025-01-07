@@ -4,6 +4,7 @@ import 'package:application/Screens/Reviews/reviews_screen.dart';
 import 'package:application/Screens/Services/services_screen.dart';
 import 'package:application/bodyToCallAPI/Comment.dart';
 import 'package:application/bodyToCallAPI/Service.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:application/Screens/Homepage/service.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +13,11 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class DetailServiceScreen extends StatefulWidget {
-  final String serviceCODE; // Added userID field
+  final String serviceCODE;
 
   const DetailServiceScreen({
     Key? key,
-    required this.serviceCODE, // Make userID required as well
+    required this.serviceCODE,
   }) : super(key: key);
 
   @override
@@ -25,162 +26,63 @@ class DetailServiceScreen extends StatefulWidget {
 
 class _DetailPageState extends State<DetailServiceScreen> {
   bool _loading = true;
-  Service? serviceDetails; // Change the type based on your response
+  Service? serviceDetails;
   List<Comment> _comments = [];
   @override
   void initState() {
     super.initState();
-    fetchServiceDetails(); // Fetch details when the page initializes
+    fetchServiceDetails();
   }
 
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
-        'http://10.0.0.2/api/service/detail?serviceCODE=${widget.serviceCODE}');
+        'http://192.168.137.1:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
     setState(() {
       _loading = true; // Start loading
     });
     try {
-      final response =
-          await http.get(url, headers: {'Content-Type': 'application/json'});
+      final session = await SessionManager().getSession();
+      final response = await http.get(url,
+          headers: {'Content-Type': 'application/json', 'Cookie': '$session'});
 
       if (response.statusCode == 200) {
         setState(() {
-          final data = jsonDecode(response.body);
-
-          // Create the Service object
+          final data = jsonDecode(response.body)['returned'];
+          print('service: $data');
           serviceDetails = Service.fromJson(data);
 
-          // Now handle comments if they exist
-          if (data['comments'] != null) {
-            _comments = (data['comments'] as List)
+          if (data['serviceComments'] != null) {
+            _comments = (data['serviceComments'] as List)
                 .map((commentData) => Comment.fromJson(commentData))
                 .toList();
+            print('comment: $_comments');
           } else {
-            _comments = []; // Initialize to empty if no comments
+            _comments = [];
           }
 
-          _loading = false; // Stop loading when data is fetched
+          _loading = false;
         });
       } else {
         throw Exception('Failed to load service details');
       }
     } catch (e) {
       setState(() {
-        _loading = false; // Stop loading on error
+        _loading = false;
       });
     }
   }
-
-//   Future<void> fetchServiceDetails() async {
-//     final url = Uri.parse(
-//         'http://10.0.0.2/api/service/detail?serviceCODE=${widget.serviceCODE}');
-
-//     try {
-//       final response =
-//           await http.get(url, headers: {'Content-Type': 'application/json'});
-
-//       if (response.body != null && response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         setState(() {
-//           serviceDetails =
-//               jsonDecode(response.body); // Update with your response structure
-//           _loading = false;
-//           if (serviceDetails == null) {
-//             print('No service found');
-//           }
-//           if (data['comments'] != null) {
-//             _comments = (data['comments'] as List)
-//                 .map((commentData) => Comment.fromJson(commentData))
-//                 .toList();
-//           }
-//           print("Testttttt: $serviceDetails");
-// // Stop loading when data is fetched
-//         });
-//       } else {
-//         throw Exception('Failed to load service details');
-//       }
-//     } catch (e) {
-//       print('Error fetching service details: $e');
-//       setState(() {
-//         _loading = false; // Stop loading on error
-//       });
-//     }
-//   }
 
   @override
   Widget build(BuildContext context) {
     Service? service = serviceDetails;
 
-    // return Scaffold(
-    //     appBar: AppBar(
-    //       backgroundColor: const Color(0xFF5CB15A),
-    //       title: const Center(
-    //         child: Text(
-    //           'Detail',
-    //           style: TextStyle(
-    //             color: Colors.white,
-    //             fontSize: 16,
-    //             fontFamily: 'Fredoka',
-    //           ),
-    //         ),
-    //       ),
-    //       actions: [
-    //         Padding(
-    //           padding: const EdgeInsets.all(8.0),
-    //           child: SizedBox(
-    //             height:
-    //                 AppBar().preferredSize.height, // Match the AppBar height
-    //             child: Image.asset(
-    //               'assets/icons/logo.png',
-    //               fit: BoxFit.contain,
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //     body: SingleChildScrollView(
-    //         child: Column(
-    //       children: [
-    //         ClipPath(
-    //           clipper: BottomRoundedClipper(),
-    //           child: Image.asset(
-    //             'assets/icons/Icon.jpg',
-    //             width: double.infinity,
-    //             height: 350,
-    //             fit: BoxFit.cover,
-    //           ),
-    //         ),
-    //         Center(
-    //           child: _loading
-    //               ? Center(child: CircularProgressIndicator())
-    //               : serviceDetails != null
-    //                   ? Column(
-    //                       children: [
-    //                         _buildServiceDetailView(),
-    //                         const SizedBox(
-    //                             height:
-    //                                 20), // Spacing between service details and button
-    //                         // Add button here
-    //                         _button(service),
-    //                         const SizedBox(height: 20),
-    //                         _buttonBook(),
-    //                         const SizedBox(height: 20),
-    //                       ],
-    //                     )
-    //                   : Center(child: Text('No details available')),
-    //         )
-    //       ],
-    //     )));
     return WillPopScope(
       onWillPop: () async {
-        // Navigate to ShopPage when back button is pressed
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ServicePage()), // Replace ShopPage with the actual widget for your shop page
+          MaterialPageRoute(builder: (context) => ServicePage()),
         );
-        return false; // Prevent the default pop action
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -199,8 +101,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                height:
-                    AppBar().preferredSize.height, // Match the AppBar height
+                height: AppBar().preferredSize.height,
                 child: Image.asset(
                   'assets/icons/logo.png',
                   fit: BoxFit.contain,
@@ -223,7 +124,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
               ),
               Center(
                 child: _loading
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(child: const Text('dsdhssjjhdsjhsd'))
                     : serviceDetails != null
                         ? Column(
                             children: [
@@ -249,11 +150,9 @@ class _DetailPageState extends State<DetailServiceScreen> {
   Widget _buildStarRating(double rating) {
     List<Widget> stars = [];
 
-    // Determine the number of full, half, and empty stars
-    int fullStars = rating.floor(); // Number of full stars
-    bool hasHalfStar = (rating % 1) >= 0.5; // Determine if there is a half star
+    int fullStars = rating.floor();
+    bool hasHalfStar = (rating % 1) >= 0.5;
 
-    // Add full stars
     for (int i = 0; i < fullStars; i++) {
       stars.add(
         Icon(
@@ -262,8 +161,6 @@ class _DetailPageState extends State<DetailServiceScreen> {
         ),
       );
     }
-
-    // Add half star if needed
     if (hasHalfStar) {
       stars.add(
         Icon(
@@ -273,7 +170,6 @@ class _DetailPageState extends State<DetailServiceScreen> {
       );
     }
 
-    // Add empty stars to make the total 5
     for (int i = stars.length; i < 5; i++) {
       stars.add(
         Icon(
@@ -309,12 +205,9 @@ class _DetailPageState extends State<DetailServiceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Adjust or remove this SizedBox for smaller spacing
-          _infoItem(serviceDetails?.serviceNAME, serviceDetails?.serviceRATING,
-              serviceDetails?.commentCOUNT, serviceDetails?.serviceDATE),
-
+          _infoItem(serviceDetails?.serviceName, serviceDetails?.serviceRating,
+              serviceDetails?.workingDate),
           const SizedBox(height: 20),
-
           SingleChildScrollView(
             child: Column(
               children: List.generate(_comments.length, (index) {
@@ -327,7 +220,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
-  Widget _infoItem(String? name, double? rating, int? number, String? des) {
+  Widget _infoItem(String? name, double? rating, String? des) {
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 128),
       child: Container(
@@ -357,13 +250,8 @@ class _DetailPageState extends State<DetailServiceScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStarRating(
-                      rating ?? 0), // Default to 0 if rating is null
+                  _buildStarRating(rating ?? 0),
                   const SizedBox(width: 10),
-                  Text(
-                    '(${number ?? 0} reviews)', // Default to 0 if number is null
-                    style: TextStyle(color: Color(0xffA6A6A6)),
-                  ),
                 ],
               ),
               const SizedBox(height: 15),
@@ -389,23 +277,27 @@ class _DetailPageState extends State<DetailServiceScreen> {
     );
   }
 
-  Widget _button(Service service) {
+  Widget _button(Service? service) {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ReviewsScreen(
-                serviceCODE: service.serviceCODE,
-                userID:
-                    service.userID, // Ensure you have userID in serviceDetails
+          if (service != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReviewsScreen(
+                  serviceCODE: service.serviceCode,
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Service not available.')),
+            );
+          }
         },
         child: const Text(
-          'See and add more comments', // Button label
+          'See and add more comments',
           style: TextStyle(
             fontSize: 17,
             fontFamily: 'Fredoka',
@@ -469,10 +361,9 @@ class _DetailPageState extends State<DetailServiceScreen> {
   }
 
   Widget _Review(Comment comment) {
-    DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+    DateTime dateTime = DateTime.parse(comment.commentTime);
 
-    // Parse and format the comment date
-    String formattedDate = dateFormat.format(comment.commentDATE);
+    String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
     return Card(
       color: Colors.white,
       child: Padding(
@@ -485,11 +376,8 @@ class _DetailPageState extends State<DetailServiceScreen> {
                 // Avatar tròn
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage(
-                    comment.profileIMG != null && comment.profileIMG.isNotEmpty
-                        ? comment.profileIMG
-                        : 'assets/images/avatar02.jpg',
-                    // Thay đổi URL với hình thật
+                  backgroundImage: NetworkImage(
+                    comment.profileIMG,
                   ),
                 ),
                 SizedBox(width: 10),
@@ -498,7 +386,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      comment.profileNAME,
+                      comment.profileName,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -522,14 +410,14 @@ class _DetailPageState extends State<DetailServiceScreen> {
             Row(
               children: [
                 Text(
-                  comment.commentRATING.toString(),
+                  comment.serviceRating.toString(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
                 ),
                 SizedBox(width: 8),
-                _buildStarRatingForUser(comment.commentRATING),
+                _buildStarRatingForUser(comment.serviceRating),
               ],
             ),
             SizedBox(height: 8),
@@ -538,7 +426,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  comment.CONTENT,
+                  comment.content,
                   style: TextStyle(
                       color: Color(0xff191919),
                       fontSize: 16,

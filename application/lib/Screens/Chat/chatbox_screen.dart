@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String userId; // Nhận userId từ ChatPage
-  const ChatScreen({super.key, required this.userId});
+  final String userName; // Nhận userId từ ChatPage
+  const ChatScreen({super.key, required this.userName});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -41,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            'Chat with User: ${widget.userId}'), // Hiển thị userId trong app bar
+            'Chat with User: ${widget.userName}'), // Hiển thị userId trong app bar
         backgroundColor: const Color(0xFF5CB15A),
         leading: Container(
           width: 50,
