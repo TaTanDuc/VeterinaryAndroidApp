@@ -1,11 +1,19 @@
+import 'dart:math';
+
 import 'package:application/Screens/Chat/Client.dart';
+import 'package:application/Screens/Chat/WebSocketService.dart';
+import 'package:application/Screens/Chat/chatbox_screen.dart';
 import 'package:application/Screens/Chat/select_chatbox.dart';
-import 'package:application/Screens/Homepage/shop.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
+import 'package:application/bodyToCallAPI/UserDTO.dart';
+import 'package:application/bodyToCallAPI/UserManager.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:application/Screens/Homepage/shop.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -20,9 +28,11 @@ class _HomePageState extends State<HomePage> {
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
   dynamic ID;
+  final String? BASE_URL = dotenv.env["BASE_URL"];
 
   @override
   void initState() {
+    print("Base URL: $BASE_URL");
     super.initState();
     fetchPets();
     fetchShops(); // Call fetchPets when the widget is initialized
@@ -30,8 +40,8 @@ class _HomePageState extends State<HomePage> {
 
   // Method to fetch pets from API
   Future<void> fetchPets() async {
-    final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/pet'); // Replace with your actual API URL
+    final url =
+        Uri.parse('$BASE_URL/customer/pet'); // Replace with your actual API URL
     try {
       final session = await SessionManager().getSession();
       print('Session: $session');
@@ -62,8 +72,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchShops() async {
-    final url =
-        Uri.parse('http://192.168.137.1:8080/api/customer/shop/getRandom');
+    final url = Uri.parse('$BASE_URL/customer/shop/getRandom');
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
@@ -121,6 +130,7 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // My Pets Section
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(

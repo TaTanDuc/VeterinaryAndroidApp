@@ -34,11 +34,11 @@ class _ShopPageState extends State<ShopPage> {
   String _lastWords = '';
 
   TextEditingController inputValueController = TextEditingController();
+  _getRequests() async {}
   @override
   void initState() {
     super.initState();
     _fetchCategory();
-    loadCartFromLocalStorage();
     _initSpeech();
   }
 
@@ -76,16 +76,6 @@ class _ShopPageState extends State<ShopPage> {
     prefs.setString('cart', jsonEncode(_cartItems));
   }
 
-  Future<void> loadCartFromLocalStorage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? cartData = prefs.getString('cart');
-    if (cartData != null) {
-      setState(() {
-        _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
-      });
-    }
-  }
-
   Future<void> handleAddCart(Map<String, dynamic> value) async {
     setState(() {
       final existingItemIndex =
@@ -108,7 +98,6 @@ class _ShopPageState extends State<ShopPage> {
           "total": value['price'],
         });
       }
-      print('dsdsdsssssdwewedsds: $_cartItems');
     });
 
     await saveCartToLocalStorage(); // Save the updated cart to local storage
@@ -199,10 +188,12 @@ class _ShopPageState extends State<ShopPage> {
                   size: 23,
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CartViewScreen()),
-                  );
+                  Navigator.of(context)
+                      .push(
+                        new MaterialPageRoute(
+                            builder: (_) => new CartViewScreen()),
+                      )
+                      .then((val) => val ? _getRequests() : null);
                 },
               ),
             ),
