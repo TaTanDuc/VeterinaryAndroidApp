@@ -120,9 +120,9 @@ class _UserChatScreenState extends State<UserChatScreen> {
       final id = UserManager().id;
       print("CAI CCNDJAJSDKOSNCDKJLFJAIO $id");
       WebSocketManager().sendMessage(userId!, userName!, message);
-      setState(() {
-        messages.add({'message': message, 'senderName': userName, 'sender': 'user'});
-      });
+      // setState(() {
+      //   messages.add({'message': message, 'senderName': userName, 'sender': 'user'});
+      // });
       _controller.clear();
 
       InactivityTimerService().resetTimer();
@@ -133,7 +133,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
           curve: Curves.fastOutSlowIn,
         );
       });
-      _saveMessage('user', userName, message);
+      //_saveMessage('user', userName, message);
     }
   }
 
@@ -182,8 +182,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
               controller: _scrollController,
               itemBuilder: (context, index) {
                 var message = messages[index];
-                bool isUserMessage = message['sender'] == 'user';
-
+                bool isUserMessage = message['senderName'] == UserManager().username;
+                print("merejirejreij: $message");
                 return Column(
                   crossAxisAlignment: isUserMessage
                       ? CrossAxisAlignment.end

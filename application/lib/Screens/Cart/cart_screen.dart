@@ -1,13 +1,7 @@
 import 'dart:convert';
 
-import 'package:application/Screens/Checkout/key.dart';
-import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/components/customButton.dart';
-import 'package:application/components/customNavContent.dart';
 import 'package:application/Screens/Homepage/shop.dart';
-import 'package:application/Screens/Checkout/key.dart';
+import 'package:application/components/customButton.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/foundation.dart';
@@ -141,8 +135,14 @@ class _CartViewScreenState extends State<CartViewScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchCartUser();
-    isClickedList = List.generate(5, (index) => false);
+    _initializeAsync();
+  }
+
+  Future<void> _initializeAsync() async {
+    await _fetchCartUser();
+    setState(() {
+      isClickedList = List.generate(5, (index) => false);
+    });
   }
 
   Future<void> clearCart() async {
@@ -277,7 +277,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
             child: Center(
               child: Column(
                 children: [
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 100),
                   _cartItems.isEmpty
                       ? Text(
                           'Hiện tại bạn không có item nào trong cart',
@@ -297,12 +297,8 @@ class _CartViewScreenState extends State<CartViewScreen> {
                               final item = _cartItems[index];
                               print(
                                   'this is item : ${_cartItems[index]['itemID']}');
-                              // final imagePath =
-                              //     'assets/images/${item['itemIMAGE']}';
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
+                              return Container(
                                 child: _itemsCart(
-                                  // imagePath,
                                   item['quantity'].toString(),
                                   item['itemName'],
                                   item['total'],
@@ -312,7 +308,6 @@ class _CartViewScreenState extends State<CartViewScreen> {
                             },
                           ),
                         ),
-                  const SizedBox(height: 70),
                   _priceItem('Subtotal', "${totalPrice}\$"),
                   const SizedBox(height: 20),
                   _priceItem('Shipping charges', "${shipPrice}\$"),
@@ -367,18 +362,19 @@ class _CartViewScreenState extends State<CartViewScreen> {
           ],
         ),
         width: double.infinity,
-        height: 120,
+        height: 150,
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //Image.asset(pathImage, width: 200, height: 150),
-                  const SizedBox(width: 30),
+                  const SizedBox(
+                    width: 30,
+                  ),
                   _contentItem(priceItem, nameItem),
-                  const SizedBox(width: 15),
                   _counter(quantityItem, index),
                 ],
               ),
@@ -388,6 +384,23 @@ class _CartViewScreenState extends State<CartViewScreen> {
                 right: 0,
                 child: GestureDetector(
                   onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+
+                    // Kiểm tra xem key 'cart' có tồn tại không
+                    if (prefs.containsKey('cart')) {
+                      // In ra thông báo rằng cart tồn tại
+                      print('Cart exists in local storage');
+
+                      // Xóa cart khỏi local storage
+                      await prefs.remove('cart');
+                      print('Cart has been removed from local storage');
+                    } else {
+                      // In ra thông báo rằng cart không tồn tại
+                      print('No cart found in local storage');
+                    }
+
+                    // Cập nhật giao diện để xóa item khỏi danh sách
                     setState(() {
                       _cartItems.removeAt(index);
                       totalPrice = calculateCartTotal(_cartItems);
@@ -397,7 +410,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
                   child: Container(
                     color: Colors.red,
                     width: 60,
-                    height: 120,
+                    height: 150,
                     child: Icon(Icons.delete, color: Colors.white, size: 30),
                   ),
                 ),
@@ -412,19 +425,20 @@ class _CartViewScreenState extends State<CartViewScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Make the name item flexible to prevent overflow
-        Flexible(
+        const SizedBox(height: 30),
+        Container(
+          width: 250,
           child: Text(
             nameItem,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis, // Truncates text if it overflows
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1, // Make sure the name doesn't take more than one line
+            maxLines: 2,
           ),
         ),
-        const SizedBox(height: 10), // Adjusted space between name and price
+        const SizedBox(height: 10),
         Text(
           "${priceItem}\$",
           style: TextStyle(

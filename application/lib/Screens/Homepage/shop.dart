@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
-import 'package:application/Screens/Homepage/explore.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
@@ -13,6 +9,8 @@ import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({
@@ -31,12 +29,16 @@ class _ShopPageState extends State<ShopPage> {
   List<dynamic> _categoryItems = [];
   bool _loading = true;
   List<Map<String, dynamic>> _cartItems = [];
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+  String _lastWords = '';
 
   TextEditingController inputValueController = TextEditingController();
+  _getRequests() async {}
   @override
   void initState() {
     super.initState();
-
+    _initSpeech();
     loadCartFromLocalStorage();
     _fetchCategory();
   }
@@ -153,6 +155,35 @@ class _ShopPageState extends State<ShopPage> {
     }
   }
 
+  void _initSpeech() async {
+    bool available = await _speechToText.initialize();
+    setState(() {
+      _isListening = available;
+    });
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      inputValueController.text = _lastWords;
+    });
+    handleSearch(_lastWords);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -176,7 +207,7 @@ class _ShopPageState extends State<ShopPage> {
             'Shop',
             style: TextStyle(
               color: Colors.white, // Màu chữ
-              fontSize: 16,
+              fontSize: 23,
               fontFamily: 'Fredoka', // Kích thước chữ
             ),
           ),
@@ -189,6 +220,7 @@ class _ShopPageState extends State<ShopPage> {
                 icon: const Icon(
                   Icons.shopping_cart_outlined,
                   color: Colors.white,
+                  size: 23,
                 ),
                 onPressed: () {
                   print('Cart current: $_cartItems');
@@ -202,34 +234,48 @@ class _ShopPageState extends State<ShopPage> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: const EdgeInsets.only(
-                  top: 40, left: 20, right: 20, bottom: 20),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.11),
-                  blurRadius: 40,
-                  spreadRadius: 0.0,
-                )
-              ]),
+              margin: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.11),
+                    blurRadius: 40,
+                    spreadRadius: 0.0,
+                  )
+                ],
+              ),
               child: TextField(
                 controller: inputValueController,
-                onChanged: (value) {
-                  handleSearch(value);
-                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(12.0),
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isListening ? Icons.mic : Icons.mic_off,
+                      color: _isListening ? Colors.green : Colors.grey,
+                    ),
+                    onPressed: () {
+                      if (_isListening) {
+                        _stopListening();
+                      } else {
+                        _startListening();
+                      }
+                    },
+                  ),
                   hintText: 'Search Items By Category',
                   hintStyle: TextStyle(
-                      fontFamily: 'Fredoka',
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20),
+                    fontFamily: 'Fredoka',
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,

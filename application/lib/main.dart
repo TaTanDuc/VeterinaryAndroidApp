@@ -1,23 +1,19 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
-import 'package:application/Screens/Chat/Client.dart';
-import 'package:application/Screens/Chat/EmployeeChat.dart';
-import 'package:application/Screens/Chat/WebSocketService.dart';
-import 'package:application/Screens/Checkout/key.dart';
-import 'package:application/Screens/Providers/googleSignin.dart';
-import 'package:application/Screens/Login/login_screen.dart';
+import 'package:application/Screens/Cart/cart_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:flutter/material.dart';
 import 'package:application/Screens/Homepage/home.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:application/Screens/Providers/googleSignin.dart';
+import 'package:application/Screens/Login/login_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 // import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
+  await dotenv.load(fileName: "assets/.env");
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
       "pk_test_51QXwiTC5mILZpjuwuFliYwCHPgV04qQErHY6cNGhvVQU8gGo2LsqD0WlavJ2zghYTKJdf6Hdhc8VZ2DsDvYj30PA00Kzc3pIYE";
@@ -50,6 +46,7 @@ class MainPage extends StatefulWidget {
 
   const MainPage();
   @override
+  // ignore: library_private_types_in_public_api
   _MainPageState createState() => _MainPageState();
 }
 
@@ -116,7 +113,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 class HomePage1 extends StatelessWidget {
-  HomePage1();
+  const HomePage1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +122,7 @@ class HomePage1 extends StatelessWidget {
 }
 
 class ExplorePage1 extends StatelessWidget {
-  ExplorePage1();
+  const ExplorePage1({super.key});
   @override
   Widget build(BuildContext context) {
     return Center(child: ExplorePage());
@@ -133,7 +130,7 @@ class ExplorePage1 extends StatelessWidget {
 }
 
 class ManagePage1 extends StatelessWidget {
-  ManagePage1();
+  const ManagePage1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +139,7 @@ class ManagePage1 extends StatelessWidget {
 }
 
 class ProfilePage1 extends StatelessWidget {
-  ProfilePage1();
+  const ProfilePage1({super.key});
 
   @override
   Widget build(BuildContext context) {

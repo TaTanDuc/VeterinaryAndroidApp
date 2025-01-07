@@ -78,7 +78,7 @@ class _ServicePageState extends State<ServicePage> {
               'Detail',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 25,
                 fontFamily: 'Fredoka',
               ),
             ),
