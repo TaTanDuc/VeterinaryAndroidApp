@@ -2,19 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/function/chat.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as Path;
-import 'package:application/Screens/Profile/profile_screen.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -80,10 +74,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
     if (response.statusCode == 200) {
       final customPath = '$fileName';
-      print('Image uploaded successfully. Access the image at: $customPath');
       return customPath;
     } else {
-      print('Failed to upload the image. Status code: ${response.statusCode}');
       return 'Error uploading image';
     }
   }
