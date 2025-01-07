@@ -1,21 +1,12 @@
 import 'package:application/Screens/Appointments/appointment_screen.dart';
-import 'package:application/Screens/Chat/Client.dart';
-import 'package:application/Screens/Chat/EmployeeChat.dart';
-import 'package:application/Screens/Chat/WebSocketService.dart';
-import 'package:application/Screens/Checkout/key.dart';
 import 'package:application/Screens/Providers/googleSignin.dart';
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:application/Screens/Homepage/home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
-// import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,62 +45,61 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-  late final List<Widget> _children;
+late final List<Widget> _children;
 
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    // Khởi tạo các trang với userID được truyền vào từ widget
-    _children = [
-      HomePage1(),
-      ExplorePage1(),
-      ManagePage1(),
-      ProfilePage1(),
-    ];
-  }
+  // Khởi tạo các trang với userID được truyền vào từ widget
+  _children = [
+    HomePage1(),
+    ExplorePage1(),
+    ManagePage1(),
+    ProfilePage1(),
+  ];
+}
 
-  void onTappedBar(int index) {
-    setState(() {
-      _currentIndex = index; // Cập nhật chỉ số trang hiện tại
-    });
-  }
+void onTappedBar(int index) {
+  setState(() {
+    _currentIndex = index;
+  });
+}
 
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: const Color(0xFF5CB15A),
-      unselectedItemColor: Colors.white,
-      selectedItemColor: Colors.black,
-      currentIndex: _currentIndex,
-      onTap: onTappedBar,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.explore),
-          label: 'Explore',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.book_online_outlined),
-          label: 'Book appointment',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-    );
-  }
+Widget _buildBottomNavigationBar() {
+  return BottomNavigationBar(
+    type: BottomNavigationBarType.fixed,
+    backgroundColor: const Color(0xFF5CB15A),
+    unselectedItemColor: Colors.white,
+    selectedItemColor: Colors.black,
+    currentIndex: _currentIndex,
+    onTap: onTappedBar,
+    items: const [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.explore),
+        label: 'Explore',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.book_online_outlined),
+        label: 'Book appointment',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: 'Profile',
+      ),
+    ],
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _children[_currentIndex],
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: _children[_currentIndex],
+    bottomNavigationBar: _buildBottomNavigationBar(),
+  );
 }
 
 class HomePage1 extends StatelessWidget {

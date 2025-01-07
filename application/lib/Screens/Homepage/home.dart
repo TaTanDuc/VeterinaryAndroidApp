@@ -1,14 +1,9 @@
-import 'dart:math';
-
 import 'package:application/Screens/Chat/Client.dart';
-import 'package:application/Screens/Chat/WebSocketService.dart';
-import 'package:application/Screens/Chat/chatbox_screen.dart';
 import 'package:application/Screens/Chat/select_chatbox.dart';
+import 'package:application/Screens/Homepage/shop.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

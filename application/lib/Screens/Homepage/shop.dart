@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
-import 'package:application/Screens/Homepage/explore.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/components/customNavContent.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
@@ -13,6 +9,8 @@ import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({
@@ -31,6 +29,9 @@ class _ShopPageState extends State<ShopPage> {
   List<dynamic> _categoryItems = [];
   bool _loading = true;
   List<Map<String, dynamic>> _cartItems = [];
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+  String _lastWords = '';
 
   TextEditingController inputValueController = TextEditingController();
   @override
@@ -38,6 +39,36 @@ class _ShopPageState extends State<ShopPage> {
     super.initState();
     _fetchCategory();
     loadCartFromLocalStorage();
+    _initSpeech();
+  }
+
+  void _initSpeech() async {
+    bool available = await _speechToText.initialize();
+    setState(() {
+      _isListening = available;
+    });
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      inputValueController.text = _lastWords;
+    });
+    handleSearch(_lastWords);
   }
 
   Future<void> saveCartToLocalStorage() async {
