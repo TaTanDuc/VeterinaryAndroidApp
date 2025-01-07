@@ -16,7 +16,8 @@ class WebSocketManager {
 
   Function? onConnectCallback;
 
-  Future<void> initialize(String session, int userId, {Function? onConnectCallback}) async {
+  Future<void> initialize(String session, int userId,
+      {Function? onConnectCallback}) async {
     if (_client != null) return;
 
     _client = StompClient(
@@ -24,7 +25,7 @@ class WebSocketManager {
         url: 'ws://192.168.137.1:8080/veterinaryCustomerService',
         webSocketConnectHeaders:
             session.isNotEmpty ? {'Cookie': session} : null,
-        onConnect: (frame) => _onConnect(userId,frame, onConnectCallback),
+        onConnect: (frame) => _onConnect(userId, frame, onConnectCallback),
         onWebSocketError: (error) => print('WebSocket error: $error'),
         onStompError: (frame) => print('STOMP error: ${frame.body}'),
         onDisconnect: (frame) {
@@ -39,7 +40,7 @@ class WebSocketManager {
     _client?.activate();
   }
 
-  void _onConnect(int userId,StompFrame frame, Function? onConnectCallback) {
+  void _onConnect(int userId, StompFrame frame, Function? onConnectCallback) {
     isConnected = true;
     print("WebSocket Connected: ${frame.body}");
 
@@ -87,7 +88,8 @@ class WebSocketManager {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> existingMessages = prefs.getStringList('chatMessages') ?? [];
-      final combinedMessage = jsonEncode({'senderName': senderName, 'message': message});
+      final combinedMessage =
+          jsonEncode({'senderName': senderName, 'message': message});
       existingMessages.add(combinedMessage);
 
       await prefs.setStringList('chatMessages', existingMessages);
@@ -116,10 +118,10 @@ class WebSocketManager {
     _client?.deactivate();
   }
 
-  Future<void> reconnect(int userId,String session, bool connect) async {
+  Future<void> reconnect(int userId, String session, bool connect) async {
     if (connect == false) {
       disconnect();
-      await initialize(session,userId);
+      await initialize(session, userId);
     }
   }
 }

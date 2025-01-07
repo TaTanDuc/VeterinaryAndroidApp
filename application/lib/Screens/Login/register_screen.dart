@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://localhost:8080/api/user/register");
+      final url = Uri.parse("http://192.168.137.1:8080/api/account/register");
       if (usernameController.text.isEmpty ||
           passwordController.text.isEmpty ||
           emailController.text.isEmpty ||
@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }),
       );
       // Kiểm tra trạng thái của API trả về
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         // Nếu đăng nhập thành công, chuyển tới MainPage
         Navigator.push(
           context,

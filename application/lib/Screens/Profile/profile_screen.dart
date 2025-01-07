@@ -1,9 +1,11 @@
 import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/addPet_screen.dart';
 import 'package:application/Screens/Profile/appointment_screen.dart';
+import 'package:application/Screens/Profile/createProfile.dart';
 import 'package:application/Screens/Profile/invoice_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/controllers/GoogleController.dart';
@@ -454,10 +456,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _loading = true; // Change the type based on your response
+  bool _loading = true;
 
   dynamic profile;
-  dynamic ID;
+  String link = '';
 
   @override
   void initState() {
@@ -466,36 +468,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchProfile() async {
-    final userManager = UserManager(); // Ensure singleton access
-    // User? currentUser = userManager.user;
-
-    // if (currentUser != null) {
-    //   print("User ID in here: ${currentUser.userID}");
-    //   ID = currentUser.userID;
-    //   print("data: $ID");
-    // } else {
-    //   print("No user is logged in in HomePage.");
-    //   setState(() {
-    //     _loading = false; // Stop loading if no user is found
-    //   });
-    //   return;
-    // }
-
-    final url = Uri.parse('http://10.0.0.2/api/profile/user/get?userID=$ID');
+    final url = Uri.parse('http://192.168.137.1:8080/api/customer/profile/get');
 
     try {
-      final response =
-          await http.get(url, headers: {'Content-Type': 'application/json'});
+      final session = await SessionManager().getSession();
+      final response = await http.get(url,
+          headers: {'Content-Type': 'application/json', 'Cookie': '$session'});
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print('Received data: $data'); // Log the received data for debugging
+        final data = jsonDecode(response.body)['returned'];
+        print('Received data: $data');
 
         setState(() {
-          profile = Profile.fromJson(
-              data); // Ensure you are calling fromJson correctly
+          profile = Profile.fromJson(data);
           _loading = false;
-          print("Parsed profile: $profile");
+          link = profile.profileIMG;
         });
       } else {
         throw Exception('Failed to load profile details');
@@ -503,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       print('Error fetching profile details: $e');
       setState(() {
-        _loading = false; // Stop loading on error
+        _loading = false;
       });
     }
   }
@@ -511,7 +498,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, // Prevent back navigation
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF5CB15A),
@@ -582,8 +569,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           ClipPath(
             clipper: BottomRoundedClipper(),
-            child: Image.asset(
-              'assets/images/avatar02.jpg',
+            child: Image.network(
+              link,
               width: double.infinity,
               height: 350,
               fit: BoxFit.cover,
@@ -649,6 +636,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
+  }
+
+  Future<void> check(context) async {
+    final sm = await SessionManager().getSession();
+    final response = await http.get(
+        Uri.parse('http://192.168.137.1:8080/api/customer/profile/get'),
+        headers: {'cookie': '$sm'});
+    try {
+      if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UpdateProfileScreen(
+              profile: profile,
+            ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProfileScreen(),
+          ),
+        );
+      }
+    } catch (ex) {
+      rethrow;
+    }
   }
 
   Widget _infoUser(Profile user) {
@@ -750,14 +765,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
             const SizedBox(height: 20),
-            // Email Row
             Row(
               children: [
                 Icon(Icons.email),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    user.profileEMAIL,
+                    user.Email!,
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: responsiveFontSize,
@@ -803,12 +817,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UpdateProfileScreen(profile: profile)),
-                  );
+                  check(context);
                 },
                 child: _optionItem(Icons.person, 'Update Information'),
               ),
@@ -855,8 +864,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10), // Vertical padding
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // Ensure spacing between elements
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Row(

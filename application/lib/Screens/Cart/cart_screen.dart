@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartViewScreen extends StatefulWidget {
   const CartViewScreen({super.key});
@@ -26,7 +27,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
   List<bool> isClickedList = [];
   dynamic userID;
   dynamic cartID;
-  List<dynamic> cartItemUser = [];
+  List<Map<String, dynamic>> _cartItems = [];
   bool isIncreasing = false;
   bool isDecreasing = false;
   int totalPrice = 0;
@@ -77,6 +78,13 @@ class _CartViewScreenState extends State<CartViewScreen> {
                 color: Color(0xff5CB15A)),
           ),
         );
+        Future<void> clearCart() async {
+          setState(() {
+            _cartItems.clear();
+          });
+          await saveCartToLocalStorage();
+        }
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),
@@ -138,157 +146,64 @@ class _CartViewScreenState extends State<CartViewScreen> {
   @override
   void initState() {
     super.initState();
-    // Giả sử có 5 item, khởi tạo danh sách trạng thái cho tất cả items
     _fetchCartUser();
-    isClickedList =
-        List.generate(5, (index) => false); // Tùy thuộc vào số lượng items
+    isClickedList = List.generate(5, (index) => false);
   }
 
-  Future<void> handleDecreaseItem(int index, bool isDecreasing) async {
-    try {
-      int currentQuantity;
-
-      // Lấy thông tin của item đang được cập nhật
-      var item = cartItemUser[index];
-      currentQuantity = item['itemQUANTITY'];
-      ;
-
-      // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
-      if (isDecreasing) {
-        currentQuantity--;
-      } else {
-        currentQuantity = currentQuantity == 1
-            ? currentQuantity
-            : currentQuantity - 1; // Không để số lượng nhỏ hơn 1
-      }
-
-      // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
-      final response = await http.patch(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userID": userID,
-          "cartID": cartID,
-          "cartItems": [
-            {
-              "itemCODE": item['itemCODE'], // Mã item
-              "itemID": item['itemID'], // ID item
-              "itemQUANTITY": currentQuantity.toString() // Số lượng mới
-            }
-          ]
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        var updatedItem = data['cartDetails'][0];
-        setState(() {
-          cartItemUser = cartItemUser.map((existingItem) {
-            if (existingItem['itemNAME'] == updatedItem['itemNAME']) {
-              return updatedItem; // Thay thế item có cùng tên
-            }
-            return existingItem; // Không thay đổi các item khác
-          }).toList();
-          setState(() {
-            totalPrice = 0; // Reset lại totalPrice
-            cartItemUser.forEach((item) {
-              int itemPrice = int.parse(item['itemPRICE'].toString());
-              int itemQuantity = int.parse(item['itemQUANTITY'].toString());
-              totalPrice += itemPrice * itemQuantity;
-            });
-          });
-        });
-      }
-    } catch (err) {
-      print(err);
-    }
+  Future<void> clearCart() async {
+    setState(() {
+      _cartItems.clear();
+    });
+    await saveCartToLocalStorage();
   }
 
-  Future<void> handleIncreaseItem(int index, bool isIncreasing) async {
-    try {
-      int currentQuantity;
-
-      // Lấy thông tin của item đang được cập nhật
-      var item = cartItemUser[index];
-      currentQuantity = item['itemQUANTITY'];
-      ;
-
-      // Tăng hoặc giảm số lượng dựa trên nút đã được nhấn
-      if (isIncreasing) {
-        currentQuantity++;
-      } else {
-        currentQuantity = currentQuantity > 1
-            ? currentQuantity - 1
-            : 1; // Không để số lượng nhỏ hơn 1
+  void increaseQuantity(int itemId) async {
+    setState(() {
+      final itemIndex =
+          _cartItems.indexWhere((item) => item['itemID'] == itemId);
+      if (itemIndex != -1) {
+        _cartItems[itemIndex]['quantity'] += 1;
+        _cartItems[itemIndex]['total'] =
+            _cartItems[itemIndex]['price'] * _cartItems[itemIndex]['quantity'];
+        totalPrice = _cartItems[itemIndex]['total'];
       }
+    });
 
-      // Gọi API để cập nhật số lượng mới
-      final url = Uri.parse("http://192.168.137.1:8080/api/cart/updateCart");
-      final response = await http.patch(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userID": userID,
-          "cartID": cartID,
-          "cartItems": [
-            {
-              "itemCODE": item['itemCODE'], // Mã item
-              "itemID": item['itemID'], // ID item
-              "itemQUANTITY": currentQuantity.toString() // Số lượng mới
-            }
-          ]
-        }),
-      );
+    await saveCartToLocalStorage();
+  }
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        var updatedItem = data['cartDetails'][0];
-        setState(() {
-          cartItemUser = cartItemUser.map((existingItem) {
-            if (existingItem['itemNAME'] == updatedItem['itemNAME']) {
-              return updatedItem; // Thay thế item có cùng tên
-            }
-            return existingItem; // Không thay đổi các item khác
-          }).toList();
-        });
-        setState(() {
-          totalPrice = 0; // Reset lại totalPrice
-          cartItemUser.forEach((item) {
-            int itemPrice = int.parse(item['itemPRICE'].toString());
-            int itemQuantity = int.parse(item['itemQUANTITY'].toString());
-            totalPrice += itemPrice * itemQuantity;
-          });
-        });
-      } else {
-        print("Failed to update item.");
+  void decreaseQuantity(int itemId) async {
+    setState(() {
+      final itemIndex =
+          _cartItems.indexWhere((item) => item['itemID'] == itemId);
+      if (itemIndex != -1) {
+        if (_cartItems[itemIndex]['quantity'] > 1) {
+          _cartItems[itemIndex]['quantity'] -= 1;
+          _cartItems[itemIndex]['total'] = _cartItems[itemIndex]['price'] *
+              _cartItems[itemIndex]['quantity'];
+          totalPrice = _cartItems[itemIndex]['total'];
+        } else {
+          _cartItems.removeAt(itemIndex);
+        }
       }
-    } catch (err) {
-      print(err);
-    }
+    });
+
+    await saveCartToLocalStorage();
+  }
+
+  Future<void> saveCartToLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('cart', jsonEncode(_cartItems));
   }
 
   Future<void> _fetchCartUser() async {
-    try {
-      final url = Uri.parse("http://192.168.137.1:8080/api/cart/getUserCart");
-      // Gửi yêu cầu POST tới API
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({}),
-      );
-      // Kiểm tra trạng thái của API trả về
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          totalPrice = data['TOTAL'];
-          cartItemUser = data["cartDetails"];
-          // totalPrice = int.parse(data['TOTAL']);
-          isClickedList = List.generate(cartItemUser.length, (index) => false);
-        });
-      }
-    } catch (error) {
-      print(error);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cartData = prefs.getString('cart');
+    if (cartData != null) {
+      setState(() {
+        _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
+        print('Cart: $_cartItems');
+      });
     }
   }
 
@@ -296,6 +211,32 @@ class _CartViewScreenState extends State<CartViewScreen> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF5CB15A),
+          title: const Center(
+            child: Text(
+              'Cart ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Fredoka',
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height:
+                    AppBar().preferredSize.height, // Match the AppBar height
+                child: Image.asset(
+                  'assets/icons/logo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Color.fromARGB(255, 240, 238, 238),
         body: _page(),
       ),
@@ -312,7 +253,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 120),
-                  cartItemUser.isEmpty
+                  _cartItems.isEmpty
                       ? Text(
                           'Hiện tại bạn không có item nào trong cart',
                           style: TextStyle(
@@ -322,27 +263,24 @@ class _CartViewScreenState extends State<CartViewScreen> {
                           ),
                         )
                       : SizedBox(
-                          height: 400, // Giới hạn chiều cao của vùng chứa
+                          height: 400,
                           child: ListView.builder(
-                            shrinkWrap:
-                                true, // Đảm bảo ListView thu nhỏ theo nội dung
-                            physics:
-                                AlwaysScrollableScrollPhysics(), // Cho phép cuộn
-                            itemCount:
-                                cartItemUser.length, // Số lượng item từ API
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: _cartItems.length,
                             itemBuilder: (context, index) {
-                              final item = cartItemUser[index];
-                              final imagePath =
-                                  'assets/images/${item['itemIMAGE']}';
+                              final item = _cartItems[index];
+                              print(
+                                  'this is item : ${_cartItems[index]['itemID']}');
+                              // final imagePath =
+                              //     'assets/images/${item['itemIMAGE']}';
                               return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 8.0), // Khoảng cách phía trên
+                                padding: const EdgeInsets.only(top: 8.0),
                                 child: _itemsCart(
-                                  imagePath, // Dữ liệu hình ảnh từ API
-                                  item['itemQUANTITY']
-                                      .toString(), // Số lượng từ API
-                                  item['itemNAME'], // Tên item từ API
-                                  item['itemPRICE'], // Giá item từ API
+                                  // imagePath,
+                                  item['quantity'].toString(),
+                                  item['itemName'],
+                                  item['total'],
                                   index,
                                 ),
                               );
@@ -362,46 +300,33 @@ class _CartViewScreenState extends State<CartViewScreen> {
                         setState(() {
                           amount = (totalPrice + shipPrice).roundToDouble();
                         });
-                        paymentSheetInitialization(amount.toString(), "VND");
+                        paymentSheetInitialization(amount.toString(), "USD");
                       })
                 ],
               ),
             ),
           ),
         ),
-        CustomNavContent(
-          navText: "Cart",
-          onBackPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ShopPage(), // Điều hướng đến trang mới
-              ),
-            );
-          },
-        )
       ],
     );
   }
 
-  Widget _itemsCart(pathImage, quantityItem, nameItem, priceItem, index) {
-    // Kiểm tra nếu index nằm ngoài phạm vi của cartItemUser
-    if (index >= cartItemUser.length) {
-      return SizedBox.shrink(); // Trả về widget rỗng nếu index không hợp lệ
+  Widget _itemsCart(quantityItem, nameItem, priceItem, index) {
+    if (index >= _cartItems.length) {
+      return SizedBox.shrink();
     }
 
     int itemIndex = index as int;
     return GestureDetector(
       onTap: () {
         setState(() {
-          isClickedList[itemIndex] =
-              !isClickedList[itemIndex]; // Đổi trạng thái cho item hiện tại
+          isClickedList[itemIndex] = !isClickedList[itemIndex];
         });
       },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
-        transform: Matrix4.translationValues(
-            isClickedList[index] ? -50 : 0, 0, 0), // Di chuyển theo trục X
+        transform:
+            Matrix4.translationValues(isClickedList[index] ? -50 : 0, 0, 0),
         decoration: BoxDecoration(
           color: Color(0xffFFFFFF),
           borderRadius: BorderRadius.circular(10),
@@ -424,7 +349,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(pathImage, width: 200, height: 150),
+                  //Image.asset(pathImage, width: 200, height: 150),
                   const SizedBox(width: 30),
                   _contentItem(priceItem, nameItem),
                   const SizedBox(width: 15),
@@ -432,17 +357,24 @@ class _CartViewScreenState extends State<CartViewScreen> {
                 ],
               ),
             ),
-            // Icon "Remove" xuất hiện khi item này được click
             if (isClickedList[itemIndex])
               Positioned(
                 right: 0,
-                child: Container(
-                  color: Colors.red,
-                  width: 60,
-                  height: 120,
-                  child: Icon(Icons.delete, color: Colors.white, size: 30),
+                child: GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      _cartItems.removeAt(index);
+                    });
+                    await saveCartToLocalStorage();
+                  },
+                  child: Container(
+                    color: Colors.red,
+                    width: 60,
+                    height: 120,
+                    child: Icon(Icons.delete, color: Colors.white, size: 30),
+                  ),
                 ),
-              ),
+              )
           ],
         ),
       ),
@@ -451,45 +383,67 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
   Widget _contentItem(priceItem, nameItem) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(nameItem,
+        // Make the name item flexible to prevent overflow
+        Flexible(
+          child: Text(
+            nameItem,
             style: TextStyle(
-                color: Color(0xff000000),
-                fontSize: 30,
-                fontFamily: 'Fredoka',
-                fontWeight: FontWeight.w600)),
-        const SizedBox(height: 15),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis, // Truncates text if it overflows
+            ),
+            maxLines: 1, // Make sure the name doesn't take more than one line
+          ),
+        ),
+        const SizedBox(height: 10), // Adjusted space between name and price
         Text(
           "${priceItem}\$",
           style: TextStyle(
-              color: Color(0xff5CB15A), fontSize: 20, fontFamily: 'Fredoka'),
+            color: Color(0xff5CB15A),
+            fontSize: 20,
+            fontFamily: 'Fredoka',
+          ),
         ),
       ],
     );
   }
 
   Widget _counter(quantityItem, index) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: Icon(Icons.add), // Biểu tượng nút
-            onPressed: () {
-              handleIncreaseItem(index, true);
-              // _fetchCartUser();
-            },
-          ),
-          Text("${quantityItem}",
-              style: TextStyle(fontSize: 16, color: Color(0xff868889))),
-          IconButton(
-            icon: Icon(Icons.remove),
-            onPressed: () {
-              handleDecreaseItem(index, isDecreasing);
-            },
-          )
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.remove,
+                size: 20,
+              ),
+              onPressed: () {
+                decreaseQuantity(_cartItems[index]['itemID']);
+              },
+            ),
+            Text(
+              "$quantityItem",
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xff868889),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                size: 20,
+              ),
+              onPressed: () {
+                increaseQuantity(_cartItems[index]['itemID']);
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 

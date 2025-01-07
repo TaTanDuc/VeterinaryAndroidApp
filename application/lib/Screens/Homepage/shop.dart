@@ -2,14 +2,17 @@ import 'dart:convert';
 
 import 'package:application/Screens/Cart/cart_screen.dart';
 import 'package:application/Screens/Homepage/explore.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
+import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({
@@ -27,53 +30,72 @@ class _ShopPageState extends State<ShopPage> {
   dynamic cartID;
   List<dynamic> _categoryItems = [];
   bool _loading = true;
+  List<Map<String, dynamic>> _cartItems = [];
 
   TextEditingController inputValueController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    _fetchCategory(); // Call fetchPets when the widget is initialized
+    _fetchCategory();
+    loadCartFromLocalStorage();
   }
 
-  Future<void> handleAddCart(value) async {
-    try {
+  Future<void> saveCartToLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('cart', jsonEncode(_cartItems));
+  }
+
+  Future<void> loadCartFromLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cartData = prefs.getString('cart');
+    if (cartData != null) {
       setState(() {
-        _loading = false;
-      });
-      final url = Uri.parse("http://10.0.2.2:8080/api/cart/addItem");
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "userID": ID,
-          "cartID": cartID,
-          "itemCODE": value['itemCODE'],
-          "itemID": value['itemID'],
-          "quantity": 1
-        }),
-      );
-      if (response.statusCode == 200) {}
-    } catch (err) {
-      print(err);
-      setState(() {
-        _loading = false;
+        _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
       });
     }
   }
 
+  Future<void> handleAddCart(Map<String, dynamic> value) async {
+    setState(() {
+      final existingItemIndex =
+          _cartItems.indexWhere((item) => item['itemID'] == value['itemID']);
+
+      if (existingItemIndex != -1) {
+        _cartItems[existingItemIndex]['quantity'] += 1;
+        _cartItems[existingItemIndex]['total'] = _cartItems[existingItemIndex]
+                ['total'] *
+            _cartItems[existingItemIndex]['quantity'];
+      } else {
+        final session = SessionManager().getSession();
+        _cartItems.add({
+          "userID": value['session'],
+          "itemName": value['itemName'],
+          "itemID": value['itemID'],
+          "categoryName": value['categoryName'],
+          "price": value['price'],
+          "quantity": 1,
+          "total": value['price'],
+        });
+      }
+      print('dsdsdsssssdwewedsds: $_cartItems');
+    });
+
+    await saveCartToLocalStorage(); // Save the updated cart to local storage
+  }
+
   Future<void> handleSearch(value) async {
     try {
+      final session = await SessionManager().getSession();
       final url = Uri.parse(
-          "http://192.168.137.1:8080/api/storage/search?itemCATEGORY=${_currentCategory}&itemNAME=${value}");
+          "http://192.168.137.1:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=${value}");
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
       );
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // Nếu đăng nhập thành công, chuyển tới MainPage
+        final data = jsonDecode(response.body)['returned'];
         setState(() {
-          _categoryItems = data; // Hiển thị thông báo lỗi
+          _categoryItems = data;
         });
       }
     } catch (err) {
@@ -84,16 +106,16 @@ class _ShopPageState extends State<ShopPage> {
   // Track the selected category index
   Future<void> _fetchCategory() async {
     try {
+      final session = await SessionManager().getSession();
       final url = Uri.parse(
-          "http://192.168.137.1:8080/api/storage/getItems?category=${_currentCategory}");
-      // Gửi yêu cầu POST tới API
+          "http://192.168.137.1:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=");
+
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
       );
-      // Kiểm tra trạng thái của API trả về
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = jsonDecode(response.body)['returned'];
         setState(() {
           _categoryItems = data;
         });
@@ -112,10 +134,22 @@ class _ShopPageState extends State<ShopPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MainPage()),
+            );
+          },
+        ),
         backgroundColor: const Color(0xFF5CB15A),
         title: const Center(
           child: Text(
-            'Shop', // Văn bản bạn muốn thêm
+            'Shop',
             style: TextStyle(
               color: Colors.white, // Màu chữ
               fontSize: 16,
@@ -133,7 +167,6 @@ class _ShopPageState extends State<ShopPage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  // Điều hướng đến trang mới
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => CartViewScreen()),
@@ -182,36 +215,12 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
             ),
-            // My Pets Section
-            // Padding(
-            //   padding: const EdgeInsets.all(30.0),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       const SizedBox(height: 20),
-            //       _buildCategoryItem(
-            //           0, 'Food', 'assets/icons/food.png', screenWidth),
-            //       _buildCategoryItem(1, 'Medicine',
-            //           'assets/icons/petmedicine.png', screenWidth),
-            //       _buildCategoryItem(2, 'Accessory',
-            //           'assets/icons/accessories.png', screenWidth),
-            //       _buildCategoryItem(
-            //           3, 'Toy', 'assets/icons/pet-toy.png', screenWidth),
-            //       _buildCategoryItem(
-            //           4, 'Furniture', 'assets/icons/house.png', screenWidth),
-
-            //     ],
-            //   ),
-            // ),
             Center(
               child: _buildCategoryBox(screenWidth),
             ),
-
             const SizedBox(height: 0),
-
             Padding(
-                padding: const EdgeInsets.all(
-                    16.0), // Set the desired padding (which acts like a margin)
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   "Our $_currentCategory",
                   style: TextStyle(
@@ -219,11 +228,10 @@ class _ShopPageState extends State<ShopPage> {
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
                 )),
-
             Center(
               child: Wrap(
-                runSpacing: 20, // Vertical space between rows
-                spacing: 20, // Horizontal space between items
+                runSpacing: 20,
+                spacing: 20,
                 direction: Axis.horizontal,
                 alignment: WrapAlignment.center,
                 runAlignment: WrapAlignment.center,
@@ -242,17 +250,18 @@ class _ShopPageState extends State<ShopPage> {
                             Image.asset('assets/images/empty_image.png')
                           ],
                         )
-                      ] // Hiển thị nếu không có dữ liệu
+                      ]
                     : List.generate(_categoryItems.length, (index) {
                         var item = _categoryItems[index];
-                        String imagePath = '${item['itemIMAGE']}';
+                        //String imagePath = '${item['itemIMAGE']}';
                         return _buildShopRow(
-                            index,
-                            item['itemNAME'],
-                            item['itemDESCRIPTION'],
-                            item['itemPRICE'].toString(),
-                            imagePath,
-                            item['itemQUANTITY'].toString());
+                          index,
+                          item['itemIMG'],
+                          item['itemName'],
+                          item['categoryName'],
+                          item['price'].toString(),
+                          item['itemRating'],
+                        );
                       }),
               ),
             ),
@@ -263,9 +272,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Widget _buildCategoryBox(double screenWidth) {
-    double boxWidth = screenWidth > 600
-        ? 600
-        : screenWidth * 0.9; // Max width of 600 for larger screens
+    double boxWidth = screenWidth > 600 ? 600 : screenWidth * 0.9;
 
     return Container(
       child: screenWidth > 600
@@ -306,13 +313,12 @@ class _ShopPageState extends State<ShopPage> {
               child: Center(
                 child: GridView.builder(
                   shrinkWrap: true,
-                  physics:
-                      NeverScrollableScrollPhysics(), // Prevent scrolling for the parent container
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // 2 columns on smaller screens
-                    childAspectRatio: 1, // Maintain aspect ratio for items
-                    crossAxisSpacing: 16, // Space between items
-                    mainAxisSpacing: 16, // Space between rows
+                    crossAxisCount: 2,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
                   ),
                   itemCount: 5,
                   itemBuilder: (context, index) {
@@ -342,8 +348,7 @@ class _ShopPageState extends State<ShopPage> {
 
   Widget _buildCategoryItem(
       int index, String title, String imagePath, double screenWidth) {
-    double containerSize =
-        screenWidth > 600 ? 80 : 60; // Adjust size based on screen width
+    double containerSize = screenWidth > 600 ? 80 : 60;
 
     return GestureDetector(
       onTap: () {
@@ -412,9 +417,7 @@ class _ShopPageState extends State<ShopPage> {
 
   Widget _buildCategoryItemRow(
       int index, String title, String imagePath, double screenWidth) {
-    // Adjust icon and container size based on screen width
-    double containerSize =
-        screenWidth > 600 ? 80 : 60; // Larger container for bigger screens
+    double containerSize = screenWidth > 600 ? 80 : 60;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -422,10 +425,9 @@ class _ShopPageState extends State<ShopPage> {
         onTap: () {
           setState(() {
             _selectedCategoryIndex = index;
-            _currentCategory =
-                title.toUpperCase(); // Update the selected category index
+            _currentCategory = title.toUpperCase();
           });
-          _fetchCategory(); // Handle the click event
+          _fetchCategory();
         },
         child: Column(
           children: [
@@ -441,17 +443,14 @@ class _ShopPageState extends State<ShopPage> {
               ),
               child: Image.asset(
                 imagePath,
-                fit: BoxFit
-                    .contain, // Ensures the image fits well inside the container
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
-                fontSize: screenWidth > 600
-                    ? 16
-                    : 12, // Larger text for bigger screens
+                fontSize: screenWidth > 600 ? 16 : 12,
                 color: _selectedCategoryIndex == index
                     ? Colors.black
                     : Colors.grey,
@@ -463,8 +462,8 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  Widget _buildShopRow(int index, String brand, String description,
-      String price, String imagePath, quantity) {
+  Widget _buildShopRow(int index, String imagePath, String brand,
+      String description, String price, double quantity) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -473,31 +472,31 @@ class _ShopPageState extends State<ShopPage> {
         width: 300,
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          // Sử dụng Column để cho phép nội dung tự động xuống hàng
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Căn chỉnh các widget sang bên trái
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // _buildShopCard(
+            //     brand, description, price, imagePath, quantity, index),
             _buildShopCard(
-                brand, description, price, imagePath, quantity, index),
+                imagePath, brand, description, price, quantity, index),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildShopCard(String brand, String description, String price,
-      String imagePath, quantity, index) {
+  Widget _buildShopCard(String imagePath, String brand, String description,
+      String price, double quantity, index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Container(
-        width: double.infinity, // Chiều rộng tối đa
+        width: double.infinity,
         constraints: BoxConstraints(
-          minHeight: 300, // Thiết lập chiều cao tối thiểu cho card
+          minHeight: 300,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
+            Image.network(
               imagePath,
               fit: BoxFit.contain,
               height: 150,
@@ -517,47 +516,26 @@ class _ShopPageState extends State<ShopPage> {
             Container(
               margin: const EdgeInsets.only(bottom: 4.0),
               constraints: BoxConstraints(
-                minHeight: 40, // Thiết lập chiều cao tối thiểu cho mô tả
+                minHeight: 40,
               ),
               child: Text(
                 description,
-                maxLines: 3, // Giới hạn số dòng
-                overflow:
-                    TextOverflow.ellipsis, // Hiển thị ... nếu mô tả quá dài
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     fontSize: 14, color: Colors.grey, fontFamily: 'Fredoka'),
               ),
             ),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                _buildStarRating(quantity),
+                const SizedBox(width: 8),
                 Text(
-                  "Price: $price",
-                  style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 16,
-                      fontFamily: 'Fredoka',
-                      fontWeight: FontWeight.w600),
+                  quantity.toStringAsFixed(1),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-                if (int.tryParse(quantity) != 0) // Nếu quantity > 0
-                  Text(
-                    'In stock: $quantity',
-                    style: TextStyle(
-                        color: Color(0xff000000),
-                        fontSize: 16,
-                        fontFamily: 'Fredoka',
-                        fontWeight: FontWeight.w600),
-                  )
-                else // Nếu quantity = 0
-                  Text(
-                    'Sold out',
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontFamily: 'Fredoka',
-                        fontWeight: FontWeight.w600),
-                  ),
               ],
             ),
             Divider(
@@ -565,78 +543,94 @@ class _ShopPageState extends State<ShopPage> {
               thickness: 3,
               height: 20,
             ),
-            if (int.tryParse(quantity) != 0) // Câu lệnh điều kiện
-              GestureDetector(
-                onTap: () {
-                  DelightToastBar(
-                          builder: (context) {
-                            return const ToastCard(
-                              leading: Icon(Icons.check, size: 20),
-                              title: const Text(
-                                'Add successful',
-                                style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Fredoka',
-                                    color: Color(0xff5CB15A)),
-                              ),
-                            );
-                          },
-                          position: DelightSnackbarPosition.top,
-                          autoDismiss: true,
-                          snackbarDuration: Durations.extralong2)
-                      .show(context);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        handleAddCart(_categoryItems[index]);
-                        DelightToastBar(
-                          builder: (context) {
-                            return const ToastCard(
-                              leading: Icon(Icons.check, size: 20),
-                              title: Text(
-                                'Add successful',
-                                style: TextStyle(
+            GestureDetector(
+              onTap: () {
+                DelightToastBar(
+                        builder: (context) {
+                          return const ToastCard(
+                            leading: Icon(Icons.check, size: 20),
+                            title: const Text(
+                              'Add successful',
+                              style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Fredoka',
-                                  color: Color(0xff5CB15A),
-                                ),
-                              ),
-                            );
-                          },
-                          position: DelightSnackbarPosition.top,
-                          autoDismiss: true,
-                          snackbarDuration: Durations.extralong4,
-                        ).show(context);
-                      },
-                      child: SizedBox(
-                        child: Row(
-                          children: [
-                            Text(
-                              'Add to cart',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Fredoka'),
+                                  color: Color(0xff5CB15A)),
                             ),
-                            const SizedBox(width: 8),
-                            Icon(Icons.shopping_cart_outlined,
-                                color: Colors.red)
-                          ],
-                        ),
+                          );
+                        },
+                        position: DelightSnackbarPosition.top,
+                        autoDismiss: true,
+                        snackbarDuration: Durations.extralong2)
+                    .show(context);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      handleAddCart(_categoryItems[index]);
+                      DelightToastBar(
+                        builder: (context) {
+                          return const ToastCard(
+                            leading: Icon(Icons.check, size: 20),
+                            title: Text(
+                              'Add successful',
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Fredoka',
+                                color: Color(0xff5CB15A),
+                              ),
+                            ),
+                          );
+                        },
+                        position: DelightSnackbarPosition.top,
+                        autoDismiss: true,
+                        snackbarDuration: Durations.extralong4,
+                      ).show(context);
+                    },
+                    child: SizedBox(
+                      child: Row(
+                        children: [
+                          Text(
+                            'Add to cart',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Fredoka'),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(Icons.shopping_cart_outlined, color: Colors.red)
+                        ],
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStarRating(double rating) {
+    int fullStars = rating.floor();
+    bool hasHalfStar = (rating - fullStars) >= 0.5;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (index) {
+        if (index < fullStars) {
+          return const Icon(Icons.star, color: Colors.yellow, size: 18);
+        } else if (index == fullStars && hasHalfStar) {
+          return const Icon(Icons.star_half, color: Colors.yellow, size: 18);
+        } else {
+          return const Icon(Icons.star_border, color: Colors.yellow, size: 18);
+        }
+      }),
     );
   }
 }

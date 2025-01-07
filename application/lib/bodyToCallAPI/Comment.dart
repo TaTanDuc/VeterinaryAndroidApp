@@ -1,36 +1,36 @@
 class Comment {
-  final int? commentID;
+  final int? serviceCommentID;
   final String profileIMG;
-  final String profileNAME;
-  final DateTime commentDATE;
-  final int commentRATING;
-  final String CONTENT;
+  final String profileName;
+  final String commentTime;
+  final int serviceRating;
+  final String content;
 
   Comment({
-    required this.commentID,
+    required this.serviceCommentID,
     required this.profileIMG,
-    required this.profileNAME,
-    required this.commentDATE,
-    required this.commentRATING,
-    required this.CONTENT,
+    required this.profileName,
+    required this.commentTime,
+    required this.serviceRating,
+    required this.content,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      commentID: json['commentID'] ?? 0, // Provide default values if necessary
+      serviceCommentID:
+          json['serviceCommentID'] ?? 0, // Provide default values if necessary
 
       profileIMG: json['profileIMG'] ?? '',
-      profileNAME: json['profileNAME'] ?? 'Anonymous',
-      commentDATE: json['commentDATE'] != null
-          ? DateTime.tryParse(json['commentDATE']) ??
-              DateTime.now() // Handle parsing
-          : DateTime.now(),
-      commentRATING: json['commentRATING'] ?? 0,
-      CONTENT: json['CONTENT'] ?? '',
+      profileName: json['profileName'] ?? 'Anonymous',
+      commentTime: json['commentTime'] != null
+          ? json['commentTime'].toString()
+          : DateTime.now().toString(),
+      serviceRating: json['serviceRating'] ?? 0,
+      content: json['content'] ?? '',
     );
   }
   @override
   String toString() {
-    return 'Comment(commentID: $commentID, profileIMG: $profileIMG, profileNAME: $profileNAME, commentDATE: $commentDATE, commentRATING: $commentRATING, CONTENT: $CONTENT)';
+    return 'Comment(commentID: $serviceCommentID, profileIMG: $profileIMG, profileNAME: $profileName, commentDATE: $commentTime, commentRATING: $serviceRating, CONTENT: $content)';
   }
 }

@@ -69,19 +69,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchShops() async {
-    final url = Uri.parse('http://192.168.137.1:8080/api/storage/getRandom');
+    final url =
+        Uri.parse('http://192.168.137.1:8080/api/customer/shop/getRandom');
     try {
+      final session = await SessionManager().getSession();
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'}, // Optional for GET
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': '$session'
+        }, // Optional for GET
       );
       print('Response Body: ${response.body}');
       if (response.statusCode == 200) {
-        final List<dynamic> shopData = jsonDecode(response.body);
+        final List<dynamic> shopData = jsonDecode(response.body)['returned'];
         setState(() {
           _randItem = shopData.map((json) => Shop.fromJson(json)).toList();
           _loading = false;
-          print('Mapped shops: $_randItem'); // Check the mapped pets
+          print('Mapped shops: $_randItem');
         });
       } else {
         throw Exception('Failed to load shop');
@@ -165,33 +170,72 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Add any other sections here...
-                    const SizedBox(height: 10),
-                    _loading
-                        ? Center(child: CircularProgressIndicator())
-                        : SizedBox(
-                            height: 300,
-                            child: ListView.builder(
-                              itemCount: _randItem.length,
-                              itemBuilder: (context, index) {
-                                return _buildPetFoodCard(_randItem[index]);
-                              },
-                            ),
+                    // The rest of the UI for the Shop section, etc.
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 4, 4, 4),
+                            width: 1.0,
                           ),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ShopPage()),
-                          );
-                        },
-                        child: const Text(
-                          'Shop Now', // Nhãn
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontFamily: 'Fredoka',
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.shopping_bag), // Biểu tượng
+                                  const SizedBox(
+                                    height: 50,
+                                    width: 8,
+                                  ), // Khoảng cách giữa biểu tượng và nhãn
+                                  const Text(
+                                    'Shop', // Nhãn
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontFamily: 'Fredoka',
+                                      fontWeight: FontWeight.bold,
+                                    ), // Bạn có thể điều chỉnh kiểu chữ ở đây
+                                  ),
+                                ],
+                              ),
+                              _loading
+                                  ? Center(child: Text('No items found.'))
+                                  : SizedBox(
+                                      height: 330,
+                                      child: ListView.builder(
+                                        itemCount: _randItem.length,
+                                        itemBuilder: (context, index) {
+                                          return _buildPetFoodCard(
+                                              _randItem[index]);
+                                        },
+                                      ),
+                                    ),
+                              const SizedBox(height: 10),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ShopPage()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Shop Now', // Nhãn
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontFamily: 'Fredoka',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -221,45 +265,49 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPetCard(Pet pet) {
+    print('Pet fetch:  ${pet.petIMAGE}');
     return Container(
       width: 80,
+      height: 120,
       margin: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                ClipOval(
-                  child: SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: pet.petIMAGE.isNotEmpty
-                        ? Image.memory(
-                            base64Decode(pet.petIMAGE),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(
-                                  child: Icon(Icons
-                                      .error)); // Display an error icon if image fails to load
-                            },
-                          )
-                        : Image.asset(
-                            'assets/icons/house.png',
-                            fit: BoxFit.cover,
-                          ),
-                  ),
+            ClipOval(
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: pet.petIMAGE.isNotEmpty
+                    ? Image.network(
+                        pet.petIMAGE,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/icons/house.png',
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            // Use a FittedBox to ensure the text adjusts within the fixed size container
+            FittedBox(
+              fit: BoxFit.scaleDown, // This ensures the text does not overflow
+              child: Text(
+                pet.petNAME,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Fredoka',
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  pet.petNAME,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Fredoka',
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            )
+                textAlign: TextAlign.center, // Center the text
+              ),
+            ),
           ],
         ),
       ),
@@ -269,51 +317,96 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPetFoodCard(Shop shop) {
     return Card(
       child: ListTile(
-        leading: Image.asset(shop.itemIMAGE, width: 50),
-        title: Text(shop.itemNAME),
+        leading: Image.network(shop.itemIMG, width: 50),
+        title: Text(shop.itemName),
         subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align to the start
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(shop.itemDESCRIPTION), // Description
-            const SizedBox(height: 5), // Spacing between description and price
+            Text(shop.categoryName),
+            const SizedBox(height: 5),
             Text(
-              '\$${shop.itemPRICE.toString()}', // Price
+              '\$${shop.price.toString()}',
               style: TextStyle(
-                fontWeight: FontWeight.bold, // Make the price bold
-                color: Colors.green, // Color of the price
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
               ),
+            ),
+            Row(
+              children: [
+                Text(
+                  shop.itemRating.toString(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 5),
+                _buildStarRating(shop.itemRating ?? 0.0),
+              ],
             ),
           ],
         ),
-        trailing: const Icon(Icons.add_shopping_cart),
       ),
+    );
+  }
+
+  Widget _buildStarRating(double rating) {
+    List<Widget> stars = [];
+
+    int fullStars = rating.floor();
+    bool hasHalfStar = (rating % 1) >= 0.5;
+
+    for (int i = 0; i < fullStars; i++) {
+      stars.add(
+        Icon(
+          Icons.star,
+          color: Colors.yellow,
+        ),
+      );
+    }
+    if (hasHalfStar) {
+      stars.add(
+        Icon(
+          Icons.star_half,
+          color: Colors.yellow,
+        ),
+      );
+    }
+
+    for (int i = stars.length; i < 5; i++) {
+      stars.add(
+        Icon(
+          Icons.star_border,
+          color: Colors.yellow,
+        ),
+      );
+    }
+
+    return Row(
+      children: stars,
     );
   }
 }
 
-
-  Future <void> check(context) async{
-    final sm = await SessionManager().getSession();
-    final response = await http.get(Uri.parse('http://192.168.137.1:8080/getCurrent'), headers: {'cookie':'$sm'});
-    try{
-        if(response.statusCode != 200){
-          Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserChatScreen(),
-                        ),
-          );
-        }
-        else{
-          Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(),
-                          ),
-            );
-        }
-    }catch(ex)
-    {
-      rethrow;
+Future<void> check(context) async {
+  final sm = await SessionManager().getSession();
+  final response = await http.get(
+      Uri.parse('http://192.168.137.1:8080/getCurrent'),
+      headers: {'cookie': '$sm'});
+  try {
+    if (response.statusCode != 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserChatScreen(),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(),
+        ),
+      );
     }
+  } catch (ex) {
+    rethrow;
   }
+}

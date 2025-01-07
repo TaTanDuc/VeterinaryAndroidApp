@@ -1,17 +1,22 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:application/bodyToCallAPI/Profile.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'package:path/path.dart' as Path;
 import 'package:application/Screens/Profile/profile_screen.dart';
 import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
 import 'package:application/components/customNavContent.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   final Profile profile; // Pass the profile data to this screen
@@ -27,21 +32,71 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  bool? selectedGender;
+  String? selectedGender;
   String? imagePath;
   dynamic ID;
   bool _loading = false;
+  File? _imageFile;
+  String? test;
+  String path = "";
 
   @override
   void initState() {
     super.initState();
     // Populate text fields with the user's current profile data
     nameController.text = widget.profile.profileNAME;
-    emailController.text = widget.profile.profileEMAIL;
-    ageController.text = widget.profile.age.toString();
+    emailController.text = widget.profile.Email!;
+    ageController.text = widget.profile.profileAGE.toString();
     phoneController.text = widget.profile.phone;
-    selectedGender = widget.profile.gender;
+    selectedGender = widget.profile.profileGENDER;
     imagePath = widget.profile.profileIMG;
+    print('proffile:  ${widget.profile}');
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      final imageTempolary = await _save(pickedFile.path);
+      test = pickedFile.path;
+      setState(() {
+        this._imageFile = imageTempolary; // Save the picked image
+      });
+      imagePath = await _getAssetsImagePath(imageTempolary.path);
+      print('Simulated path: $path');
+    }
+  }
+
+  Future<File> _save(String originalPath) async {
+    // Save to a writable directory
+    final directory = await getApplicationDocumentsDirectory();
+
+    final fileName = Path.basename(originalPath);
+    final newPath = '${directory.path}/$fileName';
+
+    return File(originalPath).copy(newPath);
+  }
+
+  Future<String> _getAssetsImagePath(String savedPath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final fileName = Path.basename(savedPath);
+    var uri = Uri.parse('http://192.168.137.1:8080/image/upload');
+    var request = http.MultipartRequest('POST', uri);
+    var multipartFile = await http.MultipartFile.fromPath(
+      'file',
+      test!,
+      filename: fileName,
+    );
+    request.files.add(multipartFile);
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      final customPath = '$fileName';
+      print('Image uploaded successfully. Access the image at: $customPath');
+      return customPath;
+    } else {
+      print('Failed to upload the image. Status code: ${response.statusCode}');
+      return 'Error uploading image';
+    }
   }
 
   Future<void> fetchUpdateUser() async {
@@ -49,43 +104,39 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _loading = true;
     });
 
-    final url = Uri.parse('http://192.168.137.1:8080/api/profile/user/update');
-
+    final url =
+        Uri.parse('http://192.168.137.1:8080/api/customer/profile/update');
     try {
       int? age;
       if (ageController.text.isNotEmpty) {
         age = int.tryParse(ageController.text);
         if (age == null) {
           print('Invalid age input: ${ageController.text}');
-          return; // Exit early if age is invalid
+          return;
         }
       } else {
         print('Age input is empty.');
-        return; // Exit early if age is empty
+        return;
       }
-
       Profile profileDTO = Profile(
-        userID: 1,
         profileIMG: imagePath!,
         profileNAME: nameController.text,
-        profileEMAIL: emailController.text,
-        age: age,
+        Email: '',
+        profileAGE: age,
         phone: phoneController.text,
-        gender: selectedGender!,
+        profileGENDER: selectedGender!,
       );
-
+      final session = await SessionManager().getSession();
       final response = await http.patch(
         url,
         headers: {
           'Content-Type': 'application/json',
+          'Cookie': '$session',
         },
-        body: jsonEncode(profileDTO.toJson()), // Convert ProfileDTO to JSON
+        body: jsonEncode(profileDTO.toJson()),
       );
 
-      print('Raw response: ${response.body}'); // Log the raw response
-
-      if (response.statusCode == 200) {
-        // Handle successful response
+      if (response.statusCode == 202) {
         print('User profile updated successfully: ${response.body}');
         DelightToastBar(
           builder: (context) {
@@ -106,9 +157,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           autoDismiss: true,
           snackbarDuration: Durations.extralong4,
         ).show(context);
-        // No need to decode, as the response is a plain string
-
-        // Navigate to the ProfilePage and pass the updated ID
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -116,9 +164,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           ),
         );
       } else {
-        // Handle error response
         print('Update failed with status code: ${response.statusCode}');
-        final errorMessage = response.body; // Log raw error message
+        final errorMessage = response.body;
         print('Error updating profile: $errorMessage');
       }
     } catch (e) {
@@ -149,7 +196,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: AppBar().preferredSize.height, // Match the AppBar height
+              height: AppBar().preferredSize.height,
               child: Image.asset(
                 'assets/icons/logo.png',
                 fit: BoxFit.contain,
@@ -159,63 +206,99 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-              ),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-              TextField(
-                controller: ageController,
-                decoration: InputDecoration(
-                  labelText: 'Age',
-                  errorText:
-                      ageController.text.isEmpty ? 'Age is required' : null,
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: 'Name'),
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  labelText: 'Phone',
-                  errorText:
-                      phoneController.text.isEmpty ? 'Phone is required' : null,
+                TextField(
+                  controller: emailController,
+                  readOnly: true,
+                  decoration: InputDecoration(labelText: 'Email'),
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 20),
-              DropdownButton<bool>(
-                value: selectedGender, // Set the value based on the boolean
-                hint: Text('Select Gender'),
-                items: [
-                  DropdownMenuItem<bool>(
-                    value: true, // Corresponds to "MALE"
-                    child: Text('MALE'),
+                TextField(
+                  controller: ageController,
+                  decoration: InputDecoration(
+                    labelText: 'Age',
+                    errorText:
+                        ageController.text.isEmpty ? 'Age is required' : null,
                   ),
-                  DropdownMenuItem<bool>(
-                    value: false, // Corresponds to "FEMALE"
-                    child: Text('FEMALE'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: phoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone',
+                    errorText: phoneController.text.isEmpty
+                        ? 'Phone is required'
+                        : null,
                   ),
-                ],
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedGender =
-                        newValue; // Set the selected gender as a boolean
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              _buttonUpdate(),
-            ],
-          ),
-        ),
-      ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 20),
+                DropdownButton<String>(
+                  value: selectedGender,
+                  hint: const Text('Select Gender'),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'Male',
+                      child: Text('Male'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'Female',
+                      child: Text('Female'),
+                    ),
+                  ],
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedGender = newValue!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  children: [
+                    _imageFile != null
+                        ? Image.file(
+                            _imageFile!,
+                            width: 250,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          )
+                        : (imagePath != null
+                            ? Image.network(
+                                imagePath!,
+                                width: 250,
+                                height: 250,
+                                fit: BoxFit.cover,
+                              )
+                            : const Text(
+                                'No image selected',
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              )),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => _pickImage(ImageSource.camera),
+                      child: const Text(
+                        'Take your pet picture',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontFamily: 'Fredoka',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buttonUpdate(),
+              ],
+            ),
+          )),
     );
   }
 
