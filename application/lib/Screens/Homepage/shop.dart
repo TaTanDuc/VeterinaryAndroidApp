@@ -38,56 +38,59 @@ class _ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
+
+    loadCartFromLocalStorage();
     _fetchCategory();
-    _initSpeech();
   }
 
-  void _initSpeech() async {
-    bool available = await _speechToText.initialize();
-    setState(() {
-      _isListening = available;
-    });
-  }
+  void navigateToCart() async {
+    bool? shouldRefresh = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CartViewScreen()),
+    );
 
-  void _startListening() async {
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {
-      _isListening = true;
-    });
-  }
-
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {
-      _isListening = false;
-    });
-  }
-
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _lastWords = result.recognizedWords;
-      inputValueController.text = _lastWords;
-    });
-    handleSearch(_lastWords);
+    if (shouldRefresh ?? false) {
+      loadCartFromLocalStorage();
+    }
   }
 
   Future<void> saveCartToLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('cart', jsonEncode(_cartItems));
+
+    bool isSaved = await prefs.setString('cart', jsonEncode(_cartItems));
+
+    if (isSaved) {
+      print('Cart saved successfully');
+    } else {
+      print('Failed to save cart');
+    }
+  }
+
+  Future<void> loadCartFromLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cartData = prefs.getString('cart');
+    if (cartData != null) {
+      setState(() {
+        _cartItems = List<Map<String, dynamic>>.from(jsonDecode(cartData));
+        print('Cart loaded: $_cartItems');
+      });
+    }
   }
 
   Future<void> handleAddCart(Map<String, dynamic> value) async {
     setState(() {
+      print('Inside setState');
       final existingItemIndex =
           _cartItems.indexWhere((item) => item['itemID'] == value['itemID']);
 
       if (existingItemIndex != -1) {
+        print('Item found, updating quantity');
         _cartItems[existingItemIndex]['quantity'] += 1;
         _cartItems[existingItemIndex]['total'] = _cartItems[existingItemIndex]
-                ['total'] *
+                ['price'] *
             _cartItems[existingItemIndex]['quantity'];
       } else {
-        final session = SessionManager().getSession();
+        print('Item not found, adding new item');
         _cartItems.add({
           "userID": value['session'],
           "itemName": value['itemName'],
@@ -100,7 +103,7 @@ class _ShopPageState extends State<ShopPage> {
       }
     });
 
-    await saveCartToLocalStorage(); // Save the updated cart to local storage
+    await saveCartToLocalStorage();
   }
 
   Future<void> handleSearch(value) async {
@@ -117,13 +120,16 @@ class _ShopPageState extends State<ShopPage> {
         setState(() {
           _categoryItems = data;
         });
+      } else {
+        setState(() {
+          _categoryItems = [];
+        });
       }
     } catch (err) {
       print(err);
     }
   }
 
-  // Track the selected category index
   Future<void> _fetchCategory() async {
     try {
       final session = await SessionManager().getSession();
@@ -188,12 +194,8 @@ class _ShopPageState extends State<ShopPage> {
                   size: 23,
                 ),
                 onPressed: () {
-                  Navigator.of(context)
-                      .push(
-                        new MaterialPageRoute(
-                            builder: (_) => new CartViewScreen()),
-                      )
-                      .then((val) => val ? _getRequests() : null);
+                  print('Cart current: $_cartItems');
+                  navigateToCart();
                 },
               ),
             ),

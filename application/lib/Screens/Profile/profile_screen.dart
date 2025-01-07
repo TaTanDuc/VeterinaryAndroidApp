@@ -41,6 +41,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  Future<void> Logout() async {
+    final url = Uri.parse('http://192.168.137.1:8080/api/account/logout');
+
+    try {
+      final session = await SessionManager().getSession();
+      final response = await http.get(url,
+          headers: {'Content-Type': 'application/json', 'Cookie': '$session'});
+
+      if (response.statusCode == 200) {
+        print('Successful');
+      } else {
+        throw Exception('Failed to logout');
+      }
+    } catch (e) {
+      print('Error fetching logout: $e');
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
   void _signOut() {
     showDialog(
       context: context,
@@ -57,11 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             TextButton(
               onPressed: () {
-                final userManager = UserManager();
-                userManager.clearUsername(); // Clear user session
-
-                Navigator.of(context).pop(); // Close the dialog
-                // Use pushAndRemoveUntil for proper navigation
+                Logout();
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => LoginScreen()),
                   (Route<dynamic> route) => false,
@@ -433,6 +450,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddPetScreen()),
+                  );
+                },
+                child: _optionItem(Icons.pets, 'Add your pet'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListApointment()),
+                  );
+                },
+                child: _optionItem(Icons.book, 'Show all apponitments'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListOrder()),
+                  );
+                },
+                child:
+                    _optionItem(Icons.gif_box, 'My appointment for invoices'),
+              ),
+            ],
+          )),
     );
   }
 
