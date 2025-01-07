@@ -1,13 +1,13 @@
 class Invoice {
-  final String invoiceCODE;
-  final String invoiceID;
-  final String invoiceDATE;
-  final String total;
+  final int apmInvoiceID;
+  final String method;
+  final String paidDate;
+  final int total;
 
   Invoice({
-    required this.invoiceCODE,
-    required this.invoiceID,
-    required this.invoiceDATE,
+    required this.apmInvoiceID,
+    required this.method,
+    required this.paidDate,
     required this.total,
   });
 
@@ -17,25 +17,15 @@ class Invoice {
     }
 
     return Invoice(
-      invoiceCODE: (json['invoiceCODE']).toString() ??
-          'Unknown', // Provide default values if necessary
-      invoiceID: (json['invoiceID']).toString() ?? '0',
-      invoiceDATE: (json['invoiceDATE']).toString() ?? '0000-00-00',
-      total: (json['total']).toString() ?? '0',
+      apmInvoiceID: (json['apmInvoiceID']) ?? 0,
+      method: (json['method']) ?? 'unknown',
+      paidDate: (json['paidDate']) ?? 'unknown',
+      total: json['total'] ?? 0,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'invoiceCODE': invoiceCODE,
-      'invoiceID': int.parse(invoiceID),
-      'invoiceDATE': invoiceDATE,
-      'total': int.parse(total),
-    };
   }
 
   @override
   String toString() {
-    return 'Appointment(invoiceCODE: $invoiceCODE, invoiceID: $invoiceID, invoiceDATE: $invoiceDATE, total: $total)';
+    return 'Appointment(invoiceCODE: $apmInvoiceID, invoiceID: $method, invoiceDATE: $paidDate, total: $total)';
   }
 }
