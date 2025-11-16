@@ -1,58 +1,61 @@
+import 'dart:convert';
 import 'package:application/bodyToCallAPI/Invoice.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
-class ListOrder extends StatefulWidget {
-  const ListOrder({super.key});
+import 'DetailsInvoice.dart';
+
+class InvoiceScreen extends StatefulWidget {
+  const InvoiceScreen({super.key});
+
   @override
-  _ListOrderState createState() => _ListOrderState();
+  State<InvoiceScreen> createState() => _InvoiceScreenState();
 }
 
-class _ListOrderState extends State<ListOrder> {
+class _InvoiceScreenState extends State<InvoiceScreen> {
   bool _loading = true;
   List<Invoice> _invoices = [];
-  dynamic ID;
+
   @override
   void initState() {
     super.initState();
-    fetchInvoice(); // Call fetchInvoice when the widget is initialized
+    _fetchInvoices();
   }
 
-  // Method to fetch services from API
-  Future<void> fetchInvoice() async {
+  Future<void> _fetchInvoices() async {
     setState(() {
-      _loading = false;
+      _loading = true;
     });
 
-    final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/appointment/getApmInvoices');
+    final url =
+        Uri.parse('http://10.0.2.2:8080/api/customer/appointment/invoices');
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': '$session',
+        },
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> invoiceData = jsonDecode(response.body)['returned'];
+        final List<dynamic> invoiceData =
+            jsonDecode(response.body)['returned'];
         setState(() {
           _invoices =
               invoiceData.map((json) => Invoice.fromJson(json)).toList();
           _loading = false;
         });
-        print('invoiceData: $_invoices');
       } else {
-        throw Exception('Failed to load invoicements');
+        setState(() {
+          _loading = false;
+        });
+        throw Exception('Failed to load invoices');
       }
     } catch (e) {
-      print('Error: $e');
       setState(() {
         _loading = false;
       });
@@ -87,157 +90,138 @@ class _ListOrderState extends State<ListOrder> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: _loading
-                  ? Center(child: CircularProgressIndicator())
-                  : _invoices.isEmpty
-                      ? Center(child: Text('No invoicess found.'))
-                      : _buildInvoiceList(),
-            ),
-          ],
-        ),
-      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _invoices.isEmpty
+              ? const Center(child: Text('No invoices found.'))
+              : RefreshIndicator(
+                  onRefresh: _fetchInvoices,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    itemCount: _invoices.length,
+                    itemBuilder: (context, index) {
+                      final invoice = _invoices[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailsInvoice(invoice: invoice),
+                            ),
+                          );
+                        },
+                        child: _InvoiceSummaryCard(invoice: invoice),
+                      );
+                    },
+                  ),
+                ),
     );
   }
+}
 
-  Widget _buildInvoiceList() {
-    return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: _invoices.length,
-      itemBuilder: (context, index) {
-        final invoice = _invoices[index];
-        return _buildInvoiceCard(invoice);
-      },
+class _InvoiceSummaryCard extends StatelessWidget {
+  const _InvoiceSummaryCard({required this.invoice});
+
+  final Invoice invoice;
+
+  @override
+  Widget build(BuildContext context) {
+    final DateTime paidDate = _parseDate(invoice.paidDate);
+    final String formattedDate = DateFormat('MMMM dd, yyyy').format(paidDate);
+    final String formattedTime = DateFormat('hh:mm a').format(paidDate);
+    final NumberFormat currencyFormatter = NumberFormat.currency(
+      symbol: '\$',
+      decimalDigits: 2,
     );
-  }
 
-  Widget _buildInvoiceCard(Invoice invoice) {
-    DateTime parsedDateTime;
-    try {
-      parsedDateTime =
-          DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(invoice.paidDate);
-    } catch (e) {
-      parsedDateTime = DateTime.now();
-    }
-
-    String formattedDate = DateFormat('MMMM dd, yyyy').format(parsedDateTime);
-    String formattedTime = DateFormat('hh:mm a').format(parsedDateTime);
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
+      elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Method:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        (invoice.method.isNotEmpty)
-                            ? invoice.method
-                            : 'unknown',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Invoice #${invoice.apmInvoiceID}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Date:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        (invoice.paidDate?.isNotEmpty == true)
-                            ? formattedDate
-                            : 'Unknown',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
+                  _buildInfoRow(
+                    label: 'Method',
+                    value: invoice.paymentMethod.isNotEmpty
+                        ? invoice.paymentMethod
+                        : 'Unknown',
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Time:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        (invoice.paidDate?.isNotEmpty == true)
-                            ? formattedTime
-                            : 'Unknown',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 6),
+                  _buildInfoRow(
+                    label: 'Paid',
+                    value: '${formattedDate} · ${formattedTime}',
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Your total:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        (invoice.total != 0)
-                            ? invoice.total.toString() + ' USD'
-                            : '0 USD',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'Fredoka',
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 6),
+                  _buildInfoRow(
+                    label: 'Total',
+                    value: currencyFormatter.format(invoice.total),
+                    valueStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
+            const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildInfoRow({
+    required String label,
+    required String value,
+    TextStyle? valueStyle,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$label: ',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: valueStyle ??
+                const TextStyle(
+                  fontSize: 14,
+                ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static DateTime _parseDate(String raw) {
+    try {
+      return DateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(raw);
+    } catch (_) {
+      return DateTime.now();
+    }
   }
 }

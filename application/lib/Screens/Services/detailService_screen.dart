@@ -36,7 +36,7 @@ class _DetailPageState extends State<DetailServiceScreen> {
 
   Future<void> fetchServiceDetails() async {
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
     setState(() {
       _loading = true; // Start loading
     });

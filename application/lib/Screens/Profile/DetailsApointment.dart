@@ -101,13 +101,13 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
       if (success == true) {
         try {
           final urlInvoicePayment = Uri.parse(
-            'http://192.168.137.1:8080/api/customer/appointment/pay',
+            'http://10.0.2.2:8080/api/customer/appointment/pay',
           );
 
           // Create Appointment Invoice DTO
           final Apointmentinvoice profileDTO = Apointmentinvoice(
             appointmentID: widget.details.appointmentID,
-            method: "VISA",
+            paymentMethod: "VISA",
             total: totalPrice,
           );
           final session = await SessionManager().getSession();
@@ -203,7 +203,7 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
     });
 
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/appointment/getDetail?appointmentID=${widget.details.appointmentID}');
+        'http://10.0.2.2:8080/api/customer/appointment/getDetail?appointmentID=${widget.details.appointmentID}');
     try {
       final session = await SessionManager().getSession();
       print('Session: $session');
@@ -219,7 +219,7 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
         final Map<String, dynamic> shopData =
             jsonDecode(response.body)['returned'];
         Details details = Details.fromJson(shopData);
-        if (details.apmInvoiceID != 0) {
+        if (details.appointmentStatus == "Complete") {
           isInvoice = true;
         }
         // Calculate total price and print service details

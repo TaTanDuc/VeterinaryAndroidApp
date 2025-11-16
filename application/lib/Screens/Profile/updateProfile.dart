@@ -43,7 +43,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Populate text fields with the user's current profile data
     nameController.text = widget.profile.profileNAME;
     emailController.text = widget.profile.Email!;
     ageController.text = widget.profile.profileAGE.toString();
@@ -56,46 +55,60 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
-      final imageTempolary = await _save(pickedFile.path);
-      test = pickedFile.path;
+      final savedFile = await _save(pickedFile.path);
+
       setState(() {
-        this._imageFile = imageTempolary; // Save the picked image
+        _imageFile = savedFile;
       });
-      imagePath = await _getAssetsImagePath(imageTempolary.path);
-      print('Simulated path: $path');
+
+      final uploadedImageUrl = await _uploadImage(savedFile);
+      if (uploadedImageUrl != null) {
+        setState(() {
+          imagePath = uploadedImageUrl;
+        });
+        print('✅ Image uploaded: $uploadedImageUrl');
+      } else {
+        print('❌ Failed to upload image.');
+      }
+    } else {
+      print('No image selected.');
     }
   }
 
   Future<File> _save(String originalPath) async {
-    // Save to a writable directory
     final directory = await getApplicationDocumentsDirectory();
-
     final fileName = Path.basename(originalPath);
     final newPath = '${directory.path}/$fileName';
-
     return File(originalPath).copy(newPath);
   }
 
-  Future<String> _getAssetsImagePath(String savedPath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final fileName = Path.basename(savedPath);
-    var uri = Uri.parse('http://192.168.137.1:8080/image/upload');
-    var request = http.MultipartRequest('POST', uri);
-    var multipartFile = await http.MultipartFile.fromPath(
+  Future<String?> _uploadImage(File imageFile) async {
+    final fileName = Path.basename(imageFile.path);
+    final uri = Uri.parse('http://10.0.2.2:8080/api/image/uploadProfile');
+    final request = http.MultipartRequest('POST', uri);
+
+    // Use the saved image file path
+    final multipartFile = await http.MultipartFile.fromPath(
       'file',
-      test!,
+      imageFile.path,
       filename: fileName,
     );
-    request.files.add(multipartFile);
-    var response = await request.send();
 
-    if (response.statusCode == 200) {
-      final customPath = '$fileName';
-      print('Image uploaded successfully. Access the image at: $customPath');
-      return customPath;
-    } else {
-      print('Failed to upload the image. Status code: ${response.statusCode}');
-      return 'Error uploading image';
+    request.files.add(multipartFile);
+
+    try {
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        // This is the URL you want to store in the DB
+        final imageUrl = '$fileName';
+        return imageUrl;
+      } else {
+        print('Upload failed with status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
     }
   }
 
@@ -104,8 +117,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _loading = true;
     });
 
-    final url =
-        Uri.parse('http://192.168.137.1:8080/api/customer/profile/update');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/profile/update');
     try {
       int? age;
       if (ageController.text.isNotEmpty) {
@@ -285,7 +297,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     ElevatedButton(
                       onPressed: () => _pickImage(ImageSource.camera),
                       child: const Text(
-                        'Take your pet picture',
+                        'Take your picture',
                         style: TextStyle(
                           fontSize: 17,
                           fontFamily: 'Fredoka',

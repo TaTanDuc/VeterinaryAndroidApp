@@ -2,16 +2,11 @@ import 'package:application/Screens/Login/login_screen.dart';
 import 'package:application/Screens/Profile/addPet_screen.dart';
 import 'package:application/Screens/Profile/appointment_screen.dart';
 import 'package:application/Screens/Profile/createProfile.dart';
-import 'package:application/Screens/Profile/invoice_screen.dart';
+import 'package:application/Screens/Profile/invoiceApp_screen.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
-import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:application/controllers/GoogleController.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -42,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> Logout() async {
-    final url = Uri.parse('http://192.168.137.1:8080/api/account/logout');
+    final url = Uri.parse('http://10.0.2.2:8080/api/account/logout');
 
     try {
       final session = await SessionManager().getSession();
@@ -72,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
@@ -95,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> check(context) async {
     final sm = await SessionManager().getSession();
     final response = await http.get(
-        Uri.parse('http://192.168.137.1:8080/api/customer/profile/get'),
+        Uri.parse('http://10.0.2.2:8080/api/customer/profile/get'),
         headers: {'cookie': '$sm'});
     try {
       if (response.statusCode == 200) {
@@ -121,14 +116,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> fetchProfile() async {
-    final url = Uri.parse('http://192.168.137.1:8080/api/customer/profile/get');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/profile/get');
 
     try {
       final session = await SessionManager().getSession();
+      print('Session header: Cookie: $session');
+
       final response = await http.get(url,
           headers: {'Content-Type': 'application/json', 'Cookie': '$session'});
-
       if (response.statusCode == 200) {
+        final sm = await SessionManager().getUserRole();
+        print('User Role: $sm');
         final data = jsonDecode(response.body)['returned'];
         print('Received data: $data');
 
@@ -137,6 +135,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _loading = false;
           link = profile.profileIMG;
         });
+      } else if (response.statusCode == 409) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProfileScreen(),
+          ),
+        );
       } else {
         throw Exception('Failed to load profile details');
       }
@@ -193,14 +198,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Stack(
         children: [
           ClipPath(
-            clipper: BottomRoundedClipper(),
-            child: Image.network(
-              link,
-              width: double.infinity,
-              height: 350,
-              fit: BoxFit.cover,
-            ),
-          ),
+              clipper: BottomRoundedClipper(),
+              child: Image.network(
+                (link != null && link.isNotEmpty)
+                    ? link
+                    : 'http://10.0.2.2:8080/api/image/getProfile?name=defaultProfileIMG.png',
+                width: double.infinity,
+                height: 350,
+                fit: BoxFit.cover,
+              )),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Center(
@@ -253,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.profileNAME ?? 'Unknown',
+                    user.profileNAME,
                     style: TextStyle(
                       fontSize: responsiveFontSize,
                       color: _darkMode ? Colors.white : Colors.black,
@@ -293,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    user.profileNAME ?? 'Unkonw',
+                    user.profileNAME,
                     style: TextStyle(
                         fontSize: responsiveFontSize,
                         color: _darkMode ? Colors.white : Colors.black,
@@ -352,7 +358,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    user.phone ?? 'Unknown need to update',
+                    user.phone,
                     style: TextStyle(
                       fontSize: responsiveFontSize,
                       color: _darkMode ? Colors.white : Colors.black,
@@ -413,6 +419,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child:
                     _optionItem(Icons.gif_box, 'My appointment for invoices'),
+              ),
+              FutureBuilder<bool>(
+                future: SessionManager().hasAdminAccess(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data == true) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      },
+                      child: _optionItem(
+                          Icons.admin_panel_settings, 'Admin Panel'),
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),

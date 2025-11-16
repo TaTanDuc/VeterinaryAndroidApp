@@ -46,7 +46,7 @@ class _ListApointmentState extends State<ListApointment> {
       _loading = false;
     });
     final session = await SessionManager().getSession();
-    final url = Uri.parse('http://192.168.137.1:8080/api/customer/appointment');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/appointment');
     try {
       final response = await http.get(
         url,
@@ -221,6 +221,14 @@ class _ListApointmentState extends State<ListApointment> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8), // Space between label and value
+                      Text(
+                        formattedTime,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontFamily: 'Fredoka',
                         ),
                       ),
                     ],

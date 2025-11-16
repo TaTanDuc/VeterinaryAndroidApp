@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:application/Screens/Homepage/shop.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/components/customButton.dart';
 import 'package:application/main.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
@@ -59,8 +60,9 @@ class _CartViewScreenState extends State<CartViewScreen> {
 
   showPaymentSheet() async {
     try {
-      await Stripe.instance.presentPaymentSheet().then((val) {
+      await Stripe.instance.presentPaymentSheet().then((val) async {
         intentPaymentData = null;
+        await _confirmPurchase(context);
         const ToastCard(
           leading: Icon(Icons.check, size: 20),
           title: const Text(
@@ -108,7 +110,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid amount format')),
         );
-        return; // Important: Stop execution if parsing fails
+        return;
       }
       intentPaymentData =
           await makeIntentForPayment(amountToSend.toString(), currency);
@@ -143,6 +145,41 @@ class _CartViewScreenState extends State<CartViewScreen> {
     setState(() {
       isClickedList = List.generate(5, (index) => false);
     });
+  }
+
+  Future<void> _confirmPurchase(BuildContext context) async {
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/shop/purchase');
+
+    final List<Map<String, dynamic>> listItems = _cartItems.map((item) {
+      return {
+        "itemID": item['itemID'].toString(),
+        "itemQUANTITY": item['quantity'].toString(),
+      };
+    }).toList();
+
+    final body = {
+      "listItems": listItems,
+      "paymentMethod": "VISA",
+      "total": totalPrice + shipPrice,
+    };
+
+    try {
+      final session = await SessionManager().getSession();
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        print("✅ Purchase saved successfully: ${response.body}");
+      } else {
+        print(
+            "❌ Failed to save purchase: ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      print("⚠️ Error saving purchase: $e");
+    }
   }
 
   Future<void> clearCart() async {
@@ -280,7 +317,7 @@ class _CartViewScreenState extends State<CartViewScreen> {
                   const SizedBox(height: 100),
                   _cartItems.isEmpty
                       ? Text(
-                          'Hiện tại bạn không có item nào trong cart',
+                          'Now your cart is empty',
                           style: TextStyle(
                             fontSize: 32,
                             color: Colors.black,

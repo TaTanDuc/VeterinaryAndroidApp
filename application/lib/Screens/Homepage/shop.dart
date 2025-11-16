@@ -110,7 +110,7 @@ class _ShopPageState extends State<ShopPage> {
     try {
       final session = await SessionManager().getSession();
       final url = Uri.parse(
-          "http://192.168.137.1:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=${value}");
+          "http://10.0.2.2:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=${value}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json', 'Cookie': '$session'},
@@ -134,7 +134,7 @@ class _ShopPageState extends State<ShopPage> {
     try {
       final session = await SessionManager().getSession();
       final url = Uri.parse(
-          "http://192.168.137.1:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=");
+          "http://10.0.2.2:8080/api/customer/shop?categoryCode=${_currentCategory}&searchString=");
 
       final response = await http.get(
         url,
@@ -324,7 +324,7 @@ class _ShopPageState extends State<ShopPage> {
                         //String imagePath = '${item['itemIMAGE']}';
                         return _buildShopRow(
                           index,
-                          item['itemIMG'],
+                          item['itemIMAGE'],
                           item['itemName'],
                           item['categoryName'],
                           item['price'].toString(),

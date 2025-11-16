@@ -1,9 +1,5 @@
 import 'dart:math';
 
-import 'package:application/Screens/Chat/Client.dart';
-import 'package:application/Screens/Chat/WebSocketService.dart';
-import 'package:application/Screens/Chat/chatbox_screen.dart';
-import 'package:application/Screens/Chat/select_chatbox.dart';
 import 'package:application/bodyToCallAPI/Pet.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/Shop.dart';
@@ -28,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   List<Pet> _pets = [];
   List<Shop> _randItem = [];
   dynamic ID;
-  final String? BASE_URL = dotenv.env["BASE_URL"];
+  final String? BASE_URL = "http://10.0.2.2:8080/api";
 
   @override
   void initState() {
@@ -246,20 +242,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // Chat Button Section
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20, right: 20),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  backgroundColor: const Color(0xFF5CB15A),
-                  onPressed: () {
-                    check(context);
-                  },
-                  child: const Icon(Icons.chat, color: Colors.white),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -319,7 +301,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPetFoodCard(Shop shop) {
     return Card(
       child: ListTile(
-        leading: Image.network(shop.itemIMG, width: 50),
+        leading: Image.network(shop.itemIMAGE, width: 50),
         title: Text(shop.itemName),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,31 +366,5 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: stars,
     );
-  }
-}
-
-Future<void> check(context) async {
-  final sm = await SessionManager().getSession();
-  final response = await http.get(
-      Uri.parse('http://192.168.137.1:8080/getCurrent'),
-      headers: {'cookie': '$sm'});
-  try {
-    if (response.statusCode != 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserChatScreen(),
-        ),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(),
-        ),
-      );
-    }
-  } catch (ex) {
-    rethrow;
   }
 }

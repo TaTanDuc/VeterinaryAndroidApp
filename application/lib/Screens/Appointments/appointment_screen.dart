@@ -62,7 +62,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> fetchPets() async {
-    final url = Uri.parse('http://192.168.137.1:8080/api/customer/pet');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/pet');
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
@@ -88,7 +88,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> fetchDepartments() async {
-    final url = Uri.parse('http://192.168.137.1:8080/api/customer/department');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/department');
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
@@ -115,7 +115,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/service?serviceCode=&searchString='); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/customer/service?serviceCode=&searchString='); // Replace with your actual API URL
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
@@ -191,7 +191,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       services: _selectedServices,
     );
 
-    final url = 'http://192.168.137.1:8080/api/customer/appointment/book';
+    final url = 'http://10.0.2.2:8080/api/customer/appointment/book';
     final body = jsonEncode(appointment.toJson());
 
     try {
@@ -277,7 +277,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                 return RadioListTile<
                                                     Department>(
                                                   title:
-                                                      Text(pet.departmentNAME),
+                                                      Text(pet.departmentName),
                                                   value: pet,
                                                   groupValue:
                                                       _selectedDeparts, // Keep this for UI purpose
@@ -333,7 +333,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       children: [
                                         Text(
                                           _selectedDeparts != null
-                                              ? _selectedDeparts.departmentNAME
+                                              ? _selectedDeparts.departmentName
                                               : 'Select a Department',
                                           style: TextStyle(
                                             fontSize: 16,

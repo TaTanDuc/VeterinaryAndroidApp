@@ -47,7 +47,7 @@ class _MyWidgetState extends State<AddReviewScreen> {
     );
 
     final url =
-        Uri.parse('http://192.168.137.1:8080/api/customer/service/postComment');
+        Uri.parse('http://10.0.2.2:8080/api/customer/service/postComment');
     final body = jsonEncode(comment.toJson());
     try {
       final session = await SessionManager().getSession();
