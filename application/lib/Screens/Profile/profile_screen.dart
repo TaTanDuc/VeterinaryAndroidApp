@@ -3,6 +3,7 @@ import 'package:application/Screens/Profile/addPet_screen.dart';
 import 'package:application/Screens/Profile/appointment_screen.dart';
 import 'package:application/Screens/Profile/createProfile.dart';
 import 'package:application/Screens/Profile/invoiceApp_screen.dart';
+import 'package:application/Screens/Profile/invoiceItemList.dart';
 import 'package:application/Screens/Profile/updateProfile.dart';
 import 'package:application/bodyToCallAPI/Profile.dart';
 import 'package:application/bodyToCallAPI/SessionManager.dart';
@@ -419,6 +420,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child:
                     _optionItem(Icons.gif_box, 'My appointment for invoices'),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListInvoiceItem()),
+                  );
+                },
+                child: _optionItem(Icons.gif_box, 'My invoices'),
               ),
               FutureBuilder<bool>(
                 future: SessionManager().hasAdminAccess(),

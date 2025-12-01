@@ -252,7 +252,7 @@ class _DetailsAppointmentState extends State<DetailsAppointment> {
         backgroundColor: const Color(0xFF5CB15A),
         title: const Center(
           child: Text(
-            'Update user',
+            'Details Appointment',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
