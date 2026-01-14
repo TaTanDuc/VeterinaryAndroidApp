@@ -38,19 +38,20 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
+
     if (pickedFile != null) {
       final imageTempolary = await _save(pickedFile.path);
       test = pickedFile.path;
       setState(() {
-        this._imageFile = imageTempolary; // Save the picked image
+        _imageFile = imageTempolary;
       });
+
       imagePath = await _getAssetsImagePath(imageTempolary.path);
-      print('Simulated path: $path');
+      print('Simulated path: $imagePath');
     }
   }
 
   Future<File> _save(String originalPath) async {
-    // Save to a writable directory
     final directory = await getApplicationDocumentsDirectory();
 
     final fileName = Path.basename(originalPath);
@@ -62,7 +63,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   Future<String> _getAssetsImagePath(String savedPath) async {
     final directory = await getApplicationDocumentsDirectory();
     final fileName = Path.basename(savedPath);
-    var uri = Uri.parse('http://192.168.137.1:8080/image/upload');
+    var uri = Uri.parse('http://10.0.2.2:8080/api/image/uploadProfile');
     var request = http.MultipartRequest('POST', uri);
     var multipartFile = await http.MultipartFile.fromPath(
       'file',
@@ -85,8 +86,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       _loading = true;
     });
 
-    final url =
-        Uri.parse('http://192.168.137.1:8080/api/customer/profile/create');
+    final url = Uri.parse('http://10.0.2.2:8080/api/customer/profile/create');
 
     try {
       int? age;
@@ -100,9 +100,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         print('Age input is empty.');
         return;
       }
+      if (imagePath == null) {
+        imagePath = 'defaultProfileIMG.png';
+      }
 
       Profile profileDTO = Profile(
-        profileIMG: '',
+        profileIMG: imagePath!,
         profileNAME: nameController.text,
         Email: '',
         profileAGE: age,
@@ -118,7 +121,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
       print('Raw response: ${response.body}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 202) {
         DelightToastBar(
           builder: (context) {
             return const ToastCard(
@@ -260,7 +263,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ElevatedButton(
                     onPressed: () => _pickImage(ImageSource.camera),
                     child: const Text(
-                      'Take your pet picture',
+                      'Take your picture',
                       style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Fredoka',
@@ -284,7 +287,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           ? null
           : () async {
               if (ageController.text.isEmpty) {
-                // Show an alert if age is required
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Age is required. Please sign in.'),
@@ -292,12 +294,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                   ),
                 );
               } else {
-                // Process the age value
                 int? age = int.tryParse(ageController.text);
                 if (age != null) {
                   print('Age: $age');
                 } else {
-                  // Show an alert if the input is not a valid number
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Please enter a valid age.'),
@@ -307,7 +307,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 }
               }
               if (phoneController.text.isEmpty) {
-                // Show an alert if phone is required
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Phone is required. Please sign in.'),
@@ -320,7 +319,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 final RegExp phoneRegExp = RegExp(r'^0[0-9]{9}$');
 
                 if (!phoneRegExp.hasMatch(phone)) {
-                  // Show an alert if the input is not in valid phone format
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
@@ -330,7 +328,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     ),
                   );
                 } else {
-                  // Phone number is valid, proceed with your logic
                   print('Phone: $phone');
                 }
               }

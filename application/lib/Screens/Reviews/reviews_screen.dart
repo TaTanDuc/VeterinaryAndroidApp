@@ -44,7 +44,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
     });
 
     final url =
-        'http://192.168.137.1:8080/api/customer/service/getOverAll?serviceCODE=${widget.serviceCODE}';
+        'http://10.0.2.2:8080/api/customer/service/getServiceOverallRatings?serviceCODE=${widget.serviceCODE}';
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(Uri.parse(url),
@@ -88,7 +88,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
 
   Future<void> fetchserviceCommnets() async {
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
 
     setState(() {
       _loading = true;
@@ -133,7 +133,7 @@ class _MyWidgetState extends State<ReviewsScreen> {
       _loading = false;
     });
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
+        'http://10.0.2.2:8080/api/customer/service/getServiceDetails?serviceCODE=${widget.serviceCODE}');
 
     try {
       final session = await SessionManager().getSession();

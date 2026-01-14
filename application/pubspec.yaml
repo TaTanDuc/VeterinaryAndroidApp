@@ -159,6 +159,7 @@ flutter:
     - assets/images/image_toy5.jpg
     - assets/images/image_furniture1.jpg
     - assets/images/card.png
+    - assets/icons/anonymous.png
   fonts:
     - family: Fredoka
       fonts:

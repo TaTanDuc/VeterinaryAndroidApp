@@ -17,7 +17,7 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      profileIMG: json['profileIMG'] ?? 'assets/icons/anonymus.webp',
+      profileIMG: json['profileIMG'],
       profileNAME: json['profileNAME'] ?? 'Unknown',
       Email: json['Email'] as String ?? '',
       profileGENDER: json['profileGENDER'] ?? 'Unknown',

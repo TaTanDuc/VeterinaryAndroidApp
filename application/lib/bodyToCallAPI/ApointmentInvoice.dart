@@ -2,12 +2,12 @@ import 'package:application/bodyToCallAPI/Service.dart';
 
 class Apointmentinvoice {
   final int appointmentID;
-  final String method;
+  final String paymentMethod;
   final int total;
 
   Apointmentinvoice({
     required this.appointmentID,
-    required this.method,
+    required this.paymentMethod,
     required this.total,
   });
 
@@ -18,7 +18,7 @@ class Apointmentinvoice {
 
     return Apointmentinvoice(
       appointmentID: json['appointmentID'] ?? 0,
-      method: (json['method']).toString() ?? 'Unknown',
+      paymentMethod: (json['paymentMethod']).toString() ?? 'Unknown',
       total: json['total'] ?? 0,
     );
   }
@@ -26,13 +26,13 @@ class Apointmentinvoice {
   Map<String, dynamic> toJson() {
     return {
       'appointmentID': appointmentID,
-      'method': method,
+      'paymentMethod': paymentMethod,
       'total': total,
     };
   }
 
   @override
   String toString() {
-    return 'Appointment(profileNAME: $appointmentID, petNAME: $method, apmDATE: $total)';
+    return 'Appointment(profileNAME: $appointmentID, petNAME: $paymentMethod, apmDATE: $total)';
   }
 }

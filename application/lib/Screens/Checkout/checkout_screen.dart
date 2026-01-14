@@ -164,9 +164,8 @@ Widget _Field(titleField) {
             hintText: titleField,
 
             border: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12.0), // Bo tròn border-radius
-              borderSide: BorderSide.none, // Không có border rõ ràng
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide.none,
             ),
           ),
         ),

@@ -1,6 +1,6 @@
 class Shop {
   final int itemID;
-  final String itemIMG;
+  final String itemIMAGE;
   final String itemName;
   final String categoryName;
   final double itemRating;
@@ -9,7 +9,7 @@ class Shop {
 
   Shop(
       {required this.itemID,
-      required this.itemIMG,
+      required this.itemIMAGE,
       required this.itemName,
       required this.categoryName,
       required this.itemRating,
@@ -19,7 +19,7 @@ class Shop {
   factory Shop.fromJson(Map<String, dynamic> json) {
     return Shop(
       itemID: json['itemID'] ?? 0,
-      itemIMG: json['itemIMG'] ?? 'assets/icons/logo.png', // Default image
+      itemIMAGE: json['itemIMAGE'] ?? '', // Default image
       itemName: json['itemName'] ?? 'Unknown', // Default name
       categoryName: json['categoryName'] ?? 'Unknown', // Default description
       itemRating: json['itemRating'] != null
@@ -31,6 +31,6 @@ class Shop {
   }
   @override
   String toString() {
-    return 'Shop(itemID: $itemID, itemName: $itemName, itemIMG:$itemIMG, categoryName: $categoryName, itemRating: $itemRating, price, $price, total: $total)';
+    return 'Shop(itemID: $itemID, itemName: $itemName, itemIMAGE:$itemIMAGE, categoryName: $categoryName, itemRating: $itemRating, price, $price, total: $total)';
   }
 }

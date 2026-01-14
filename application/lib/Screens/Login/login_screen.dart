@@ -1,17 +1,11 @@
-import 'dart:convert'; // Thêm import để xử lý JSON
-import 'package:application/Screens/Providers/googleSignin.dart';
-import 'package:application/Screens/Login/register_screen.dart'; // Thêm import cho MainPage
-import 'package:application/bodyToCallAPI/SessionManager.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
 import 'dart:convert';
 import 'package:application/Screens/Login/register_screen.dart';
-import 'package:application/bodyToCallAPI/UserDTO.dart';
+import 'package:application/bodyToCallAPI/SessionManager.dart';
 import 'package:application/bodyToCallAPI/UserManager.dart';
-import 'package:provider/provider.dart';
 import 'package:application/components/customInputField.dart';
 import 'package:application/controllers/GoogleController.dart';
 import 'package:application/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:application/Screens/Admin/admin_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -26,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   var session;
+  bool _isAdminLogin = false;
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -35,15 +30,22 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse('http://192.168.137.1:8080/api/account/login');
       if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
         setState(() {
-          _errorMessage =
-              'Input data cannot be empty'; // Hiển thị thông báo lỗi
+          _errorMessage = 'Input data cannot be empty';
         });
         return;
       }
-      // Gửi yêu cầu POST tới API
+      await _clientLogin();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> _clientLogin() async {
+    try {
+      String roleUser = '';
+      final url = Uri.parse('http://10.0.2.2:8080/api/account/login');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -52,78 +54,88 @@ class _LoginScreenState extends State<LoginScreen> {
           "password": passwordController.text
         }),
       );
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final userId = data['userID'];
-        final token = data['returned']['token'];
-        final validationUrl =
-            'http://192.168.137.1:8080/api/account/login/validate';
-        final validationResponse = await http.get(
-          Uri.parse(validationUrl),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-        );
-        if (validationResponse.statusCode == 200) {
-          print('Token is valid!');
-          String? setCookie = validationResponse.headers['set-cookie'];
-          if (setCookie != null) {
-            // Extract the session value
-            final sessionCookie = setCookie.split(';').firstWhere(
-                  (part) => part.trim().startsWith('SESSION='),
-                  orElse: () => '',
-                );
-
-            if (sessionCookie.isNotEmpty) {
-              // Rename the cookie to `SESSION`
-              final sessionValue = sessionCookie.split('=').last;
-              final customSessionCookie = 'SESSION=$sessionValue';
-              await SessionManager().saveSession(customSessionCookie);
-              final URLgetUsername =
-                  'http://192.168.137.1:8080/api/account/login/getUsername';
-              final UserNameResponse = await http.get(
-                Uri.parse(URLgetUsername),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Cookie': '$customSessionCookie',
-                },
+        String? setCookie = response.headers['set-cookie'];
+        if (setCookie != null) {
+          final sessionCookie = setCookie.split(';').firstWhere(
+                (part) => part.trim().startsWith('SESSION='),
+                orElse: () => '',
               );
-              if (UserNameResponse.statusCode == 200) {
-                final info = jsonDecode(UserNameResponse.body);
-                print(info);
 
-                final username = info['returned']['userName'];
-                final id =
-                    int.tryParse(info['returned']['userID'].toString()) ?? 0;
-                print('sdsdsdsds: $id');
-                final userManager = UserManager();
-                userManager.setUsername(username, true, id);
-                final test = UserManager().id;
-                print('sdsdsdsdsdsdsdsdsdsdsdsd: $test');
-              }
-              print('Custom Session Cookie: $customSessionCookie');
-            } else {
-              print('Session cookie not found in headers.');
+          if (sessionCookie.isNotEmpty) {
+            final sessionValue = sessionCookie.split('=').last;
+            final customSessionCookie = 'SESSION=$sessionValue';
+
+            final URLgetUsername =
+                'http://10.0.2.2:8080/api/account/login/getCurrentUser';
+            final UserNameResponse = await http.get(
+              Uri.parse(URLgetUsername),
+              headers: {
+                'Content-Type': 'application/json',
+                'Cookie': '$customSessionCookie',
+              },
+            );
+            if (UserNameResponse.statusCode == 200) {
+              final info = jsonDecode(UserNameResponse.body);
+              print(info);
+              String? setCookie2 = UserNameResponse.headers['set-cookie'];
+              final sessionCookie2 = setCookie2!.split(';').firstWhere(
+                    (part) => part.trim().startsWith('SESSION='),
+                    orElse: () => '',
+                  );
+              final sessionValue2 = sessionCookie2.split('=').last;
+              final customSessionCookie2 = 'SESSION=$sessionValue2';
+
+              final username = info['returned']['userNAME'];
+              roleUser = info['returned']['role'];
+              await SessionManager().saveSession(customSessionCookie2,
+                  role: info['returned']['role']);
+              final id =
+                  int.tryParse(info['returned']['userID'].toString()) ?? 0;
+              print('sdsdsdsds: $id');
+              final userManager = UserManager();
+              userManager.setUsername(username, true, id);
             }
+            print('Custom Session Cookie: $customSessionCookie');
           } else {
-            print('No Set-Cookie header found in the response.');
+            print('Session cookie not found in headers.');
           }
         } else {
-          print('erroe when validate');
+          print('No Set-Cookie header found in the response.');
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MainPage()),
-        );
+        if (mounted) {
+          if (roleUser == 'ADMIN') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AdminMainPage()),
+            );
+            return;
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MainPage()),
+            );
+          }
+        }
       } else {
         setState(() {
-          _errorMessage = response.body; // Hiển thị thông báo lỗi
+          try {
+            final decoded = jsonDecode(response.body);
+            _errorMessage = (decoded is Map && decoded['returned'] != null)
+                ? decoded['returned'].toString()
+                : 'Login failed. Please check your credentials.';
+          } catch (e) {
+            _errorMessage = 'Login failed. Please check your credentials.';
+          }
         });
         return;
       }
     } catch (error) {
       print(error);
+      setState(() {
+        _errorMessage = 'Login failed. Please try again.';
+      });
     }
   }
 
@@ -148,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _icon(),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
                   CustomInput(
                       hintText: 'Username',
                       hintTextColor: Color(0xFFA6A6A6),

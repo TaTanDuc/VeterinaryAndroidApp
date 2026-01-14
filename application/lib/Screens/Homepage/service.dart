@@ -30,7 +30,7 @@ class _ServicePageState extends State<ServicePage> {
   // Method to fetch services from API
   Future<void> fetchServices() async {
     final url = Uri.parse(
-        'http://192.168.137.1:8080/api/customer/service?serviceCode=&searchString='); // Replace with your actual API URL
+        'http://10.0.2.2:8080/api/customer/service?serviceCode=&searchString=');
     try {
       final session = await SessionManager().getSession();
       final response = await http.get(
@@ -126,9 +126,8 @@ class _ServicePageState extends State<ServicePage> {
 
   Widget _buildServiceList() {
     return ListView.builder(
-      physics:
-          NeverScrollableScrollPhysics(), // Prevent scrolling inside the ListView
-      shrinkWrap: true, // Use available space
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       itemCount: _services.length,
       itemBuilder: (context, index) {
         final service = _services[index];

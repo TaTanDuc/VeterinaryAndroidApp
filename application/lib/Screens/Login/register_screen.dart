@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _errorMessage = ''; // Xóa thông báo lỗi trước đó
     });
     try {
-      final url = Uri.parse("http://192.168.137.1:8080/api/account/register");
+      final url = Uri.parse("http://10.0.2.2:8080/api/account/register");
       if (usernameController.text.isEmpty ||
           passwordController.text.isEmpty ||
           emailController.text.isEmpty ||

@@ -1,12 +1,12 @@
 class Invoice {
   final int apmInvoiceID;
-  final String method;
+  final String paymentMethod;
   final String paidDate;
   final int total;
 
   Invoice({
     required this.apmInvoiceID,
-    required this.method,
+    required this.paymentMethod,
     required this.paidDate,
     required this.total,
   });
@@ -18,7 +18,7 @@ class Invoice {
 
     return Invoice(
       apmInvoiceID: (json['apmInvoiceID']) ?? 0,
-      method: (json['method']) ?? 'unknown',
+      paymentMethod: (json['paymentMethod']) ?? 'unknown',
       paidDate: (json['paidDate']) ?? 'unknown',
       total: json['total'] ?? 0,
     );
@@ -26,6 +26,6 @@ class Invoice {
 
   @override
   String toString() {
-    return 'Appointment(invoiceCODE: $apmInvoiceID, invoiceID: $method, invoiceDATE: $paidDate, total: $total)';
+    return 'Appointment(invoiceCODE: $apmInvoiceID, invoiceID: $paymentMethod, invoiceDATE: $paidDate, total: $total)';
   }
 }

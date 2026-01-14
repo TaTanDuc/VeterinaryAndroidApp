@@ -9,14 +9,14 @@ class ServiceInvoice {
 
   factory ServiceInvoice.fromJson(Map<String, dynamic> json) {
     return ServiceInvoice(
-      serviceNAME: json['serviceNAME'] ?? 'Unknown',
+      serviceNAME: json['serviceName'] ?? 'Unknown',
       servicePRICE: json['servicePRICE'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'serviceNAME': serviceNAME,
+      'serviceName': serviceNAME,
       'servicePRICE': servicePRICE,
     };
   }

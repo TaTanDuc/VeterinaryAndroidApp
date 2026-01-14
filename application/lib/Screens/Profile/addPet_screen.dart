@@ -64,7 +64,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
         false;
       });
       final session = await SessionManager().getSession();
-      final url = Uri.parse('http://192.168.137.1:8080/api/customer/pet');
+      final url = Uri.parse('http://10.0.2.2:8080/api/customer/pet');
       final response = await http.get(
         url,
         headers: {
@@ -92,10 +92,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
   Future<void> handleAddPet() async {
     try {
-      final url =
-          Uri.parse("http://192.168.137.1:8080/api/customer/pet/create");
+      final url = Uri.parse("http://10.0.2.2:8080/api/customer/pet/create");
       final session = await SessionManager().getSession();
       print('data insert $imagePath');
+      if (imagePath == null) {
+        imagePath = 'defaultProfileIMG.png';
+      }
       final response = await http.post(
         url,
         headers: {
@@ -144,6 +146,10 @@ class _AddPetScreenState extends State<AddPetScreen> {
           snackbarDuration: Durations.extralong4,
         ).show(context);
       } else {
+        final decoded = jsonDecode(response.body);
+        _dataMessage = (decoded is Map && decoded['returned'] != null)
+            ? decoded['returned'].toString()
+            : 'Login failed. Please check your credentials.';
         DelightToastBar(
           builder: (context) {
             return ToastCard(
@@ -175,10 +181,10 @@ class _AddPetScreenState extends State<AddPetScreen> {
       final imageTempolary = await _save(pickedFile.path);
       test = pickedFile.path;
       setState(() {
-        this._imageFile = imageTempolary; // Save the picked image
+        this._imageFile = imageTempolary;
       });
       imagePath = await _getAssetsImagePath(imageTempolary.path);
-      print('Simulated path: $imagePath');
+      print('Simulated path: $path');
     }
   }
 
@@ -195,7 +201,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
   Future<String> _getAssetsImagePath(String savedPath) async {
     final directory = await getApplicationDocumentsDirectory();
     final fileName = Path.basename(savedPath);
-    var uri = Uri.parse('http://192.168.137.1:8080/image/upload');
+    var uri = Uri.parse('http://10.0.2.2:8080/api/image/uploadProfile');
     var request = http.MultipartRequest('POST', uri);
     var multipartFile = await http.MultipartFile.fromPath(
       'file',
@@ -207,10 +213,8 @@ class _AddPetScreenState extends State<AddPetScreen> {
 
     if (response.statusCode == 200) {
       final customPath = '$fileName';
-      print('Image uploaded successfully. Access the image at: $customPath');
       return customPath;
     } else {
-      print('Failed to upload the image. Status code: ${response.statusCode}');
       return 'Error uploading image';
     }
   }
@@ -413,13 +417,11 @@ class _AddPetScreenState extends State<AddPetScreen> {
   Widget _textField(hintName, controller) {
     return Container(
       constraints: BoxConstraints(
-        minWidth:
-            200, // Chiều rộng tối thiểu // Chiều rộng tối đa theo kích thước màn hình
+        minWidth: 200,
       ),
       child: TextField(
         decoration: InputDecoration(
           hintText: hintName,
-          // Nội dung placeholder (hint text)
           border: OutlineInputBorder(),
         ),
         controller: controller,
